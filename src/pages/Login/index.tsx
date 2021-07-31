@@ -2,7 +2,9 @@ import { Container } from './styles'
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Divider } from 'primereact/divider';
-import logo  from '../../assets/logo.svg'
+import logo from '../../assets/logo.svg'
+import { ButtonBase } from '../../components/ButtonBase';
+import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
 
 // ========================================
 // Autor: Luan Miranda
@@ -13,15 +15,15 @@ export function Login() {
             <div className="card">
                 <div>
                     <img src={logo} alt="logo" />
-                    <Divider/>
                 </div>
                 <div>
-                    <br />
-                    <h3>Login</h3>
+                   
                 </div>
                 <div className="p-grid">
                     <div className="p-col-12 p-md-6 p-lg-5 p-d-flex p-ai-center p-jc-center">
+                      
                         <div className="p-fluid">
+                            <h3>Login</h3>
                             <div className="p-field">
                                 <label htmlFor="email">E-mail</label>
                                 <InputText id="email" type="text" placeholder="Digite seu e-mail" />
@@ -30,7 +32,7 @@ export function Login() {
                                 <label htmlFor="senha">Senha</label>
                                 <InputText id="senha" type="password" placeholder="Digite sua senha" />
                             </div>
-                            <Button label="ENTRAR" className="p-button-success"></Button>
+                            <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" />
                             <div className="div-link">
                                 <a href="" ><span>Cadastre-se</span></a>
                                 <a href=""><span className="span-link">Esquece a senha</span></a>
@@ -38,24 +40,15 @@ export function Login() {
 
                         </div>
                     </div>
-                    <div className="p-col-2">
+                    <div className="divider p-col-2">
                         <Divider layout="vertical">
                         </Divider>
                     </div>
 
-                    <div>
-                        <div className="p-col-12 p-md-6 p-lg-12 p-d-flex p-ai-center p-jc-center">
-                            <Button className="google p-2">
-                                <i className="pi pi-google p-px-2"></i>
-                                <span className="p-px-3">Google</span>
-                            </Button>
-                        </div>
-                        <div className="p-col-12 p-md-6 p-lg-12 p-d-flex p-ai-center p-jc-center">
-                            <Button className="facebook p-p-2">
-                                <i className="pi pi-facebook p-px-2"></i>
-                                <span className="p-px-3">Facebook</span>
-                            </Button>
-                        </div>
+                    <div className="p-col-12 p-md-6 p-lg-5 p-ai-center p-jc-center">
+                            <h3>Login com redes sociais</h3>
+                            <ButtonRedeSociais icon="pi pi-google" sizeIcon="4" size="6" label="Google" className="google p-button-raised p-button-rounded" />
+                            <ButtonRedeSociais icon="pi pi-facebook" sizeIcon="3" size="6" label="Facebook" className="facebook p-button-raised p-button-rounded" />
                     </div>
                 </div>
             </div>
