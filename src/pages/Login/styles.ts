@@ -2,31 +2,41 @@ import styled from 'styled-components';
 
 export const Container = styled.header`
   background: var(--white);
-  margin-left: 25%;
   margin-top: 6%;
+  margin-left: 15%;
   border-radius: 5px;
-  height: 10%;
-  padding: 0 1rem 1rem;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: baseline;
+  padding: 0 3rem 1rem;
+  width:70%;
+  
+
+
+  img{
+    @media (max-width: 1080px){
+        width:50%;
+  }
+    @media (max-width: 720px){
+        width:70%;
+  }
+    width:25%;
+    margin-left: 35%;
+    margin-top: 5%;
+   
+  }
+
   h3{
     text-align: center;
     margin-bottom:  2rem ;
     color: var(--text-title);
     /* padding: 3 1rem 10rem; */
    }
-   .div-master{
-       margin-bottom: 1rem;
-   }
    .div-link{
        display:flex;
-       margin-top: 0.5rem;
+       margin-top: 1rem;
        /* justify-content: baseline; */
        font-weight: bold;
 
        a{
+           
            padding: 0 1.5rem;
            text-decoration: none;
        }
@@ -45,14 +55,35 @@ export const Container = styled.header`
        height:35px;
        width:309px;
        padding:0 1rem;
-       /* border-top:  0;
-       border-left:  0;
-       border-right:  0; */
    }
    label{
        color: var(--green);
    }
-   .button-enter{
+
+   .google{
+    margin-top: 26%;
+    background: -webkit-gradient(linear,right top,left top,color-stop(70%,var(--purple-600)),color-stop(70%,var(--purple-700)));
+    width: 100%;
+    font-weight: bold;
+    bottom:1rem;
+    transition: background-position .5s ease-out;
+    &:hover {
+        background: -webkit-gradient(linear,right top,left top,color-stop(20%,var(--purple-600)),color-stop(78%,var(--purple-700)));
+        filter: brightness(0.9)
+        
+    }
+   
+
+  }
+  .facebook{
+    padding-left: 1rem!important;
+    padding-right: 1rem!important;
+    background: -webkit-gradient(linear,right top,left top,color-stop(70%,var(--indigo-600)),color-stop(70%,#2c397f));
+    width:100%;
+    font-weight: bold;
+}
+   
+   .p-button-success{
        color: var(--white);
        font-style: normal;
        font-weight: bold;
@@ -62,29 +93,17 @@ export const Container = styled.header`
        border:0;
        background: var(--green);
        height:35px;
-       width:309px;
+       width:100%;
        padding:0 1rem;
        border-radius: 3px;
        transition: 0.2s;
         &:hover {
-            filter: brightness(0.9)
+            filter: brightness(0.9);
         }
-   }
-`;
-export const Content = styled.div`
-  padding: 0 1rem 10rem;
-  display: flexbox;
-  align-items: center;
-  justify-content: baseline;
 
-  .button-sem-fundo{  
-    /* background: var(--white); */
-    color: var(--text-title);
-    margin-bottom: 2rem;
-    border: 1rem;
-    border-width: medium;
-    border-color: var(--text-title);
-  }
-`;
+       
+  } 
+   
+`
 
 
