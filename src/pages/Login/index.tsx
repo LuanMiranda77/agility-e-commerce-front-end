@@ -1,6 +1,8 @@
-import { Container, Content } from './styles'
-import iconGoogle from '../../assets/icon-google.svg'
-import iconFace from '../../assets/icon-face.svg'
+import { Container } from './styles'
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { Divider } from 'primereact/divider';
+import logo  from '../../assets/logo.svg'
 
 // ========================================
 // Autor: Luan Miranda
@@ -8,37 +10,55 @@ import iconFace from '../../assets/icon-face.svg'
 export function Login() {
     return (
         <Container>
-            {/* <img src="./assets/logo.svg" alt="logo" /> */}
-            <div className="p-fluid">
-                <h3>Login</h3>
-                <div className="div-master">
-                    <label htmlFor="email" >E-mail</label>
-                    <input type="text" placeholder="Digite seu e-mail" />
+            <div className="card">
+                <div>
+                    <img src={logo} alt="logo" />
+                    <Divider/>
                 </div>
-                <div className="div-master">
-                    <label htmlFor="senha" >Senha</label>
-                    <input type="text" placeholder="Digite sua senha" />
+                <div>
+                    <br />
+                    <h3>Login</h3>
                 </div>
-                <button className="button-enter">ENTRAR</button>
-                <div className="div-link">
-                    <a href="" ><span>Cadastre-se</span></a>
-                    <a href=""><span className="span-link">Esquece a senha</span></a>
+                <div className="p-grid">
+                    <div className="p-col-12 p-md-6 p-lg-5 p-d-flex p-ai-center p-jc-center">
+                        <div className="p-fluid">
+                            <div className="p-field">
+                                <label htmlFor="email">E-mail</label>
+                                <InputText id="email" type="text" placeholder="Digite seu e-mail" />
+                            </div>
+                            <div className="p-field">
+                                <label htmlFor="senha">Senha</label>
+                                <InputText id="senha" type="password" placeholder="Digite sua senha" />
+                            </div>
+                            <Button label="ENTRAR" className="p-button-success"></Button>
+                            <div className="div-link">
+                                <a href="" ><span>Cadastre-se</span></a>
+                                <a href=""><span className="span-link">Esquece a senha</span></a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div className="p-col-2">
+                        <Divider layout="vertical">
+                        </Divider>
+                    </div>
+
+                    <div>
+                        <div className="p-col-12 p-md-6 p-lg-12 p-d-flex p-ai-center p-jc-center">
+                            <Button className="google p-2">
+                                <i className="pi pi-google p-px-2"></i>
+                                <span className="p-px-3">Google</span>
+                            </Button>
+                        </div>
+                        <div className="p-col-12 p-md-6 p-lg-12 p-d-flex p-ai-center p-jc-center">
+                            <Button className="facebook p-p-2">
+                                <i className="pi pi-facebook p-px-2"></i>
+                                <span className="p-px-3">Facebook</span>
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <Content>
-                <div className="content">
-                    <h3>Fazer login via redes sociais</h3>
-                    <button className="button-sem-fundo">
-                        <img src={iconGoogle} alt="logo" />
-                        <span>Registre-se com o google</span>
-                    </button>
-                    <button>
-                        <img src={iconFace} alt="" />
-                        <span>Registre-se com o facebook</span>
-                    </button>
-                </div>
-            </Content>
 
         </Container>
 
