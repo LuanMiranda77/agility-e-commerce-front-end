@@ -36,6 +36,7 @@ export function Login() {
                                 <a href=""><span className="span-link">Esquece a senha</span></a>
                             </div>
 
+
                         </div>
                     </div>
                     <div className="divider p-col-2">
