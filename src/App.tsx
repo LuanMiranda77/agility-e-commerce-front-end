@@ -6,10 +6,6 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import { HeaderAdmin } from "./components/HeaderAdmin";
-import { ButtonBase } from "./components/ButtonBase";
-import { InputSearch } from "./components/InputSearch";
-import { ButtonRedeSociais } from "./components/ButtonRedeSociais";
-import { InputGroup } from "./components/InputGroup";
 
 
 
@@ -21,7 +17,6 @@ export function App() {
 
   return (
     <div>
-      {/* <Dashboard /> */}
       <HeaderAdmin></HeaderAdmin>
       <Login/>
       <GlobalStyle />
