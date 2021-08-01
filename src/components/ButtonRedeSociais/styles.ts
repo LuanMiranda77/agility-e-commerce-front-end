@@ -17,6 +17,9 @@ export const Container = styled.div`
       background-position: left bottom;
       filter: brightness(0.6)
   }
+  @media (max-width: 720px){
+    background-size: 153% 100%;
+    }
 }
 
 .facebook i {
@@ -37,6 +40,10 @@ export const Container = styled.div`
     font-size: 18px;
     height:35px;
     border-radius: 3px;
+    @media (max-width: 720px){
+    background-size: 153% 100%;
+    }
+    
 }
 .google:hover {
     background-position: left bottom;
