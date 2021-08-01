@@ -21,8 +21,6 @@ export function App() {
 
   return (
     <div>
-      {/* <Dashboard /> */}
-      <HeaderAdmin></HeaderAdmin>
       <Login/>
       <GlobalStyle />
     </div>
