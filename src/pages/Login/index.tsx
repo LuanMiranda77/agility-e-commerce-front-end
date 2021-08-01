@@ -4,7 +4,6 @@ import logo from '../../assets/logo.svg'
 import { ButtonBase } from '../../components/ButtonBase';
 import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
 import { InputGroup } from '../../components/InputGroup';
-import { GlobalStyle } from '../../style/global';
 
 // ========================================
 // Autor: Luan Miranda
@@ -12,7 +11,6 @@ import { GlobalStyle } from '../../style/global';
 export function Login() {
     return (
         <Container>
-            <GlobalStyle/>
             <div className="card">
                 <div>
                     <img src={logo} alt="logo" />
