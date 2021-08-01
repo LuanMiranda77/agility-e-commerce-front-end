@@ -12,14 +12,7 @@ import { HeaderAdmin } from "./components/HeaderAdmin";
 export function App() {
   // active ripple effect
   PrimeReact.ripple = true;
-
-
-
   return (
-    <div>
-      <HeaderAdmin></HeaderAdmin>
       <Login/>
-      <GlobalStyle />
-    </div>
-  );
+  )
 }
