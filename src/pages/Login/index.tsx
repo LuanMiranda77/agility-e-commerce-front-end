@@ -1,10 +1,9 @@
 import { Container } from './styles'
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
 import { Divider } from 'primereact/divider';
 import logo from '../../assets/logo.svg'
 import { ButtonBase } from '../../components/ButtonBase';
 import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
+import { InputGroup } from '../../components/InputGroup';
 
 // ========================================
 // Autor: Luan Miranda
@@ -21,16 +20,13 @@ export function Login() {
                 </div>
                 <div className="p-grid">
                     <div className="p-col-12 p-md-6 p-lg-5 p-d-flex p-ai-center p-jc-center">
-                      
                         <div className="p-fluid">
                             <h3>Login</h3>
                             <div className="p-field">
-                                <label htmlFor="email">E-mail</label>
-                                <InputText id="email" type="text" placeholder="Digite seu e-mail" />
+                                <InputGroup type="text" label="E-mail" placeholder="Digite seu e-mail" icon="pi pi-user"></InputGroup>
                             </div>
                             <div className="p-field">
-                                <label htmlFor="senha">Senha</label>
-                                <InputText id="senha" type="password" placeholder="Digite sua senha" />
+                                <InputGroup label="Senha" placeholder="Digite a senha" icon="pi pi-key" type="password"></InputGroup>
                             </div>
                             <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" />
                             <div className="div-link">

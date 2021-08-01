@@ -51,9 +51,8 @@ export const Container = styled.header`
         @media (max-width: 720px){
         padding: 0 0.4rem;
        }
-           padding: 0 1rem;
-           text-decoration: none;
-
+        padding: 0 0.5rem;
+        text-decoration: none;
        }
 
 
