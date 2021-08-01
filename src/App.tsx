@@ -1,14 +1,16 @@
 import { Login } from "./pages/Login";
 import { GlobalStyle } from "./style/global";
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
 import PrimeReact from 'primereact/api';
-
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
+import { HeaderAdmin } from "./components/HeaderAdmin";
 import { ButtonBase } from "./components/ButtonBase";
+import { InputSearch } from "./components/InputSearch";
+import { ButtonRedeSociais } from "./components/ButtonRedeSociais";
+import { InputGroup } from "./components/InputGroup";
+
 
 
 export function App() {
@@ -20,7 +22,8 @@ export function App() {
   return (
     <div>
       {/* <Dashboard /> */}
-      <Login />
+      <HeaderAdmin></HeaderAdmin>
+      <Login/>
       <GlobalStyle />
     </div>
   );
