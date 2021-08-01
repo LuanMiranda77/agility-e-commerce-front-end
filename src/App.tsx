@@ -13,6 +13,9 @@ export function App() {
   // active ripple effect
   PrimeReact.ripple = true;
   return (
+   <div>
       <Login/>
+      <GlobalStyle/>
+    </div>
   )
 }
