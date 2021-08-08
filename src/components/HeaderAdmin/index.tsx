@@ -29,7 +29,7 @@ export function HeaderAdmin() {
   
   return (
     <Header>
-      <Card className="card">
+      <Card className="card-admin">
       {/* <PanelMenu model={items} style={{width:'300px'}}/> */}
         <Logo className="logo" />
 
