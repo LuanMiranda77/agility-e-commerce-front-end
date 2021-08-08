@@ -34,7 +34,7 @@ export const Container = styled.div`
     font-weight: bold;
     font-size: 18px;
     border:0;
-    background: var(--orange);
+    background: var(--secondary);
     height:35px;
     border-radius: 3px;
     transition: 0.2s;
