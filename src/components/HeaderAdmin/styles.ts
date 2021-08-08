@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Header = styled.header`
 
-.card{
+.card-admin{
   height:70px;
 
 }
