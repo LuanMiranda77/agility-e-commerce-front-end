@@ -1,23 +1,13 @@
 import { useEffect, useState } from "react";
-import { api } from "../../services/apiDev";
+import { api } from "../../services/api";
+import { IProduto } from "../../services/ProdutoServices/produtoInterface";
 import { Container } from "./styles";
 
-    interface Produto{
-        id: number;
-        codigoBarras: string;
-        nome: string;
-        precoVarejo: number;
-        precoAtacado: number;
-        quantidade: number;
-        descricao: string;
-        imagens: string[];
-
-    }
 
 export function Table(){
 
 
-        const[produtos,setProdutos] = useState<Produto[]>([])
+        const[produtos,setProdutos] = useState<IProduto[]>([])
 
         useEffect(() => {
             api.get('produto')
