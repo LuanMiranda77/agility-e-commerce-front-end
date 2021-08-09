@@ -17,7 +17,10 @@ export const Container  = styled.div`
        
     }
     /* DataTableDemo.css */
-
+.but-add{
+    width:"100%";
+    float: right;
+}
 .table-header {
     display: flex;
     align-items: center;
@@ -40,8 +43,43 @@ export const Container  = styled.div`
     align-items: center;
     justify-content: center;
 }
+.react-modal-content{
+        max-width: 20rem;
+    }
 
 
 
 
+`;
+
+export const FormControl = styled.form`
+
+    h3{
+        color: var(--text-title);
+    }
+    label{
+        color: var(--text-title);
+    }
+    .divider{
+        margin-top: -1rem;
+    }
+    .card{
+        background: var(--white);
+        border-radius: 0.24rem;
+        margin-top: 1.8rem;
+    }
+    .p-button-primary{
+        background: var(--white);
+        border: 0;
+        height: 8rem;
+        width: 8rem;
+        color: var(--blue);
+        
+        text-align: left;
+    }
+    .but-save{
+        width:"100%";
+        float:right;
+    }
+   
 `;
