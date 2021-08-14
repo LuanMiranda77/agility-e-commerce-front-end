@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
 export const Header = styled.header`
+/* position:fixed;
+width:100%;
+margin-top: -12px; */
 
 .card-admin{
   height:70px;
