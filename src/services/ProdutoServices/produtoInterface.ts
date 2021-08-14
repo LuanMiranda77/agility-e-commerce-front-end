@@ -1,3 +1,5 @@
+import { ImagemProduto } from "./ImagemProduto";
+
 export interface IProduto{
   id: number;
   codigoBarras: string;
@@ -7,5 +9,5 @@ export interface IProduto{
   quantidade: number;
   descricao: string;
   estrelas: number;
-  imagens: string[];
+  imagens: ImagemProduto[];
 }

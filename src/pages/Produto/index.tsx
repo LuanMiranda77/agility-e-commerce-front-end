@@ -23,6 +23,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
+import Slide from '@material-ui/core/Slide';
+import { TransitionProps } from '@material-ui/core/transitions';
 
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
@@ -68,6 +70,12 @@ export function Produto() {
     const produtoService = new ProdutoService();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+    const Transition = React.forwardRef(function Transition(
+        props: TransitionProps & { children?: React.ReactElement<any, any> },
+        ref: React.Ref<unknown>,
+      ) {
+        return <Slide direction="up" ref={ref} {...props} />;
+      });
 
     useEffect(() => {
         produtoService.getProdutos().then(data => setProdutos(data));
@@ -89,6 +97,10 @@ export function Produto() {
     }
 
     const hideDeleteProdutoDialog = () => {
+        produtoService.delete(produto.id);
+      
+       produtos.splice(produtos.indexOf(produto), 1);
+   
         setDeleteprodutoDialog(false);
     }
 
@@ -238,7 +250,7 @@ export function Produto() {
     }
 
     const imageBodyTemplate = (rowData: IProduto) => {
-        return <img src={`showcase/demo/images/produto/${rowData.imagens[0]}`} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={rowData.imagens[0]} className="produto-image" />
+        return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
@@ -435,7 +447,8 @@ export function Produto() {
                     scroll={scroll}
                     aria-labelledby="scroll-dialog-title"
                     aria-describedby="scroll-dialog-description"
-                    fullScreen={fullScreen}
+                    maxWidth="lg"
+                    
                 >
                     <DialogContent dividers={scroll === 'paper'}>
                     <button type="button" onClick={hideDialog} className="react-modal-close">
@@ -450,18 +463,18 @@ export function Produto() {
                             <Divider className="divider" />
                             <div className="p-grid">
                                 <div className="p-col p-field" >
-                                    <label htmlFor="codigo" className="p-mb-2">Codigo</label>
-                                    <InputText id="barras" style={{ width: '12rem' }} value={produto.codigoBarras} onChange={(e) => onInputChange(e.target, "codigo")} required autoFocus className={classNames({ 'p-invalid': submitted && !produto.nome })} />
-                                    {submitted && !produto.nome && <small className="p-error">Codigo é obtigatorio.</small>}
+                                    <label htmlFor="codigo" className="p-mb-2">Código</label>
+                                    <InputText id="barras" style={{ width: '20rem' }} value={produto.codigoBarras} onChange={(e) => onInputChange(e.target, "codigo")} required autoFocus className={classNames({ 'p-invalid': submitted && !produto.nome })} />
+                                    {submitted && !produto.nome && <small className="p-error">Código é obtigatorio.</small>}
                                 </div>
                                 <div className="p-col p-field">
                                     <label htmlFor="name">Nome</label>
-                                    <InputText id="name" value={produto.nome} onChange={(e) => onInputChange(e.target, "")} style={{ width: '50rem' }} required autoFocus className={classNames({ 'p-invalid': submitted && !produto.nome })} />
+                                    <InputText id="name" value={produto.nome} onChange={(e) => onInputChange(e.target, "")} style={{ width: '50rem' }} required className={classNames({ 'p-invalid': submitted && !produto.nome })} />
                                     {submitted && !produto.nome && <small className="p-error">Nome é obtigatorio.</small>}
                                 </div>
                             </div>
                             <div className="p-formgrid p-grid">
-                                <div className="p-field p-col">
+                                <div className="p-field p-col" style={{ width: '90rem' }}>
                                     <label htmlFor="quantidade">Quantidade</label>
                                     <InputNumber id="quantidade" value={produto.quantidade} onValueChange={(e) => onInputNumber(e, 'quantidade')} />
                                 </div>
@@ -524,6 +537,7 @@ export function Produto() {
                     {produto && <span>Tem Certeza que vai deletar o <b>{produto.nome}</b>?</span>}
                 </div>
             </Dialog>
+            
 
             <Dialog visible={deleteProdutosDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteProdutosDialogFooter} onHide={hideDeleteProdutosDialog}>
                 <div className="confirmation-content">
@@ -531,6 +545,30 @@ export function Produto() {
                     {produto && <span>Tem certeza que quer deletar os produtos selecionados?</span>}
                 </div>
             </Dialog> */}
+
+<Dialog
+        open={deleteProdutoDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={hideDeleteProdutoDialog}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir o ítem?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+           O ítem {produto.nome}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() =>{ setDeleteprodutoDialog(false)}} color="primary">
+            Não 
+          </Button>
+          <Button onClick={hideDeleteProdutoDialog} color="primary">
+            Sim
+          </Button>
+        </DialogActions>
+      </Dialog>
 
         </Container>
     )

@@ -9,7 +9,7 @@ export class ProdutoService {
       return api.post(this.url,pEntity).then(response => response.data);;
     }
     update(pEntity: IProduto) : void{
-      api.put(this.url,pEntity);
+      api.put(this.url+`/${pEntity.id}`,pEntity);
     }
     delete(id:number){
       api.delete(this.url+`/${id}`);
