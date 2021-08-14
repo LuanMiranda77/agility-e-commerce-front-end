@@ -4,11 +4,20 @@ import logo from '../../assets/logo.svg'
 import { ButtonBase } from '../../components/ButtonBase';
 import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
 import { InputGroup } from '../../components/InputGroup';
+import { useState } from 'react';
+import { IUser } from '../../services/LoginService/IUser';
+import { LoginService } from '../../services/LoginService/LoginService';
 
 // ========================================
 // Autor: Luan Miranda
 // ========================================
 export function Login() {
+    const [login, setLogin] = useState(null);
+    const loginService = new LoginService();
+
+    const logar = (user: IUser) => {
+        
+    };
     return (
         <Container>
             <div className="card">

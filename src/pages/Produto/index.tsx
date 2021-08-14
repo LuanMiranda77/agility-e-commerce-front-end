@@ -233,19 +233,19 @@ export function Produto() {
 
     const leftToolbarTemplate = () => {
         return (
-            <React.Fragment>
+            <div>
                 <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={openNew} />
                 <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedProdutos || !selectedProdutos.length} />
-            </React.Fragment>
+            </div>
         )
     }
 
     const rightToolbarTemplate = () => {
         return (
-            <React.Fragment>
+            <div>
                 <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseLabel="Import" className="p-mr-2 p-d-inline-block" />
                 <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />
-            </React.Fragment>
+            </div>
         )
     }
 
@@ -264,10 +264,10 @@ export function Produto() {
 
     const actionBodyTemplate = (rowData: IProduto) => {
         return (
-            <React.Fragment>
+            <div>
                 <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => editproduto(rowData)} />
                 <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteproduto(rowData)} />
-            </React.Fragment>
+            </div>
         );
     }
 
@@ -281,22 +281,22 @@ export function Produto() {
     //     </div>
     // );
     const produtoDialogFooter = (
-        <React.Fragment>
+        <div>
             <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
             <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveProduto} />
-        </React.Fragment>
+        </div>
     );
     const deleteProdutoDialogFooter = (
-        <React.Fragment>
+        <div>
             <Button label="NÃO" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProdutoDialog} />
             <Button label="SIM" icon="pi pi-check" className="p-button-text" onClick={deleteproduto} />
-        </React.Fragment>
+        </div>
     );
     const deleteProdutosDialogFooter = (
-        <React.Fragment>
+        <div>
             <Button label="NÃO" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProdutosDialog} />
             <Button label="SIM" icon="pi pi-check" className="p-button-text" onClick={deleteSelectedprodutos} />
-        </React.Fragment>
+        </div>
     );
     return (
         <Container>

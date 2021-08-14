@@ -4,7 +4,7 @@ export const Container = styled.header`
   background: var(--white);
   align-items: center;
   margin: 5% auto;
-  width:58%;
+  width:50%;
   border-radius: 5px;
   padding: 0 1rem 1rem;
  
