@@ -43,6 +43,12 @@ export const Container  = styled.div`
     align-items: center;
     justify-content: center;
 }
+
+.teste{
+    background: var(--background);
+    width: 100%;
+}
+
 .react-modal-content{
         max-width: 20rem;
     }
