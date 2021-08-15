@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Container  = styled.div`
 
     img{
-        max-width: 6rem;
+        max-width: 4rem;
         max-height: 8rem;
     }
 
