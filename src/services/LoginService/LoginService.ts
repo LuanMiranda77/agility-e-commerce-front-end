@@ -4,9 +4,10 @@ import { IUser } from "./IUser";
 
 export class LoginService {
 
-    url='user';
+    url='user/login';
 
-    public login(usuario : IUser) {
-       api.post(this.url, usuario).then(response => response.data); 
+    public async login(pEntity : IUser) {
+        const response = await api.post(this.url, pEntity);
+        return response.data;
     }
 }

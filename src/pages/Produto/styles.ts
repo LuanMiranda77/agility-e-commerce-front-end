@@ -9,6 +9,7 @@ export const Container  = styled.div`
 
     background: var(--background);
     label{
+        display: flex;
         color: var(--text-title);
         margin-top: 0.5rem;
         margin-left: 0.5rem;

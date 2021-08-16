@@ -98,10 +98,10 @@ export function Produto() {
 
     const hideDeleteProdutoDialog = () => {
         produtoService.delete(produto.id);
-      
-       produtos.splice(produtos.indexOf(produto), 1);
-   
+        produtos.splice(produtos.indexOf(produto), 1);
         setDeleteprodutoDialog(false);
+        window.location.reload();
+ 
     }
 
     const hideDeleteProdutosDialog = () => {
@@ -189,6 +189,7 @@ export function Produto() {
     const deleteSelectedprodutos = () => {
         let _produtos = produtos.filter(valor => !selectedProdutos.includes(valor));
         setProdutos(_produtos);
+        produtoService.deleteAll(produtos);
         setDeleteprodutosDialog(false);
         setSelectedprodutos([]);
         //     consttoast.current.show({ severity: 'success', summary: 'Successful', detail: 'produtos Deleted', life: 3000 });
@@ -205,10 +206,7 @@ export function Produto() {
             setProduto(_produto);
 
         }
-        // setProduto({
-        //     ...produto,
-        //     [e.name]: e.value
-        // });
+       
     }
     const onInputTextAreaChange = (e: HTMLTextAreaElement) => {
         let _produto = { ...produto };
@@ -228,16 +226,6 @@ export function Produto() {
             _produto.quantidade = e.target.value;
             setProduto(_produto);
         };
-    }
-
-
-    const leftToolbarTemplate = () => {
-        return (
-            <div>
-                <Button label="New" icon="pi pi-plus" className="p-button-success p-mr-2" onClick={openNew} />
-                <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={confirmDeleteSelected} disabled={!selectedProdutos || !selectedProdutos.length} />
-            </div>
-        )
     }
 
     const rightToolbarTemplate = () => {
@@ -309,7 +297,7 @@ export function Produto() {
                     </div>
                     <div className="p-grid  p-col-12 p-md-6 p-lg-4" >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openNew} />
-                        <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" />
+                        <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" onClick={deleteSelectedprodutos} />
                     </div>
 
                 </div>
