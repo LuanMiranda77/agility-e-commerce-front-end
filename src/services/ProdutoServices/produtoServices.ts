@@ -3,7 +3,7 @@ import { api } from "../api";
 import {IProduto} from "./produtoInterface";
 export class ProdutoService {
 
-    url='produto';
+    url='api/produto';
 
     async save(pEntity: IProduto){
       const response = await api.post(this.url, pEntity);

@@ -17,7 +17,6 @@ import { LoginService } from '../../services/LoginService/LoginService';
 export function Login() {
     const history = useHistory();
     const [user, setUser] = useState<IUser>({
-        id: 0,
         email: '',
         password: ''
     });

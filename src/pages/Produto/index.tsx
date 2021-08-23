@@ -25,6 +25,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
+import { useHistory } from "react-router-dom";
+import Snackbar from '@material-ui/core/Snackbar';
 
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
@@ -37,7 +39,7 @@ import iconImport from "../../assets/iconImport.svg";
 
 
 export function Produto() {
-
+    const history = useHistory();
     const [produtos, setProdutos] = useState<IProduto[]>([]);
     const [produtoDialog, setProdutoDialog] = useState(false);
     const [deleteProdutoDialog, setDeleteprodutoDialog] = useState(false);
@@ -106,6 +108,7 @@ export function Produto() {
 
     const hideDeleteProdutosDialog = () => {
         setDeleteprodutosDialog(false);
+        window.location.reload();
     }
     const onChangeCategoria = (e: { value: any }) => {
         setCategoria(e.value);
@@ -188,10 +191,15 @@ export function Produto() {
 
     const deleteSelectedprodutos = () => {
         let _produtos = produtos.filter(valor => !selectedProdutos.includes(valor));
+        console.log(_produtos);
         setProdutos(_produtos);
-        produtoService.deleteAll(produtos);
+
+        let produtosDelete = produtos.filter(valor => selectedProdutos.includes(valor));
+        produtoService.deleteAll(produtosDelete);
         setDeleteprodutosDialog(false);
         setSelectedprodutos([]);
+       // history.push("/produto");
+        window.location.reload();
         //     consttoast.current.show({ severity: 'success', summary: 'Successful', detail: 'produtos Deleted', life: 3000 });
     }
 
@@ -253,21 +261,22 @@ export function Produto() {
     const actionBodyTemplate = (rowData: IProduto) => {
         return (
             <div>
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2" onClick={() => editproduto(rowData)} />
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => confirmDeleteproduto(rowData)} />
+                <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() => editproduto(rowData)} />
+                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => confirmDeleteproduto(rowData)} />
             </div>
         );
     }
 
-    // const header = (
-    //     <div className="table-header">
-    //         <h5 className="p-m-0">Manage produtos</h5>
-    //         <span className="p-input-icon-left">
-    //             <i className="pi pi-search" />
-    //             <InputText type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Search..." />
-    //         </span>
-    //     </div>
-    // );
+    const header = (
+        <div className="table-header">
+            <h5 className="p-m-0">Listagem de produtos</h5>
+            {/* <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} placeholder="Search..." />
+            </span> */}
+            
+        </div>
+    );
     const produtoDialogFooter = (
         <div>
             <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
@@ -289,15 +298,15 @@ export function Produto() {
     return (
         <Container>
             <HeaderAdmin />
-            <div className="card p-mt-3 p-pt-4">
-                <div className="p-grid" >
+            <div className="card">
+                <div className="p-grid p-mt-3" >
                     <div className="p-grid  p-col-12 p-md-6 p-lg-8">
                         <img src={produtoIcone} alt="img" className="p-ml-2 p-p-2" />
                         <label className="p-ml-2 p-pt-3">Cadastro de Produto</label>
                     </div>
-                    <div className="p-grid  p-col-12 p-md-6 p-lg-4" >
+                    <div className="p-grid  p-col-12 p-md-6 p-lg-4 " >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openNew} />
-                        <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" onClick={deleteSelectedprodutos} />
+                        <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" onClick={confirmDeleteSelected} />
                     </div>
 
                 </div>
@@ -310,15 +319,12 @@ export function Produto() {
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
                     </div>
                 </div>
-
-
-
-
             </div>
+            
             <div className="datatable-crud-demo">
                 <Toast />
 
-                <div className="card">
+                <div className="table">
                     {/* <Toolbar className="p-mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar> */}
 
                     <DataTable value={produtos} selection={selectedProdutos} onSelectionChange={(e) => setSelectedprodutos(e.value)}
@@ -327,7 +333,7 @@ export function Produto() {
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
                         globalFilter={globalFilter}
-                    // header={header}
+                        header={header}
                     >
 
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
@@ -341,93 +347,6 @@ export function Produto() {
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
-
-                <Modal
-                    isOpen={false}
-                    onRequestClose={hideDialog}
-                    overlayClassName="react-modal-overlay"
-                    className="react-modal-content"
-                >
-                    <button type="button" onClick={hideDialog} className="react-modal-close">
-                        <i className="pi pi-times" style={{ 'fontSize': '1.5em' }} />
-                    </button>
-                    <FormControl>
-                        <div className="card p-p-4">
-                            <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                                <img src={produtoIcone} alt="img" className="p-p-2" />
-                                <h3 className="p-text-bold p-text-uppercase p-mt-3">Cadastro de produto</h3>
-                            </div>
-                            <Divider className="divider" />
-                            <div className="p-grid">
-                                <div className="p-col p-field" >
-                                    <label htmlFor="codigo" className="p-mb-2">Codigo</label>
-                                    <InputText id="barras" style={{ width: '12rem' }} value={produto.codigoBarras} onChange={(e) => onInputChange(e.target, "codigo")} required autoFocus className={classNames({ 'p-invalid': submitted && !produto.nome })} />
-                                    {submitted && !produto.nome && <small className="p-error">Codigo é obtigatorio.</small>}
-                                </div>
-                                <div className="p-col p-field">
-                                    <label htmlFor="name">Nome</label>
-                                    <InputText id="name" value={produto.nome} onChange={(e) => onInputChange(e.target, "")} style={{ width: '50rem' }} required autoFocus className={classNames({ 'p-invalid': submitted && !produto.nome })} />
-                                    {submitted && !produto.nome && <small className="p-error">Nome é obtigatorio.</small>}
-                                </div>
-                            </div>
-                            <div className="p-formgrid p-grid">
-                                <div className="p-field p-col">
-                                    <label htmlFor="quantidade">Quantidade</label>
-                                    <InputNumber id="quantidade" value={produto.quantidade} onValueChange={(e) => onInputNumber(e, 'quantidade')} />
-                                </div>
-                                <div className="p-field p-col">
-                                    <label htmlFor="pricovarejo">Preço de Varejo</label>
-                                    <InputNumber id="pricevarejo" value={produto.precoVarejo} onValueChange={(e) => onInputNumber(e, 'varejo')} mode="currency" currency="BRL" locale="pt-br" />
-                                </div>
-                                <div className="p-field p-col">
-                                    <label htmlFor="priceatacado">Preço de Atacado</label>
-                                    <InputNumber id="priceatacado" value={produto.precoAtacado} onValueChange={(e) => onInputNumber(e, 'atacado')} mode="currency" currency="BRL" locale="pt-br" />
-                                </div>
-
-                                <div className="p-field p-col">
-                                    <label htmlFor="categoria">Categoria</label>
-                                    {/* <Dropdown value={categoria} options={categorias} optionLabel="name" placeholder="Escolha a categoria" /> */}
-                                </div>
-
-
-
-
-                            </div>
-
-                        </div>
-
-                        <div className="p-card p-field p-mt-3 p-p-3">
-                            <label htmlFor="description">Description</label>
-                            <InputTextarea id="description" style={{ width: '100%', height: '8rem' }} value={produto.descricao} onChange={(e) => onInputTextAreaChange(e.target)} required rows={3} cols={20} />
-                        </div>
-
-                        <div className="p-card p-p-3">
-                            <label htmlFor="imagens">Imagens</label>
-                            <div className="p-grid p-field p-mt-2 p-pl-4 p-col-12 p-md-6 p-lg-12">
-                                <FileUpload
-                                    mode="basic"
-                                    accept="image/*"
-                                    maxFileSize={1000000}
-                                    chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-4' }}
-
-                                >
-                                </FileUpload>
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                            </div>
-                        </div>
-
-
-                        <div className="but-save">
-                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={saveProduto} />
-                        </div>
-
-
-                    </FormControl>
-
-                </Modal>
                 <Dialog 
                     className="teste"
                     open={produtoDialog}
@@ -553,6 +472,25 @@ export function Produto() {
             Não 
           </Button>
           <Button onClick={hideDeleteProdutoDialog} color="primary">
+            Sim
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={deleteProdutosDialog}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={hideDeleteProdutoDialog}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir os  ítens selecionados?"}</DialogTitle>
+        <DialogActions>
+          <Button onClick={() =>{setDeleteprodutosDialog(false); window.location.reload()}} color="primary">
+            Não 
+          </Button>
+          <Button onClick={deleteSelectedprodutos} color="primary">
             Sim
           </Button>
         </DialogActions>

@@ -18,9 +18,15 @@ export const Container  = styled.div`
     }
 
     .card { 
+        position: fixed;
+        width: 100%;
         background: var(--white);
-        margin: 0.5rem auto;
+        margin-top:-11.5rem;
+        z-index: 12;
        
+    }
+    .table{
+        margin-top: 16rem;
     }
     /* DataTableDemo.css */
 .but-add{
@@ -50,7 +56,7 @@ export const Container  = styled.div`
     justify-content: center;
 }
 
-.teste{
+.MuiDialog-root{
     background: var(--background);
     width: 100%;
 }
