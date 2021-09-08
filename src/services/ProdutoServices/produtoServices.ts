@@ -1,6 +1,6 @@
 
 import { api } from "../api";
-import {IProduto} from "./produtoInterface";
+import {IProduto} from "../../domain/types/IProduto";
 export class ProdutoService {
 
     url='api/produto';

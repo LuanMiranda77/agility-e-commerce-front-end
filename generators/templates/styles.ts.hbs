@@ -1,12 +1,12 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-export const Container  = styled.div`
-
-    img{
+export const Container = styled.div`
+img{
         max-width: 4rem;
         max-height: 8rem;
     }
 
+    background: var(--background);
     label{
         display: flex;
         color: var(--text-title);
@@ -20,12 +20,12 @@ export const Container  = styled.div`
         position: fixed;
         width: 100%;
         background: var(--white);
-        margin-top: 0.8rem;
+        margin-top:-11.5rem;
         z-index: 12;
        
     }
     .table{
-        margin-top: 13rem;
+        margin-top: 16rem;
     }
     /* DataTableDemo.css */
 .but-add{
@@ -70,13 +70,16 @@ export const Container  = styled.div`
 `;
 
 export const FormControl = styled.form`
-    button{
-        background: 'ffff';
+
+    h3{
+        color: var(--text-title);
     }
     label{
-        color: var(--primary);
+        color: var(--text-title);
     }
-
+    .divider{
+        margin-top: -1rem;
+    }
     .card{
         background: var(--white);
         border-radius: 0.24rem;

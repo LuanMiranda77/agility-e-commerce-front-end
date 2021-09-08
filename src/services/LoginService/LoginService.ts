@@ -1,14 +1,12 @@
 
 import { api } from "../api";
 import { login, TOKEN_KEY } from "../auth";
-import { IUser } from "./IUser";
+import { IUser } from "../../domain/types/IUser";
 
 export class LoginService {
 
     url='api/user/login';
     auth='/tokken';
-
-
 
     public async login(pEntity : IUser) {
         
@@ -17,10 +15,9 @@ export class LoginService {
             login(response.data);
 
         });
-       
-        
-        
         const response = await api.post(this.url, pEntity);
         return response.data;
     }
+
+
 }

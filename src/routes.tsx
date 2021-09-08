@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import { Login } from './pages/Login';
-import { Produto } from './pages/Produto';
+import Login  from './pages/Login';
+import Produto  from './pages/Produto';
 import {Notfound} from './pages/Notfound';
 import PrivateRoute from './privateRoutes';
 

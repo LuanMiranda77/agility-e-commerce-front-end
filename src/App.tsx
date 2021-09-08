@@ -1,4 +1,3 @@
-import { Login } from "./pages/Login";
 import { GlobalStyle } from "./style/global";
 import PrimeReact from 'primereact/api';
 import 'primereact/resources/themes/saga-blue/theme.css';
@@ -12,9 +11,9 @@ export function App() {
   // active ripple effect
   PrimeReact.ripple = true;
   return (
-   <BrowserRouter>
-      <Routes/>
-      <GlobalStyle/>
+    <BrowserRouter>
+      <Routes />
+      <GlobalStyle />
     </BrowserRouter>
   )
 }
