@@ -4,7 +4,7 @@ export const Container  = styled.div`
 
     img{
         max-width: 4rem;
-        max-height: 8rem;
+        max-height: 5rem;
     }
 
     label{
@@ -65,6 +65,22 @@ export const Container  = styled.div`
     }
     .datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
     display: none;
+}
+
+.datatable-style-demo .outofstock {
+    font-weight: 700;
+    color: #FF5252;
+    text-decoration: line-through;
+}
+
+.datatable-style-demo .lowstock {
+    font-weight: 700;
+    color: #FFA726;
+}
+
+.datatable-style-demo .instock {
+    font-weight: 700;
+    color: #66BB6A;
 }
 
 @media screen and (max-width: 40em) {

@@ -184,48 +184,52 @@ const Produto: React.FC = () =>  {
 
     const bodyTemplateColumnA = (rowData: IProduto) => {
         return (
-            <React.Fragment>
+            <div>
                 <span className="p-column-title">Cod.Barras:</span>
                 {rowData.codigoBarras}
-            </React.Fragment>
+            </div>
         );
     }
     const bodyTemplateColumnB = (rowData: IProduto) => {
         return (
-            <React.Fragment>
+            <div>
                 <span className="p-column-title">Nome:</span>
                 {rowData.nome}
-            </React.Fragment>
+            </div>
         );
     }
     const bodyTemplateColumnC = (rowData: IProduto) => {
         const p = priceBodyTemplate(rowData);
         return (
-            <React.Fragment>
+            <div>
                 <span className="p-column-title">Preço Varejo:</span>
                 <span>{p}</span>
-            </React.Fragment>
+            </div>
         );
     }
     const bodyTemplateColumnD = (rowData: IProduto) => {
         const p = priceBodyTemplate(rowData);
         return (
-            <React.Fragment>
+            <div>
                 <span className="p-column-title">Preço Atacado:</span>
                 <span>{p}</span>
-            </React.Fragment>
+            </div>
         );
     }
     const bodyTemplateColumnE = (rowData: IProduto) => {
+        const stockClassName = classNames({
+            'outofstock': rowData.quantidade === 0,
+            'lowstock': rowData.quantidade > 0 && rowData.quantidade < 10,
+            'instock': rowData.quantidade > 10
+        });
         return (
-            <React.Fragment>
+            <div className={stockClassName}>
                 <span className="p-column-title">Quatidade:</span>
                 {rowData.quantidade}
-            </React.Fragment>
+            </div>
         );
     }
     
-   
     return (
         <Container>
             <HeaderAdmin />
@@ -257,8 +261,6 @@ const Produto: React.FC = () =>  {
                 <Toast />
 
                 <div className="table">
-                    {/* <Toolbar className="p-mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar> */}
-
                     <DataTable 
                         value={produtos} selection={selectedProdutos} 
                         onSelectionChange={(e) => setSelectedprodutos(e.value)}
@@ -268,6 +270,8 @@ const Produto: React.FC = () =>  {
                         currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
                         globalFilter={globalFilter}
                         header={header}
+                        scrollable
+                        scrollHeight="15rem"
                         className="p-datatable-responsive-demo"
                         
                     >
