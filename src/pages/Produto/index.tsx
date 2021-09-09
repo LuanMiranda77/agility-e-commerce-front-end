@@ -154,8 +154,8 @@ const Produto: React.FC = () =>  {
 
     const imageBodyTemplate = (rowData: IProduto) => {
         
-        //return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
-       return null;
+        return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
+       //return null;
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
@@ -169,29 +169,73 @@ const Produto: React.FC = () =>  {
 
     const actionBodyTemplate = (rowData: IProduto) => {
         return (
-            <div>
+            <div className="buttonAction">
                 <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() =>  editar(rowData)} />
-                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={() => openConfirmeDeleteDialog(rowData)} />
+                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => openConfirmeDeleteDialog(rowData)} />
             </div>
         );
     }
 
     const header = (
-        <div className="table-header" >
+        <div className="table-header">
             <h5 className="p-m-0">Listagem de produtos</h5> 
         </div>
     );
+
+    const bodyTemplateColumnA = (rowData: IProduto) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Cod.Barras:</span>
+                {rowData.codigoBarras}
+            </React.Fragment>
+        );
+    }
+    const bodyTemplateColumnB = (rowData: IProduto) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Nome:</span>
+                {rowData.nome}
+            </React.Fragment>
+        );
+    }
+    const bodyTemplateColumnC = (rowData: IProduto) => {
+        const p = priceBodyTemplate(rowData);
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Preço Varejo:</span>
+                <span>{p}</span>
+            </React.Fragment>
+        );
+    }
+    const bodyTemplateColumnD = (rowData: IProduto) => {
+        const p = priceBodyTemplate(rowData);
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Preço Atacado:</span>
+                <span>{p}</span>
+            </React.Fragment>
+        );
+    }
+    const bodyTemplateColumnE = (rowData: IProduto) => {
+        return (
+            <React.Fragment>
+                <span className="p-column-title">Quatidade:</span>
+                {rowData.quantidade}
+            </React.Fragment>
+        );
+    }
+    
    
     return (
         <Container>
             <HeaderAdmin />
             <div className="card">
                 <div className="p-grid p-mt-3" >
-                    <div className="p-grid  p-col-12 p-md-6 p-lg-8">
+                    <div className="p-grid  p-col-12 p-md-6 p-lg-9 p-ml-2">
                         <img src={produtoIcone} alt="img" className="p-ml-2 p-p-2" />
                         <label className="p-ml-2 p-pt-3">Cadastro de Produto</label>
                     </div>
-                    <div className="p-grid  p-col-12 p-md-6 p-lg-4 " >
+                    <div className="p-grid  p-sm-6 p-md-6 p-lg-3 buttonAdd" >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openDialog} />
                         <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" onClick={confirmDeleteSelected} />
                     </div>
@@ -200,16 +244,16 @@ const Produto: React.FC = () =>  {
                 <Divider />
 
                 <div className="p-grid p-p-2">
-                    <div className="p-col-12 p-md-6 p-lg-7" >
-                        <ButtonBase label="Estoque mínimo" icon="" className=" p-button-warning" />
+                    <div className="p-col-12 p-md-6 p-lg-5 p-ml-3 p-mr-5" >
+                        <ButtonBase label="Estoque mínimo" icon="" className="p-button-warning" />
                     </div>
-                    <div className="p-p-2 p-col-12 p-md-6 p-lg-5">
+                    <div className="p-p-2 p-col-12 p-sm-5 p-md-6 p-lg-6 p-ml-2 pesquisar">
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
                     </div>
                 </div>
             </div>
             
-            <div className="datatable-crud-demo">
+            <div className="datatable-crud-demo datatable-responsive-demo">
                 <Toast />
 
                 <div className="table">
@@ -224,15 +268,17 @@ const Produto: React.FC = () =>  {
                         currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
                         globalFilter={globalFilter}
                         header={header}
+                        className="p-datatable-responsive-demo"
+                        
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column header="" body={imageBodyTemplate}></Column>
-                        <Column field="codigoBarras" header="Codigo" sortable></Column>
-                        <Column field="nome" header="Nome" sortable></Column>
-                        <Column field="precoVarejo" header="Preco Varejo" body={priceBodyTemplate} sortable></Column>
-                        <Column field="precoAtacado" header="Preco Varejo" body={priceBodyTemplate} sortable></Column>
+                        <Column field="codigoBarras" header="Codigo" body={bodyTemplateColumnA} sortable></Column>
+                        <Column field="nome" header="Nome"  body={bodyTemplateColumnB}  sortable></Column>
+                        <Column field="precoVarejo" header="Preco Varejo" body={bodyTemplateColumnC} sortable></Column>
+                        <Column field="precoAtacado" header="Preco Atacado" body={bodyTemplateColumnD} sortable></Column>
                         <Column field="estrelas" header="Reviews" body={ratingBodyTemplate} sortable></Column>
-                        <Column field="quantidade" header="quantidade" sortable></Column>
+                        <Column field="quantidade" header="quantidade" body={bodyTemplateColumnE} sortable></Column>
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
@@ -259,27 +305,29 @@ const Produto: React.FC = () =>  {
                     <FormControl>
                         <div className="card p-p-4">
                             <div className="p-grid">
-                                <div className="p-col p-field" >
+                                <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-2 p-field" >
                                     <label htmlFor="codigo" className="p-mb-2">Código</label>
-                                    <InputText id="barras" style={{ width: '20rem' }} 
+                                    <InputText id="barras" 
                                     value={produto.codigoBarras} onChange={(e) => produto.codigoBarras = e.target.value} 
                                     required autoFocus 
                                     className={classNames({ 'p-invalid': submitted && !produto.nome })} 
                                     />
                                     {submitted && !produto.nome && <small className="p-error">Código é obtigatorio.</small>}
                                 </div>
-                                <div className="p-col p-field">
+                                <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field">
                                     <label htmlFor="name">Nome</label>
-                                    <InputText id="name" value={produto.nome} onChange={(e) => produto.nome = e.target.value} 
-                                    style={{ width: '50rem' }} 
+                                    <InputText id="name" 
+                                    value={produto.nome} 
+                                    onChange={(e) => produto.nome = e.target.value} 
                                     required 
-                                    className={classNames({ 'p-invalid': submitted && !produto.nome })} 
+                                    className={classNames({ 'p-invalid': submitted && !produto.nome })}
+                                    style={{width: '100%'}} 
                                     />
                                     {submitted && !produto.nome && <small className="p-error">Nome é obtigatorio.</small>}
                                 </div>
                             </div>
                             <div className="p-formgrid p-grid">
-                                <div className="p-field p-col" style={{ width: '90rem' }}>
+                                <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field" >
                                     <label htmlFor="quantidade">Quantidade</label>
                                     <InputNumber 
                                         id="quantidade" 
@@ -287,7 +335,7 @@ const Produto: React.FC = () =>  {
                                         onValueChange={(e) => produto.quantidade = e.target.value} 
                                     />
                                 </div>
-                                <div className="p-field p-col">
+                                <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
                                     <label htmlFor="pricovarejo">Preço de Varejo</label>
                                     <InputNumber 
                                         id="pricevarejo" 
@@ -298,7 +346,7 @@ const Produto: React.FC = () =>  {
                                         locale="pt-br" 
                                      />
                                 </div>
-                                <div className="p-field p-col">
+                                <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
                                     <label htmlFor="priceatacado">Preço de Atacado</label>
                                     <InputNumber 
                                         id="priceatacado" 
@@ -310,9 +358,8 @@ const Produto: React.FC = () =>  {
                                     />
                                 </div>
 
-                                <div className="p-field p-col">
+                                <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
                                     <label htmlFor="categoria">Categoria</label>
-                                    {/* <Dropdown value={categoria} options={categorias} optionLabel="name" placeholder="Escolha a categoria" /> */}
                                     <ComboBase dados={categorias} />
                                 </div>
                             </div>

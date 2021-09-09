@@ -16,18 +16,43 @@ import Divider from '@material-ui/core/Divider';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import { Drawer } from "@material-ui/core";
+import { Drawer, Icon } from "@material-ui/core";
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import Button from '@material-ui/core/Button';
-
+import TreeView from '@material-ui/lab/TreeView';
+import TreeItem, { TreeItemProps } from '@material-ui/lab/TreeItem';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Label from '@material-ui/icons/Label';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import InfoIcon from '@material-ui/icons/Info';
+import ForumIcon from '@material-ui/icons/Forum';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import { AccountBox, AccountTree, Category, Public, ShoppingCart, Store } from "@material-ui/icons";
+import MoveToInbox from "@material-ui/icons/MoveToInbox";
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import PostAddIcon from '@material-ui/icons/PostAdd';
+declare module 'csstype' {
+  interface Properties {
+    '--tree-view-color'?: string;
+    '--tree-view-bg-color'?: string;
+  }
+}
+type StyledTreeItemProps = TreeItemProps & {
+  bgColor?: string;
+  color?: string;
+  labelIcon: React.ElementType<SvgIconProps>;
+  labelInfo?: string;
+  labelText: string;
+};
 
 export function HeaderAdmin() {
   const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     list: {
-      width: 250,
+      width: 350,
     },
     fullList: {
       width: 'auto',
@@ -44,7 +69,6 @@ export function HeaderAdmin() {
         display: 'block',
       },
     },
-   
     sectionDesktop: {
       display: 'none',
       [theme.breakpoints.up('md')]: {
@@ -83,8 +107,96 @@ export function HeaderAdmin() {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const useTreeItemStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      color: theme.palette.text.secondary,
+      '&:hover > $content': {
+        backgroundColor: theme.palette.action.hover,
+      },
+      '&:focus > $content, &$selected > $content': {
+        backgroundColor: `var(--tree-view-bg-color, ${theme.palette.grey[400]})`,
+        color: 'var(--tree-view-color)',
+      },
+      '&:focus > $content $label, &:hover > $content $label, &$selected > $content $label': {
+        backgroundColor: 'transparent',
+      },
+    },
+    content: {
+      color: theme.palette.text.secondary,
+      borderTopRightRadius: theme.spacing(0),
+      borderBottomRightRadius: theme.spacing(0),
+      paddingRight: theme.spacing(8),
+      fontWeight: theme.typography.fontWeightMedium,
+      '$expanded > &': {
+        fontWeight: theme.typography.fontWeightRegular,
+      },
+    },
+    group: {
+      marginLeft: 0,
+      '& $content': {
+        paddingLeft: theme.spacing(5),
+      },
+    },
+    expanded: {},
+    selected: {},
+    label: {
+      fontWeight: 'bold',
+      color: 'inherit',
+    },
+    labelRoot: {
+      display: 'flex',
+      alignItems: 'center',
+      padding: theme.spacing(2, 0),
+      
+    },
+    labelIcon: {
+      marginRight: theme.spacing(2),
+    },
+    labelText: {
+      fontWeight: 'inherit',
+      flexGrow: 1,
+      fontSize:18,
+    },
+  }),
+);
+
+
+  function StyledTreeItem(props: StyledTreeItemProps) {
+    const classes = useTreeItemStyles();
+    const { labelText, labelIcon: LabelIcon, labelInfo, color, bgColor, ...other } = props;
+  
+    return (
+      <TreeItem
+        label={
+          <div className={classes.labelRoot}>
+            <LabelIcon color="primary" className={classes.labelIcon} />
+            <Typography variant="body2" className={classes.labelText}>
+              {labelText}
+            </Typography>
+            <Typography variant="caption" color="inherit">
+              {labelInfo}
+            </Typography>
+          </div>
+        }
+        style={{
+          '--tree-view-color': color,
+          '--tree-view-bg-color': bgColor,
+        }}
+        classes={{
+          root: classes.root,
+          content: classes.content,
+          expanded: classes.expanded,
+          selected: classes.selected,
+          group: classes.group,
+          label: classes.label,
+        }}
+        {...other}
+      />
+    );
+  }
   const [state, setStatus] = useState(false);
-  type Anchor = 'left';
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent,
   ) => {
@@ -100,26 +212,85 @@ export function HeaderAdmin() {
   const list = () => (
     <div
       role="presentation"
-      onClick={toggleDrawer(false)}
+      //onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
+          <ListItem button key={"/Login"} onClick={toggleDrawer(false)}>
+           <Logo className="p-ml-4"/>
           </ListItem>
-        ))}
       </List>
       <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <TreeView
+     // className={classes.root}
+      defaultCollapseIcon={<ArrowDropDownIcon />}
+      defaultExpandIcon={<ArrowRightIcon />}
+      defaultEndIcon={<div style={{ width: 24 }} />}
+      >
+      <StyledTreeItem nodeId="1" labelText="DASHBORD" labelIcon={AccountTree} />
+      <Divider />
+      <StyledTreeItem nodeId="2" labelText="MINHA LOJA" labelIcon={Store}>
+        <StyledTreeItem
+            nodeId="3"
+            labelText="Dados Pessoais"
+            labelIcon={AccountBox}
+            labelInfo=""
+            color="#1a73e8"
+            bgColor="#e8f0fe"
+            onClick={toggleDrawer(false)}
+          />
+          <StyledTreeItem
+            nodeId="4"
+            labelText="Dados Bancários"
+            labelIcon={AccountBalanceIcon}
+            labelInfo=""
+            color="#e3742f"
+            bgColor="#fcefe3"
+            onClick={toggleDrawer(false)}
+          />
+          <StyledTreeItem
+            nodeId="5"
+            labelText="Endereço"
+            labelIcon={Public}
+            labelInfo=""
+            color="#a250f5"
+            bgColor="#f3e8fd"
+            onClick={toggleDrawer(false)}
+          />
+          <StyledTreeItem
+            nodeId="6"
+            labelText="Pedidos"
+            labelIcon={PostAddIcon}
+            labelInfo="733"
+            color="#3c8039"
+            bgColor="#e6f4ea"
+            onClick={toggleDrawer(false)}
+          />
+      </StyledTreeItem>
+      <Divider />
+      <StyledTreeItem nodeId="7" labelText="CÁTALAGO" labelIcon={MoveToInbox}>
+        <StyledTreeItem
+          nodeId="8"
+          labelText="Produto"
+          labelIcon={ShoppingCart}
+          labelInfo="90"
+          color="#1a73e8"
+          bgColor="#e8f0fe"
+          onClick={toggleDrawer(false)}
+        />
+        <StyledTreeItem
+          nodeId="9"
+          labelText="Categoria"
+          labelIcon={Category}
+          labelInfo="10"
+          color="#e3742f"
+          bgColor="#fcefe3"
+          onClick={toggleDrawer(false)}
+        />
+      </StyledTreeItem>
+      <Divider />
+      <StyledTreeItem nodeId="10" labelText="PROMOÇÕES" labelIcon={MonetizationOnIcon} />
+    </TreeView>
     </div>
   );
 
@@ -134,8 +305,9 @@ export function HeaderAdmin() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Minha conta</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Sair</MenuItem>
     </Menu>
   );
 
@@ -182,7 +354,7 @@ export function HeaderAdmin() {
   return (
 
     <div className={classes.grow} >
-      <AppBar position="static" style={{background: 'var(--white)'}}>
+      <AppBar position="fixed" style={{background: 'var(--white)'}}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -193,7 +365,7 @@ export function HeaderAdmin() {
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-           <Logo className={''}/>
+           <Logo className='p-mt-2'/>
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
