@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { IProduto } from "../domain/types/IProduto";
 import {createContext}from "react";
-import { inject } from "mobx-react";
+
 
 class ProdutoStore{
   

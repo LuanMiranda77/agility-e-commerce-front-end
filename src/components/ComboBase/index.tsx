@@ -4,6 +4,7 @@ import { createStyles,  withStyles, Theme } from '@material-ui/core/styles';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 
+let size = "";
 const BootstrapInput = withStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -17,7 +18,7 @@ const BootstrapInput = withStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
       border: '1px solid #ced4da',
       fontSize: 14,
-      width: '13rem',
+      width: size,
       padding: '10px 26px 10px 12px',
       transition: theme.transitions.create(['border-color', 'box-shadow']),
       '&:focus': {
@@ -31,10 +32,12 @@ const BootstrapInput = withStyles((theme: Theme) =>
 )(InputBase);
 
 interface Props {
+    size: string; 
     dados: Array<any>;
 } 
 const ComboBase: React.FC<Props> = (props) => {
   const [age, setAge] = useState('');
+  size = props.size;  
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setAge(event.target.value as string);
   };

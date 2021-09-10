@@ -7,7 +7,7 @@ module.exports = (plop)=>{
         {
           type:'input',
           name:'name',
-          message:'Digite o nome do módulo? (São válidos nomes com subpastas - Ex.: exemplo/Exemplo ou pastaRaiz/nomeModulo/NomeModulo)',
+          message:'Digite o nome do módulo? (São válidos nomes com subpastas - Ex.: nomeModulo/NomeModulo',
         },
       ],
       actions:[
@@ -16,13 +16,30 @@ module.exports = (plop)=>{
         '------------------------------',
         {
           type:'add',
-          path:'../src/pages/{{getPath name}}/index.tsx',
-          templateFile:'templates/component.tsx.hbs',
+          path:'../src/domain/types/I{{pascalCase (getName name)}}.ts',
+          templateFile:'templates/type.ts.hbs',
         },
         {
           type:'add',
-          path:'../src/pages/{{getPath name}}/styles.ts',
+          path:'../src/pages/{{pascalCase (getName name)}}/index.tsx',
+          templateFile:'templates/component.tsx.hbs',
+          force:true,
+          
+        },
+        {
+          type:'add',
+          path:'../src/pages/{{pascalCase (getName name)}}/styles.ts',
           templateFile:'templates/styles.ts.hbs',
+        },
+        {
+          type:'add',
+          path:'../src/services/{{pascalCase (getName name)}}Service/{{getPasta name}}Service.ts',
+          templateFile:'templates/service.ts.hbs',
+        },
+        {
+          type:'add',
+          path:'../src/stores/{{pascalCase (getName name)}}Store.ts',
+          templateFile:'templates/store.ts.hbs',
         },
         // {
         //   type:'append',

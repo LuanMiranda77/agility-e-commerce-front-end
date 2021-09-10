@@ -15,17 +15,24 @@ export const Container  = styled.div`
         font-size: 18px;
         font-weight: bold;
     }
+    .diveder{
+        margin-top: -1rem;
+        margin-bottom: 0.5rem;
+        @media screen and (max-width: 40em) {
+            margin: 0;
+        }
+    }
 
     .card { 
         position: fixed;
         width: 100%;
         background: var(--white);
-        margin-top: -12.5rem;
+        margin-top: -9.4rem;
         z-index: 12;
        
     }
     .table{
-        margin-top: 17rem;
+        margin-top: 14rem;
     }
     /* DataTableDemo.css */
     .but-add{
@@ -64,24 +71,24 @@ export const Container  = styled.div`
         max-width: 20rem;
     }
     .datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
-    display: none;
-}
+        display: none;
+    }
 
-.datatable-style-demo .outofstock {
-    font-weight: 700;
-    color: #FF5252;
-    text-decoration: line-through;
-}
+    .outofstock {
+        font-weight: 700;
+        color: #FF5252;
+        text-decoration: line-through;
+    }
 
-.datatable-style-demo .lowstock {
-    font-weight: 700;
-    color: #FFA726;
-}
+    .lowstock {
+        font-weight: 700;
+        color: #FFA726;
+    }
 
-.datatable-style-demo .instock {
-    font-weight: 700;
-    color: #66BB6A;
-}
+    .datatable-style-demo .instock {
+        font-weight: 700;
+        color: #66BB6A;
+    }
 
 @media screen and (max-width: 40em) {
     .table-header{
@@ -96,10 +103,11 @@ export const Container  = styled.div`
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td {
         text-align: left;
         display: block;
-        width: 100%;
+        width: 30rem;
         float: left;
         clear: left;
         border: 0 none;
+        background: #fff;
     }
 
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {

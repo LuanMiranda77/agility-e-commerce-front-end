@@ -11,27 +11,24 @@ import { Rating } from 'primereact/rating';
 import { FileUpload } from 'primereact/fileupload';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
-import { Message } from 'primereact/message';
 import { InputNumber} from 'primereact/inputnumber';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
 import { TransitionProps } from '@material-ui/core/transitions';
-
-
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { InputSearch } from "../../components/InputSearch"
 import { ProdutoService } from "../../services/ProdutoServices/produtoServices"
 import { IProduto } from "../../domain/types/IProduto"
-import iconImport from "../../assets/iconImport.svg";
 import ProdutoStore  from "../../stores/ProdutoStore"
 import { observer} from 'mobx-react-lite';
-import { AppBar, IconButton, Slide, Toolbar } from "@material-ui/core"
+import { Slide } from "@material-ui/core"
 import ComboBase from "../../components/ComboBase"
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 const Produto: React.FC = () =>  {
     const store = useContext(ProdutoStore);
@@ -90,13 +87,27 @@ const Produto: React.FC = () =>  {
  
     }
 
-    const hideDeleteProdutosDialog = () => {
-        setDeleteprodutosDialog(false);
-        window.location.reload();
-    }
     const onChangeCategoria = (e: { value: any }) => {
         setCategoria(e.value);
     }
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+
+    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setOpen(false);
+    };
+
+    function Alert(props: AlertProps) {
+        return <MuiAlert elevation={6} variant="filled" {...props} />;
+      }
 
     const saveProduto = () => {
         setSubmitted(true);
@@ -105,12 +116,11 @@ const Produto: React.FC = () =>  {
             if (produto.id) {
                 const index = store.findIndexById(produto.id);
                 produtos[index] = produto;
-                <Message severity="success" text="Record Saved"></Message>
-                // toast.current.show({ severity: 'success', summary: 'Successful', detail: 'produto Updated', life: 3000 });
+                handleOpen();
             }
             else {
                 store.add(produto);
-                // toast.current.show({ severity: 'success', summary: 'Successful', detail: 'produto Created', life: 3000 });
+                handleOpen();
             }
             produtoService.save(produto).then(res => { produtos.push(res) });
         }
@@ -128,6 +138,7 @@ const Produto: React.FC = () =>  {
     const exportCSV = () => {
         // dt.current.exportCSV();
     }
+    
 
     const confirmDeleteSelected = () => {
         setDeleteprodutosDialog(true);
@@ -154,8 +165,8 @@ const Produto: React.FC = () =>  {
 
     const imageBodyTemplate = (rowData: IProduto) => {
         
-        return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
-       //return null;
+        //return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
+       return null;
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
@@ -220,7 +231,7 @@ const Produto: React.FC = () =>  {
         const stockClassName = classNames({
             'outofstock': rowData.quantidade === 0,
             'lowstock': rowData.quantidade > 0 && rowData.quantidade < 10,
-            'instock': rowData.quantidade > 10
+            'instock': rowData.quantidade > 5
         });
         return (
             <div className={stockClassName}>
@@ -229,6 +240,12 @@ const Produto: React.FC = () =>  {
             </div>
         );
     }
+
+    let te = "21.8rem";
+    const tamanhoTela = window.screen.availHeight;
+    if(tamanhoTela>768){
+        te="40rem";
+    }
     
     return (
         <Container>
@@ -236,8 +253,8 @@ const Produto: React.FC = () =>  {
             <div className="card">
                 <div className="p-grid p-mt-3" >
                     <div className="p-grid  p-col-12 p-md-6 p-lg-9 p-ml-2">
-                        <img src={produtoIcone} alt="img" className="p-ml-2 p-p-2" />
-                        <label className="p-ml-2 p-pt-3">Cadastro de Produto</label>
+                        <img src={produtoIcone} alt="img" className="p-ml-2 p-mb-2" />
+                        <label className="p-ml-2 p-mt-2">Cadastro de Produto</label>
                     </div>
                     <div className="p-grid  p-sm-6 p-md-6 p-lg-3 buttonAdd" >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openDialog} />
@@ -245,7 +262,7 @@ const Produto: React.FC = () =>  {
                     </div>
                 </div>
 
-                <Divider />
+                <Divider  className="diveder"/>
 
                 <div className="p-grid p-p-2">
                     <div className="p-col-12 p-md-6 p-lg-5 p-ml-3 p-mr-5" >
@@ -265,13 +282,12 @@ const Produto: React.FC = () =>  {
                         value={produtos} selection={selectedProdutos} 
                         onSelectionChange={(e) => setSelectedprodutos(e.value)}
                         dataKey="id" paginator rows={10}
-                        //rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
                         globalFilter={globalFilter}
                         header={header}
                         scrollable
-                        scrollHeight="15rem"
+                        scrollHeight={te}
                         className="p-datatable-responsive-demo"
                         
                     >
@@ -364,7 +380,7 @@ const Produto: React.FC = () =>  {
 
                                 <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
                                     <label htmlFor="categoria">Categoria</label>
-                                    <ComboBase dados={categorias} />
+                                    <ComboBase dados={categorias} size='11rem'/>
                                 </div>
                             </div>
                         </div>
@@ -424,7 +440,7 @@ const Produto: React.FC = () =>  {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() =>{setDeleteprodutoDialog(false)}} color="primary">
+          <Button onClick={() =>{setDeleteprodutoDialog(false); window.location.reload()}} color="primary">
             Não 
           </Button>
           <Button onClick={hideDeleteProdutoDialog} color="primary">
@@ -451,6 +467,11 @@ const Produto: React.FC = () =>  {
           </Button>
         </DialogActions>
     </Dialog>
+    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success">
+            Produto Cadastrado com Sucesso!
+        </Alert>
+    </Snackbar>
 
 </Container>
     )
