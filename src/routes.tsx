@@ -10,7 +10,7 @@ import PrivateRoute from './privateRoutes';
 const Routes: React.FC = () => {
   return (
     <Switch>
-      <Route path="/" exact component={Login}/>
+      <Route path="/" exact component={Produto}/>
       <Route path="/login" exact component={Login}/>
       <Route path="/produto"component={Produto} />
       <Route component={Notfound} />
