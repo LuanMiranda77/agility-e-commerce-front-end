@@ -1,0 +1,72 @@
+import { action, computed, makeObservable, observable } from "mobx";
+import { I{{pascalCase (getName name)}} } from "../domain/types/I{{pascalCase (getName name)}}";
+import {createContext}from "react";
+
+class {{pascalCase (getName name)}}Store{
+  
+  byId = observable.map();
+
+  objNew = {
+   {{!-- Adicionar atributos aqui --}}
+   //adicionar atributos aqui
+  };
+
+  @observable
+  {{getPasta name}}s: Array<I{{pascalCase (getName name)}}>;
+
+  @observable
+  {{getPasta name}}: I{{pascalCase (getName name)}};
+  
+
+  constructor(){
+    this.{{getPasta name}}s = new Array<I{{pascalCase (getName name)}}>();
+    this.{{getPasta name}} = this.objNew;
+    makeObservable(this);
+  }
+
+  @action
+  novo = () =>{
+    this.{{getPasta name}} = this.objNew;
+  }
+
+  @action
+  update = ({{getPasta name}}: I{{pascalCase (getName name)}}) =>{
+    this.{{getPasta name}} = { ...{{getPasta name}} };
+  }
+
+  @action
+  add = ({{getPasta name}}: I{{pascalCase (getName name)}}) =>{
+    this.{{getPasta name}}s.push({{getPasta name}});
+  }
+
+  @action
+  remove = (id: number) =>{
+    this.{{getPasta name}}s = this.{{getPasta name}}s.filter({{getPasta name}} => {{getPasta name}}.id !== id);
+  }
+
+  @action
+  load({{getPasta name}}s: I{{pascalCase (getName name)}}[]): void {
+    this.{{getPasta name}}s = {{getPasta name}}s;
+  }
+  
+  @action
+  findIndexById = (id: number) => {
+    let index = -1;
+    for (let i = 0; i < this.{{getPasta name}}s.length; i++) {
+        if (this.{{getPasta name}}s[i].id === id) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+  }
+  
+  @computed
+  get all() {
+    //metodo de Mobx para calculo
+    return  null;
+  }
+  
+
+}
+export default createContext(new {{pascalCase (getName name)}}Store());

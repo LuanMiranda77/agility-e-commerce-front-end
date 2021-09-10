@@ -1,0 +1,28 @@
+import { api } from "../api";
+import { I{{pascalCase (getName name)}} } from "../../domain/types/I{{pascalCase (getName name)}}";
+export class {{pascalCase (getName name)}}Service {
+
+    url='api/{{getPasta name}}';
+
+    async save(pEntity: I{{pascalCase (getName name)}}){
+      const response = await api.post(this.url, pEntity);
+      return response.data;
+    }
+    update(pEntity: I{{pascalCase (getName name)}}) : void{
+      api.put(this.url+`/${pEntity.id}`,pEntity);
+    }
+    delete(id:number){
+      api.delete(this.url+`/${id}`);
+    }
+    deleteAll(array: I{{pascalCase (getName name)}}[]){
+      api.post(this.url+`/deleteall`, array);
+    }
+    async get{{pascalCase (getName name)}}s() {
+        const response = await api.get(this.url);
+      return response.data;
+    }
+
+  
+
+  
+}
