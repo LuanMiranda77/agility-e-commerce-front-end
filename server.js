@@ -1,5 +1,5 @@
 const express = require('express')
-const {resolve} = require('https://git.heroku.com/agility-e-commerce-front-end.git')
+const {resolve} = require('path')
 const app = express()
 
 
