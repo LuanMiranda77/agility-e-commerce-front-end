@@ -19,28 +19,28 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TransitionProps } from '@material-ui/core/transitions';
-import {{getPasta name}}Icone from "../../assets/{{getPasta name}}Icone.svg"
+import categoriaIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { InputSearch } from "../../components/InputSearch"
-import { {{pascalCase (getName name)}}Service } from "../../services/{{pascalCase (getName name)}}Service/{{getPasta name}}Service"
-import { I{{pascalCase (getName name)}} } from "../../domain/types/I{{pascalCase (getName name)}}"
-import {{pascalCase (getName name)}}Store  from "../../stores/{{pascalCase (getName name)}}Store"
+import { CategoriaService } from "../../services/CategoriaService/categoriaService"
+import { ICategoria } from "../../domain/types/ICategoria"
+import CategoriaStore  from "../../stores/CategoriaStore"
 import { observer} from 'mobx-react-lite';
 import { Slide } from "@material-ui/core"
 import ComboBase from "../../components/ComboBase"
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
-const {{pascalCase (getName name)}}: React.FC = () => {
-    const store = useContext({{pascalCase (getName name)}}Store);
+const Categoria: React.FC = () => {
+    const store = useContext(CategoriaStore);
     const [modalDialog, setModalDialog] = useState(false);
     const [modalDeleteDialog, setModalDeleteDialog] = useState(false);
     const [modalDeletesDialog, setModalDeletesDialog] = useState(false);
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const [selected{{pascalCase (getName name)}}s, setSelected{{pascalCase (getName name)}}s] = useState<I{{pascalCase (getName name)}}[]>([]);
+    const [selectedCategorias, setSelectedCategorias] = useState<ICategoria[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
-    const {{getPasta name}}Service = new {{pascalCase (getName name)}}Service();
+    const categoriaService = new CategoriaService();
     const Transition = React.forwardRef(function Transition(
         props: TransitionProps & { children?: React.ReactElement<any, any> },
         ref: React.Ref<unknown>,
@@ -49,11 +49,13 @@ const {{pascalCase (getName name)}}: React.FC = () => {
       });
 
     useEffect(() => {
-        {{getPasta name}}Service.get{{pascalCase (getName name)}}s().then(data => {
+        categoriaService.getCategorias().then(data => {
             store.load(data);
         });
         
     }, []);
+
+    
 
     const formatCurrency = (value: number) => {
         return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
@@ -71,8 +73,8 @@ const {{pascalCase (getName name)}}: React.FC = () => {
     }
 
     const hideDeleteDialog = () => {
-        {{getPasta name}}Service.delete(store.{{getPasta name}}.id);
-        store.remove(store.{{getPasta name}}.id);
+        categoriaService.delete(store.categoria.id);
+        store.remove(store.categoria.id);
         setModalDeleteDialog(false);
         window.location.reload();
  
@@ -96,28 +98,28 @@ const {{pascalCase (getName name)}}: React.FC = () => {
       }
     const save = () => {
         setSubmitted(true);
-        if (store.{{getPasta name}}.descricao.trim()) {
+        if (store.categoria.descricao.trim()) {
             setModalDialog(false);
-            if (store.{{getPasta name}}.id) {
-                const index = store.findIndexById(store.{{getPasta name}}.id);
-                store.{{getPasta name}}s[index] = store.{{getPasta name}};
+            if (store.categoria.id) {
+                const index = store.findIndexById(store.categoria.id);
+                store.categorias[index] = store.categoria;
                 handleOpen();
             }
             else {
-                store.add(store.{{getPasta name}});
+                store.add(store.categoria);
                 handleOpen();
 
             }
-            {{getPasta name}}Service.save(store.{{getPasta name}}).then(res => { store.{{getPasta name}}s.push(res) });
+            categoriaService.save(store.categoria).then(res => { store.categorias.push(res) });
         }
     }
-    const editar = ({{getPasta name}}: I{{pascalCase (getName name)}}) => {
-        store.update(store.{{getPasta name}});
+    const editar = (categoria: ICategoria) => {
+        store.update(store.categoria);
         setModalDialog(true);
     }
 
-    const openConfirmeDeleteDialog = ({{getPasta name}}: I{{pascalCase (getName name)}}) => {
-        store.{{getPasta name}} = {{getPasta name}};
+    const openConfirmeDeleteDialog = (categoria: ICategoria) => {
+        store.categoria = categoria;
         setModalDeleteDialog(true);
     }
 
@@ -131,11 +133,11 @@ const {{pascalCase (getName name)}}: React.FC = () => {
     }
 
     const deleteSelecteds = () => {
-        store.load(store.{{getPasta name}}s.filter(valor => !selected{{pascalCase (getName name)}}s.includes(valor)));
-        let {{getPasta name}}sDelete = store.{{getPasta name}}s.filter(valor => selected{{pascalCase (getName name)}}s.includes(valor));
-        {{getPasta name}}Service.deleteAll({{getPasta name}}sDelete);
+        store.load(store.categorias.filter(id => !selectedCategorias.includes(id)));
+        let categoriasDelete = store.categorias.filter(id => selectedCategorias.includes(id));
+        categoriaService.deleteAll(categoriasDelete);
         setModalDeletesDialog(false);
-        setSelected{{pascalCase (getName name)}}s([]);
+        setSelectedCategorias([]);
         window.location.reload();
         
     }
@@ -148,17 +150,17 @@ const {{pascalCase (getName name)}}: React.FC = () => {
         )
     }
 
-    const imageBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
+    const imageBodyTemplate = (rowData: ICategoria) => {
         
-        return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="store.{{getPasta name}}-image" />
+        //return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="store.categoria-image" />
        //return null;
     }
 
-    const priceBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
-        return formatCurrency(rowData.tributoDinheiro);
+    const priceBodyTemplate = (rowData: ICategoria) => {
+        return formatCurrency(rowData.id);
     }
 
-    const actionBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
+    const actionBodyTemplate = (rowData: ICategoria) => {
         return (
             <div className="buttonAction">
                 <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() =>  editar(rowData)} />
@@ -169,50 +171,49 @@ const {{pascalCase (getName name)}}: React.FC = () => {
 
     const header = (
         <div className="table-header">
-            <h5 className="p-m-0">Listagem de {{getPasta name}}s</h5> 
+            <h5 className="p-m-0">Listagem de categorias</h5> 
         </div>
     );
 
-    const bodyTemplateColumnA = (rowData: I{{pascalCase (getName name)}}) => {
+    const bodyTemplateColumnA = (rowData: ICategoria) => {
         return (
             <div>
                 <span className="p-column-title">Nomde da coluna:</span>
-                {rowData.valor}
+                {rowData.id}
             </div>
         );
     }
-    const bodyTemplateColumnB = (rowData: I{{pascalCase (getName name)}}) => {
+    const bodyTemplateColumnB = (rowData: ICategoria) => {
         return (
             <div>
                 <span className="p-column-title">Nomde da coluna:</span>
-                {rowData.valor}
+                {rowData.id}
             </div>
         );
     }
-    const bodyTemplateColumnC = (rowData: I{{pascalCase (getName name)}}) => {
+    const bodyTemplateColumnC = (rowData: ICategoria) => {
         const p = priceBodyTemplate(rowData);
         return (
             <div>
-                <span className="p-column-title">Nome da Coluna de valor real:</span>
+                <span className="p-column-title">Nome da Coluna de id real:</span>
                 <span>{p}</span>
             </div>
         );
     }
     //Coluna Colorida==============================
-    const bodyTemplateColumnE = (rowData: I{{pascalCase (getName name)}}) => {
+    const bodyTemplateColumnE = (rowData: ICategoria) => {
         const stockClassName = classNames({
-            'outofstock': rowData.quantidade === 0,
-            'lowstock': rowData.quantidade > 0 && rowData.quantidade < 10,
-            'instock': rowData.quantidade > 5
+            'outofstock': rowData.id === 0,
+            'lowstock': rowData.id > 0 && rowData.id < 10,
+            'instock': rowData.id > 5
         });
         return (
             <div className={stockClassName}>
                 <span className="p-column-title">Quatidade:</span>
-                {rowData.quantidade}
+                {rowData.id}
             </div>
         );
     }
-    {{!-- Teste de tela  --}}
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
     if(tamanhoTela>768){
@@ -224,8 +225,8 @@ const {{pascalCase (getName name)}}: React.FC = () => {
             <div className="card">
                 <div className="p-grid p-mt-3" >
                     <div className="p-grid  p-col-12 p-md-6 p-lg-9 p-ml-2">
-                        <img src={ {{getPasta name}}Icone } alt="img" className="p-ml-2 p-mb-2" />
-                        <label className="p-ml-2 p-mt-2">Cadastro de {{pascalCase (getName name)}}</label>
+                        <img src={ categoriaIcone } alt="img" className="p-ml-2 p-mb-2" />
+                        <label className="p-ml-2 p-mt-2">Cadastro de Categoria</label>
                     </div>
                     <div className="p-grid  p-sm-6 p-md-6 p-lg-3 buttonAdd" >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openDialog} />
@@ -250,11 +251,11 @@ const {{pascalCase (getName name)}}: React.FC = () => {
 
                 <div className="table">
                     <DataTable 
-                         value={store.{{getPasta name}}s} selection={selected{{pascalCase (getName name)}}s} 
-                         onSelectionChange={(e) => setSelected{{pascalCase (getName name)}}s(e.value)}
+                         value={store.categorias} selection={selectedCategorias} 
+                         onSelectionChange={(e) => setSelectedCategorias(e.value)}
                         dataKey="id" paginator rows={10}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
+                        currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} store.categorias"
                         globalFilter={globalFilter}
                         header={header}
                         scrollable
@@ -262,12 +263,12 @@ const {{pascalCase (getName name)}}: React.FC = () => {
                         className="p-datatable-responsive-demo"
                         
                     >
-                        <Column selectionMode="multiple" headerStyle={[-1 width: '3rem' }}></Column>
+                        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column header="" body={imageBodyTemplate}></Column>
                         <Column field="codigoBarras" header="Codigo" body={bodyTemplateColumnA} sortable></Column>
-                        <Column field="nome" header="Nome"  body={bodyTemplateColumnB}  sortable></Column>
-                        <Column field="precoVarejo" header="Preco Varejo" body={bodyTemplateColumnC} sortable></Column>
-                        <Column field="quantidade" header="quantidade" body={bodyTemplateColumnE} sortable></Column>
+                        <Column field="descricao" header="Nome"  body={bodyTemplateColumnB}  sortable></Column>
+                        <Column field="id" header="Preco Varejo" body={bodyTemplateColumnC} sortable></Column>
+                        <Column field="id" header="id" body={bodyTemplateColumnE} sortable></Column>
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
@@ -281,55 +282,55 @@ const {{pascalCase (getName name)}}: React.FC = () => {
                     aria-describedby="scroll-dialog-description"
                     maxWidth="lg"
                     >
-                    <DialogTitle id="scroll-dialog-title" style={[-1 background: 'var(--primary)'}}>
+                    <DialogTitle id="scroll-dialog-title" style={{ background: 'var(--primary)'}}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                            <img src={ {{getPasta name}}Icone} alt="img" />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={[-1 color: 'var(--white)'}}>Cadastro de {{getPasta name}}</h3>
-                            <button type="button" onClick={hideDialog} className="react-modal-close" style={[-1 background: 'var(--primary)'}}>
-                                <i className="pi pi-times p-mt-2" style={[-1 'fontSize': '1.5rem','color': 'white'}} />
+                            <img src={ categoriaIcone} alt="img" />
+                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={{ color: 'var(--white)'}}>Cadastro de categoria</h3>
+                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{ background: 'var(--primary)'}}>
+                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.5rem','color': 'white'}} />
                             </button>
                         </div>
                     </DialogTitle>
-                    <DialogContent dividers={scroll === 'paper'} style={[-1 background: 'var(--background)'}}>
+                    <DialogContent dividers={scroll === 'paper'} style={{ background: 'var(--background)'}}>
                     <FormControl>
                         <div className="card p-p-4">
                             <div className="p-grid">
                                 <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-2 p-field" >
                                     <label htmlFor="codigo" className="p-mb-2">Código</label>
                                     <InputText id="barras" 
-                                    value={produto.codigoBarras} onChange={(e) => produto.codigoBarras = e.target.value} 
+                                    value={store.categoria.id} onChange={(e) => store.categoria.descricao = e.target.value} 
                                     required autoFocus 
-                                    className={classNames({ 'p-invalid': submitted && !produto.nome })} 
+                                    className={classNames({ 'p-invalid': submitted && !store.categoria.descricao })} 
                                     />
-                                    {submitted && !produto.nome && <small className="p-error">Código é obtigatorio.</small>}
+                                    {submitted && !store.categoria.descricao && <small className="p-error">Código é obtigatorio.</small>}
                                 </div>
                                 <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field">
                                     <label htmlFor="name">Nome</label>
                                     <InputText id="name" 
-                                    value={produto.nome} 
-                                    onChange={(e) => produto.nome = e.target.value} 
+                                    value={store.categoria.descricao} 
+                                    onChange={(e) => store.categoria.descricao = e.target.value} 
                                     required 
-                                    className={classNames({ 'p-invalid': submitted && !produto.nome })}
-                                    style={[-1 width: '100%'}} 
+                                    className={classNames({ 'p-invalid': submitted && !store.categoria.descricao })}
+                                    style={{ width: '100%'}} 
                                     />
-                                    {submitted && !produto.nome && <small className="p-error">Nome é obtigatorio.</small>}
+                                    {submitted && !store.categoria.descricao && <small className="p-error">Nome é obtigatorio.</small>}
                                 </div>
                             </div>
                             <div className="p-formgrid p-grid">
                                 <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field" >
-                                    <label htmlFor="quantidade">Quantidade</label>
+                                    <label htmlFor="id">Quantidade</label>
                                     <InputNumber 
-                                        id="quantidade" 
-                                        value={produto.quantidade} 
-                                        onValueChange={(e) => produto.quantidade = e.target.value} 
+                                        id="id" 
+                                        value={store.categoria.id} 
+                                        onValueChange={(e) => store.categoria.id = e.target.value} 
                                     />
                                 </div>
                                 <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
                                     <label htmlFor="pricovarejo">Preço de Varejo</label>
                                     <InputNumber 
                                         id="pricevarejo" 
-                                        value={produto.precoVarejo}
-                                        onValueChange={(e) => produto.precoVarejo = e.target.value} 
+                                        value={store.categoria.id}
+                                        onValueChange={(e) => store.categoria.id = e.target.value} 
                                         mode="currency" 
                                         currency="BRL" 
                                         locale="pt-br" 
@@ -339,8 +340,8 @@ const {{pascalCase (getName name)}}: React.FC = () => {
                                     <label htmlFor="priceatacado">Preço de Atacado</label>
                                     <InputNumber 
                                         id="priceatacado" 
-                                        value={produto.precoAtacado} 
-                                        onValueChange={(e) => produto.precoAtacado= e.target.value} 
+                                        value={store.categoria.id} 
+                                        onValueChange={(e) => store.categoria.id= e.target.value} 
                                         mode="currency" 
                                         currency="BRL" 
                                         locale="pt-br" 
@@ -349,7 +350,7 @@ const {{pascalCase (getName name)}}: React.FC = () => {
 
                                 <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
                                     <label htmlFor="categoria">Categoria</label>
-                                    <ComboBase dados={categorias} size='11rem'/>
+                                    <ComboBase dados={store.categorias} size='11rem'/>
                                 </div>
                             </div>
                         </div>
@@ -375,7 +376,7 @@ const {{pascalCase (getName name)}}: React.FC = () => {
         <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir o ítem?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-           O ítem {store.{{getPasta name}}.nome}
+           O ítem {store.categoria.descricao}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -415,4 +416,4 @@ const {{pascalCase (getName name)}}: React.FC = () => {
   );
 }
 
-export default observer({{pascalCase (getName name)}});
+export default observer(Categoria);

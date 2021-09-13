@@ -53,8 +53,8 @@ function Login() {
                             </div>
                             <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" onClick={logar} />
                             <div className="div-link">
-                                <a href="" ><span className="cadastro">Cadastre-se</span></a>
-                                <a href=""><span className="esquece">Esquece a senha</span></a>
+                                <a href="/user" ><span className="cadastro">Cadastre-se</span></a>
+                                <a href="/esquece"><span className="esquece">Esquece a senha</span></a>
                             </div>
 
                         </div>
