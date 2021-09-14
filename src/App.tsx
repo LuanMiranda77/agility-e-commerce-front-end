@@ -6,6 +6,7 @@ import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./routes";
+import Summary from "./components/Summary";
 
 export function App() {
   // active ripple effect

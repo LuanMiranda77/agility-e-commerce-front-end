@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Header = styled.header`
 position:fixed;
 width:100%;
-margin-top: -16rem;
+top: 0;
 z-index: 12;
 
 .card-admin{
