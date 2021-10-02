@@ -1,24 +1,23 @@
-
 import { api } from "../api";
-import {IProduto} from "../../domain/types/IProduto";
-export class ProdutoService {
+import { ICategoria } from "../../domain/types/ICategoria";
+export class CategoriaService {
 
-    url='api/produto';
+    url='api/categoria';
 
-    async save(pEntity: IProduto){
+    async save(pEntity: ICategoria){
       const response = await api.post(this.url, pEntity);
       return response.data;
     }
-    update(pEntity: IProduto) : void{
+    update(pEntity: ICategoria) : void{
       api.put(this.url+`/${pEntity.id}`,pEntity);
     }
     delete(id:number){
       api.delete(this.url+`/${id}`);
     }
-    deleteAll(array: IProduto[]){
+    deleteAll(array: ICategoria[]){
       api.post(this.url+`/deleteall`, array);
     }
-    async getProdutos() {
+    async getCategorias() {
         const response = await api.get(this.url);
       return response.data;
     }

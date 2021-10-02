@@ -11,6 +11,7 @@ import { Rating } from 'primereact/rating';
 import { FileUpload } from 'primereact/fileupload';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
+import { Message } from 'primereact/message';
 import { InputNumber} from 'primereact/inputnumber';
 import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -18,37 +19,28 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TransitionProps } from '@material-ui/core/transitions';
-import produtoIcone from "../../assets/produtoIcone.svg"
+import {{getPasta name}}Icone from "../../assets/{{getPasta name}}Icone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { InputSearch } from "../../components/InputSearch"
-import { ProdutoService } from "../../services/ProdutoServices/produtoServices"
-import { IProduto } from "../../domain/types/IProduto"
-import ProdutoStore  from "../../stores/ProdutoStore"
+import { {{pascalCase (getName name)}}Service } from "../../services/{{pascalCase (getName name)}}Service/{{getPasta name}}Service"
+import { I{{pascalCase (getName name)}} } from "../../domain/types/I{{pascalCase (getName name)}}"
+import {{pascalCase (getName name)}}Store  from "../../stores/{{pascalCase (getName name)}}Store"
 import { observer} from 'mobx-react-lite';
 import { Slide } from "@material-ui/core"
 import ComboBase from "../../components/ComboBase"
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
-const Produto: React.FC = () =>  {
-    const store = useContext(ProdutoStore);
-    const {produto, produtos} = store;
-    const [produtoDialog, setProdutoDialog] = useState(false);
-    const [deleteProdutoDialog, setDeleteprodutoDialog] = useState(false);
-    const [deleteProdutosDialog, setDeleteprodutosDialog] = useState(false);
+const {{pascalCase (getName name)}}: React.FC = () => {
+    const store = useContext({{pascalCase (getName name)}}Store);
+    const [modalDialog, setModalDialog] = useState(false);
+    const [modalDeleteDialog, setModalDeleteDialog] = useState(false);
+    const [modalDeletesDialog, setModalDeletesDialog] = useState(false);
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const categorias = [
-        { id:1, label: 'Relogio', value: 'NY' },
-        { id:2,label: 'Trilha', value: 'RM' },
-        { id:3,label: 'Chap', value: 'LDN' },
-        { id:4,label: 'Tribater', value: 'IST' },
-        { id:5,label: 'Floresta', value: 'PRS' }
-    ];
-    const [categoria, setCategoria] = useState<any>(null);
-    const [selectedProdutos, setSelectedprodutos] = useState<IProduto[]>([]);
+    const [selected{{pascalCase (getName name)}}s, setSelected{{pascalCase (getName name)}}s] = useState<I{{pascalCase (getName name)}}[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
-    const produtoService = new ProdutoService();
+    const {{getPasta name}}Service = new {{pascalCase (getName name)}}Service();
     const Transition = React.forwardRef(function Transition(
         props: TransitionProps & { children?: React.ReactElement<any, any> },
         ref: React.Ref<unknown>,
@@ -57,7 +49,7 @@ const Produto: React.FC = () =>  {
       });
 
     useEffect(() => {
-        produtoService.getProdutos().then(data => {
+        {{getPasta name}}Service.get{{pascalCase (getName name)}}s().then(data => {
             store.load(data);
         });
         
@@ -70,27 +62,21 @@ const Produto: React.FC = () =>  {
     const openDialog = () => {
         store.novo();
         setSubmitted(false);
-        setProdutoDialog(true);
+        setModalDialog(true);
     }
 
     const hideDialog = () => {
         setSubmitted(false);
-        setProdutoDialog(false);
+        setModalDialog(false);
     }
 
-    const hideDeleteProdutoDialog = () => {
-        produtoService.delete(produto.id);
-        store.remove(produto.id);
-        //produtos.splice(produtos.indexOf(produto), 1);
-        setDeleteprodutoDialog(false);
+    const hideDeleteDialog = () => {
+        {{getPasta name}}Service.delete(store.{{getPasta name}}.id);
+        store.remove(store.{{getPasta name}}.id);
+        setModalDeleteDialog(false);
         window.location.reload();
  
     }
-
-    const onChangeCategoria = (e: { value: any }) => {
-        setCategoria(e.value);
-    }
-
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -108,31 +94,31 @@ const Produto: React.FC = () =>  {
     function Alert(props: AlertProps) {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
       }
-
-    const saveProduto = () => {
+    const save = () => {
         setSubmitted(true);
-        if (produto.descricao.trim()) {
-            setProdutoDialog(false);
-            if (produto.id) {
-                const index = store.findIndexById(produto.id);
-                produtos[index] = produto;
+        if (store.{{getPasta name}}.descricao.trim()) {
+            setModalDialog(false);
+            if (store.{{getPasta name}}.id) {
+                const index = store.findIndexById(store.{{getPasta name}}.id);
+                store.{{getPasta name}}s[index] = store.{{getPasta name}};
                 handleOpen();
             }
             else {
-                store.add(produto);
+                store.add(store.{{getPasta name}});
                 handleOpen();
+
             }
-            produtoService.save(produto).then(res => { produtos.push(res) });
+            {{getPasta name}}Service.save(store.{{getPasta name}}).then(res => { store.{{getPasta name}}s.push(res) });
         }
     }
-    const editar = (produto: IProduto) => {
-        store.update(produto);
-        setProdutoDialog(true);
+    const editar = ({{getPasta name}}: I{{pascalCase (getName name)}}) => {
+        store.update(store.{{getPasta name}});
+        setModalDialog(true);
     }
 
-    const openConfirmeDeleteDialog = (produto: IProduto) => {
-        store.produto = produto;
-        setDeleteprodutoDialog(true);
+    const openConfirmeDeleteDialog = ({{getPasta name}}: I{{pascalCase (getName name)}}) => {
+        store.{{getPasta name}} = {{getPasta name}};
+        setModalDeleteDialog(true);
     }
 
     const exportCSV = () => {
@@ -141,18 +127,17 @@ const Produto: React.FC = () =>  {
     
 
     const confirmDeleteSelected = () => {
-        setDeleteprodutosDialog(true);
+        setModalDeletesDialog(true);
     }
 
-    const deleteSelectedprodutos = () => {
-        store.load(produtos.filter(valor => !selectedProdutos.includes(valor)));
-        let produtosDelete = produtos.filter(valor => selectedProdutos.includes(valor));
-        produtoService.deleteAll(produtosDelete);
-        setDeleteprodutosDialog(false);
-        setSelectedprodutos([]);
-       // history.push("/produto");
+    const deleteSelecteds = () => {
+        store.load(store.{{getPasta name}}s.filter(valor => !selected{{pascalCase (getName name)}}s.includes(valor)));
+        let {{getPasta name}}sDelete = store.{{getPasta name}}s.filter(valor => selected{{pascalCase (getName name)}}s.includes(valor));
+        {{getPasta name}}Service.deleteAll({{getPasta name}}sDelete);
+        setModalDeletesDialog(false);
+        setSelected{{pascalCase (getName name)}}s([]);
         window.location.reload();
-        //     consttoast.current.show({ severity: 'success', summary: 'Successful', detail: 'produtos Deleted', life: 3000 });
+        
     }
     const rightToolbarTemplate = () => {
         return (
@@ -163,22 +148,17 @@ const Produto: React.FC = () =>  {
         )
     }
 
-    const imageBodyTemplate = (rowData: IProduto) => {
+    const imageBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
         
-        //return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
-       return null;
+        return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="store.{{getPasta name}}-image" />
+       //return null;
     }
 
-    const priceBodyTemplate = (rowData: IProduto) => {
-        return formatCurrency(rowData.precoAtacado);
+    const priceBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
+        return formatCurrency(rowData.tributoDinheiro);
     }
 
-    const ratingBodyTemplate = (rowData: IProduto) => {
-        return <Rating value={rowData.estrelas} readOnly cancel={false} />;
-    }
-
-
-    const actionBodyTemplate = (rowData: IProduto) => {
+    const actionBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
         return (
             <div className="buttonAction">
                 <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() =>  editar(rowData)} />
@@ -189,45 +169,37 @@ const Produto: React.FC = () =>  {
 
     const header = (
         <div className="table-header">
-            <h5 className="p-m-0">Listagem de produtos</h5> 
+            <h5 className="p-m-0">Listagem de {{getPasta name}}s</h5> 
         </div>
     );
 
-    const bodyTemplateColumnA = (rowData: IProduto) => {
+    const bodyTemplateColumnA = (rowData: I{{pascalCase (getName name)}}) => {
         return (
             <div>
-                <span className="p-column-title">Cod.Barras:</span>
-                {rowData.codigoBarras}
+                <span className="p-column-title">Nomde da coluna:</span>
+                {rowData.valor}
             </div>
         );
     }
-    const bodyTemplateColumnB = (rowData: IProduto) => {
+    const bodyTemplateColumnB = (rowData: I{{pascalCase (getName name)}}) => {
         return (
             <div>
-                <span className="p-column-title">Nome:</span>
-                {rowData.nome}
+                <span className="p-column-title">Nomde da coluna:</span>
+                {rowData.valor}
             </div>
         );
     }
-    const bodyTemplateColumnC = (rowData: IProduto) => {
+    const bodyTemplateColumnC = (rowData: I{{pascalCase (getName name)}}) => {
         const p = priceBodyTemplate(rowData);
         return (
             <div>
-                <span className="p-column-title">Preço Varejo:</span>
+                <span className="p-column-title">Nome da Coluna de valor real:</span>
                 <span>{p}</span>
             </div>
         );
     }
-    const bodyTemplateColumnD = (rowData: IProduto) => {
-        const p = priceBodyTemplate(rowData);
-        return (
-            <div>
-                <span className="p-column-title">Preço Atacado:</span>
-                <span>{p}</span>
-            </div>
-        );
-    }
-    const bodyTemplateColumnE = (rowData: IProduto) => {
+    //Coluna Colorida==============================
+    const bodyTemplateColumnE = (rowData: I{{pascalCase (getName name)}}) => {
         const stockClassName = classNames({
             'outofstock': rowData.quantidade === 0,
             'lowstock': rowData.quantidade > 0 && rowData.quantidade < 10,
@@ -240,21 +212,20 @@ const Produto: React.FC = () =>  {
             </div>
         );
     }
-
+    {{!-- Teste de tela  --}}
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
     if(tamanhoTela>768){
         te="40rem";
     }
-    
-    return (
-        <Container>
-            <HeaderAdmin />
+  return(
+    <Container>
+       <HeaderAdmin />
             <div className="card">
                 <div className="p-grid p-mt-3" >
                     <div className="p-grid  p-col-12 p-md-6 p-lg-9 p-ml-2">
-                        <img src={produtoIcone} alt="img" className="p-ml-2 p-mb-2" />
-                        <label className="p-ml-2 p-mt-2">Cadastro de Produto</label>
+                        <img src={ {{getPasta name}}Icone } alt="img" className="p-ml-2 p-mb-2" />
+                        <label className="p-ml-2 p-mt-2">Cadastro de {{pascalCase (getName name)}}</label>
                     </div>
                     <div className="p-grid  p-sm-6 p-md-6 p-lg-3 buttonAdd" >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openDialog} />
@@ -279,8 +250,8 @@ const Produto: React.FC = () =>  {
 
                 <div className="table">
                     <DataTable 
-                        value={produtos} selection={selectedProdutos} 
-                        onSelectionChange={(e) => setSelectedprodutos(e.value)}
+                         value={store.{{getPasta name}}s} selection={selected{{pascalCase (getName name)}}s} 
+                         onSelectionChange={(e) => setSelected{{pascalCase (getName name)}}s(e.value)}
                         dataKey="id" paginator rows={10}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
@@ -291,13 +262,11 @@ const Produto: React.FC = () =>  {
                         className="p-datatable-responsive-demo"
                         
                     >
-                        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
+                        <Column selectionMode="multiple" headerStyle={[-1 width: '3rem' }}></Column>
                         <Column header="" body={imageBodyTemplate}></Column>
                         <Column field="codigoBarras" header="Codigo" body={bodyTemplateColumnA} sortable></Column>
                         <Column field="nome" header="Nome"  body={bodyTemplateColumnB}  sortable></Column>
                         <Column field="precoVarejo" header="Preco Varejo" body={bodyTemplateColumnC} sortable></Column>
-                        <Column field="precoAtacado" header="Preco Atacado" body={bodyTemplateColumnD} sortable></Column>
-                        <Column field="estrelas" header="Reviews" body={ratingBodyTemplate} sortable></Column>
                         <Column field="quantidade" header="quantidade" body={bodyTemplateColumnE} sortable></Column>
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
@@ -305,23 +274,23 @@ const Produto: React.FC = () =>  {
 {/* =============================================inicio do modal==========================================================================*/}
                 <Dialog 
                     className="teste"
-                    open={produtoDialog}
+                    open={modalDialog}
                     onClose={hideDialog}
                     scroll={scroll}
                     aria-labelledby="scroll-dialog-title"
                     aria-describedby="scroll-dialog-description"
                     maxWidth="lg"
                     >
-                    <DialogTitle id="scroll-dialog-title" style={{background: 'var(--primary)'}}>
+                    <DialogTitle id="scroll-dialog-title" style={[-1 background: 'var(--primary)'}}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                            <img src={produtoIcone} alt="img" />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={{color: 'var(--white)'}}>Cadastro de produto</h3>
-                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{background: 'var(--primary)'}}>
-                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.5rem','color': 'white'}} />
+                            <img src={ {{getPasta name}}Icone} alt="img" />
+                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={[-1 color: 'var(--white)'}}>Cadastro de {{getPasta name}}</h3>
+                            <button type="button" onClick={hideDialog} className="react-modal-close" style={[-1 background: 'var(--primary)'}}>
+                                <i className="pi pi-times p-mt-2" style={[-1 'fontSize': '1.5rem','color': 'white'}} />
                             </button>
                         </div>
                     </DialogTitle>
-                    <DialogContent dividers={scroll === 'paper'} style={{background: 'var(--background)'}}>
+                    <DialogContent dividers={scroll === 'paper'} style={[-1 background: 'var(--background)'}}>
                     <FormControl>
                         <div className="card p-p-4">
                             <div className="p-grid">
@@ -341,7 +310,7 @@ const Produto: React.FC = () =>  {
                                     onChange={(e) => produto.nome = e.target.value} 
                                     required 
                                     className={classNames({ 'p-invalid': submitted && !produto.nome })}
-                                    style={{width: '100%'}} 
+                                    style={[-1 width: '100%'}} 
                                     />
                                     {submitted && !produto.nome && <small className="p-error">Nome é obtigatorio.</small>}
                                 </div>
@@ -384,96 +353,66 @@ const Produto: React.FC = () =>  {
                                 </div>
                             </div>
                         </div>
-                        <div className="p-card p-field p-mt-3 p-p-3">
-                            <label htmlFor="description">Description</label>
-                            <InputTextarea 
-                            id="description" 
-                            style={{ width: '100%', height: '8rem' }} 
-                            value={produto.descricao} 
-                            onChange={(e) => produto.descricao = e.target.value} 
-                            required 
-                            rows={3} 
-                            cols={20} />
-                        </div>
 
-                        <div className="p-card p-p-3">
-                            <label htmlFor="imagens">Imagens</label>
-                            <div className="p-grid p-field p-mt-2 p-pl-4 p-col-12 p-md-6 p-lg-12">
-                                <FileUpload
-                                    mode="basic"
-                                    accept="image/*"
-                                    maxFileSize={1000000}
-                                    chooseOptions={{ 
-                                        label: 'Importe a imagem', 
-                                        icon: 'pi pi-image', 
-                                        className: 'p-col p-button-primary p-button-raised p-mr-4' }}
-                                >
-                                </FileUpload>
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                            </div>
-                        </div>
                     </FormControl>
                     </DialogContent>
                     <DialogActions >
                     <div className="but-save">
-                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={saveProduto} />
+                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={save} />
                         </div>
                     </DialogActions>
                 </Dialog>
 
             </div>
     <Dialog
-        open={deleteProdutoDialog}
+        open={modalDeleteDialog}
         TransitionComponent={Transition}
         keepMounted
-        onClose={hideDeleteProdutoDialog}
+        onClose={hideDeleteDialog}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
         >
         <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir o ítem?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-           O ítem {produto.nome}
+           O ítem {store.{{getPasta name}}.nome}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() =>{setDeleteprodutoDialog(false); window.location.reload()}} color="primary">
+          <Button onClick={() =>{setModalDeleteDialog(false); window.location.reload()}} color="primary">
             Não 
           </Button>
-          <Button onClick={hideDeleteProdutoDialog} color="primary">
+          <Button onClick={hideDeleteDialog} color="primary">
             Sim
           </Button>
         </DialogActions>
     </Dialog>
 
     <Dialog
-        open={deleteProdutosDialog}
+        open={modalDeletesDialog}
         TransitionComponent={Transition}
         keepMounted
-        onClose={hideDeleteProdutoDialog}
+        onClose={hideDeleteDialog}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir os  ítens selecionados?"}</DialogTitle>
         <DialogActions>
-          <Button onClick={() =>{setDeleteprodutosDialog(false); window.location.reload()}} color="primary">
+          <Button onClick={() =>{setModalDeletesDialog(false); window.location.reload()}} color="primary">
             Não 
           </Button>
-          <Button onClick={deleteSelectedprodutos} color="primary">
+          <Button onClick={deleteSelecteds} color="primary">
             Sim
           </Button>
         </DialogActions>
     </Dialog>
     <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
-            Produto Cadastrado com Sucesso!
+            Item Cadastrado com Sucesso!
         </Alert>
     </Snackbar>
-
-</Container>
-    )
+    </Container>
+  );
 }
-export default observer(Produto);
+
+export default observer({{pascalCase (getName name)}});

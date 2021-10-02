@@ -1,12 +1,23 @@
 
 import { api } from "../api";
-import { IUser } from "./IUser";
+import { login, TOKEN_KEY } from "../auth";
+import { IUser } from "../../domain/types/IUser";
 
 export class LoginService {
 
-    url='user';
+    url='api/user/login';
+    auth='/tokken';
 
-    public login(usuario : IUser) {
-       api.post(this.url, usuario).then(response => response.data); 
+    public async login(pEntity : IUser) {
+        
+        api.post(this.auth, {email:'admin',password:'Ads%$#@!Ads'}).then(response =>{
+            console.log(response.data);
+            login(response.data);
+
+        });
+        const response = await api.post(this.url, pEntity);
+        return response.data;
     }
+
+
 }
