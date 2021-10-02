@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 //nossos imports
+import Pedido from './pages/Pedido';
 import Login  from './pages/Login';
 import Produto  from './pages/Produto';
 import {Notfound} from './pages/Notfound';
@@ -17,6 +18,7 @@ const Routes: React.FC = () => {
       <Route path="/produto" exact component={Produto}/>
       <Route path="/dashbord" exact component={Dashbord}/>
       <PrivateRoute path="/categoria"exact component={Categoria} />
+      <PrivateRoute path="/pedido"component={ Pedido } />
       <Route component={Notfound}/>
     </Switch>
 
