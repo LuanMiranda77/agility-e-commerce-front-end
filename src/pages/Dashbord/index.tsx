@@ -55,7 +55,7 @@ const Dashbord: React.FC = () => {
       <div className="product-item">
         <div className="product-item-content">
           <div className="p-mb-3">
-            <img src={product.imagens[0].url} style={{ width: '3rem' }} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.nome} className="product-image" />
+            <img src={product.imagens[0].objectURL} style={{ width: '3rem' }} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.nome} className="product-image" />
           </div>
           <div>
             <h4 className="p-mb-1">{"Nome:" + product.nome}</h4>

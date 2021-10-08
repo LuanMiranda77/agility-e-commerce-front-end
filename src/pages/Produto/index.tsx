@@ -1,4 +1,4 @@
-import React, { useContext, useEffect,  useState  } from "react"
+import React, { useContext, useEffect,  useState, useRef  } from "react"
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { Container, FormControl } from "./styles"
 import { Divider } from "primereact/divider"
@@ -8,7 +8,7 @@ import { Toast } from 'primereact/toast';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Rating } from 'primereact/rating';
-import { FileUpload } from 'primereact/fileupload';
+import { FileUpload, FileUploadFilesParam, FileUploadHeaderTemplateOptions, FileUploadRemoveParams } from 'primereact/fileupload';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { classNames } from 'primereact/utils';
 import { InputNumber} from 'primereact/inputnumber';
@@ -29,8 +29,13 @@ import { Slide } from "@material-ui/core"
 import ComboBase from "../../components/ComboBase"
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { Tag } from 'primereact/tag';
+import { ProgressBar } from 'primereact/progressbar';
+import { FileArquivo } from "../../domain/types/FileUpload";
+import { Utils } from "../../utils/utils"
 
 const Produto: React.FC = () =>  {
+    
     const store = useContext(ProdutoStore);
     const {produto, produtos} = store;
     const [produtoDialog, setProdutoDialog] = useState(false);
@@ -164,9 +169,11 @@ const Produto: React.FC = () =>  {
     }
 
     const imageBodyTemplate = (rowData: IProduto) => {
-        
-        //return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
-       return null;
+
+        return <img src={rowData.imagens[0].objectURL} 
+                    onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} 
+                    className="produto-image"
+                     />
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
@@ -241,12 +248,87 @@ const Produto: React.FC = () =>  {
         );
     }
 
+    // ====================template imgages==========================//
+    const [totalSize, setTotalSize] = useState(0);
+    const toast = useRef(null);
+    const fileUploadRef = useRef<FileUpload>(null);
+
+    const onTemplateSelect = (arrayFile: FileUploadFilesParam) => {
+        let v = arrayFile.files[0];
+        let _totalSize = totalSize + v.size;
+        setTotalSize(_totalSize);
+    }
+
+    const onTemplateUpload = (arrayFile: FileUploadFilesParam) => {
+        let _totalSize = 0;
+        console.log(arrayFile);
+        arrayFile.files.forEach(file => {
+            _totalSize += (file.size || 0);
+        });
+
+        setTotalSize(_totalSize);
+        // toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+    }
+
+
+    const onTemplateRemove = (file: File, callback: any) => {
+        setTotalSize(totalSize - file.size);
+        callback();
+    }
+
+    const onTemplateClear = () => {
+        setTotalSize(0);
+    }
+
+    const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
+        const { className, chooseButton, uploadButton, cancelButton } = options;
+        const value = totalSize/5000;
+        const formatedValue = fileUploadRef && fileUploadRef.current ? Utils.fileConvertSizeByte(totalSize) : '0 B';
+
+        return (
+            <div className={className} style={{backgroundColor: 'transparent', display: 'flex', alignItems: 'center'}}>
+                {chooseButton}
+                {/* {uploadButton} */}
+                {/* {cancelButton} */}
+                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} | 500KB`} style={{width: '200px', height: '20px', marginLeft: 'auto'}}></ProgressBar>
+            </div>
+        );
+    }
+
+    const itemTemplate = (file: FileArquivo, props: any) => {
+        return (
+            <div className="p-ai-center p-col-8 p-sm-6 p-md-8 p-lg-3">
+                <div className="p-ai-center" style={{width: '100%', marginLeft:'-5px'}}>
+                    {/* <span className="p-d-flex p-dir-col p-text-left p-ml-3">
+                        <small>{file.name}</small>
+                    </span> */}
+                    <img alt={file.name} role="presentation" src={file.objectURL} width={'100%'} height={180} />
+                </div>
+                <Tag value={props.formatSize} severity="warning" className="p-px-1 p-mt-2 p-py-1" style={{width: '100%', marginLeft:'-30px'}} />
+                <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger p-ml-auto p-mt-2" onClick={() => onTemplateRemove(file, props.onRemove)} />
+            </div>
+        )
+    }
+    
+
+    const emptyTemplate = () => {
+        return (
+            <div className="p-d-flex p-ai-center p-dir-col">
+                <i className="pi pi-image p-mt-3 p-p-5" style={{'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)'}}></i>
+                <span style={{'fontSize': '1.2em', color: 'var(--text-color-secondary)'}} className="p-my-5">Arraste e solte a imagem aqui</span>
+            </div>
+        )
+    }
+    const chooseOptions = {icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined'};
+    const uploadOptions = {icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined'};
+    const cancelOptions = {icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined'};
+
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
     if(tamanhoTela>768){
         te="40rem";
     }
-    
+
     return (
         <Container>
             <HeaderAdmin />
@@ -312,12 +394,12 @@ const Produto: React.FC = () =>  {
                     aria-describedby="scroll-dialog-description"
                     maxWidth="lg"
                     >
-                    <DialogTitle id="scroll-dialog-title" style={{background: 'var(--primary)'}}>
+                    <DialogTitle id="dialog-title" style={{background: 'var(--primary)', padding:'0px'}}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                            <img src={produtoIcone} alt="img" />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={{color: 'var(--white)'}}>Cadastro de produto</h3>
-                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{background: 'var(--primary)'}}>
-                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.5rem','color': 'white'}} />
+                            <img src={produtoIcone} alt="img" className='p-ml-5 p-mt-1'/>
+                            <h3 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{color: 'var(--white)'}}>Cadastro de produto</h3>
+                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{background: 'var(--primary)', marginTop:'-10px'}}>
+                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.0rem','color': 'white'}} />
                             </button>
                         </div>
                     </DialogTitle>
@@ -398,28 +480,53 @@ const Produto: React.FC = () =>  {
 
                         <div className="p-card p-p-3">
                             <label htmlFor="imagens">Imagens</label>
-                            <div className="p-grid p-field p-mt-2 p-pl-4 p-col-12 p-md-6 p-lg-12">
-                                <FileUpload
-                                    mode="basic"
-                                    accept="image/*"
-                                    maxFileSize={1000000}
-                                    chooseOptions={{ 
-                                        label: 'Importe a imagem', 
-                                        icon: 'pi pi-image', 
-                                        className: 'p-col p-button-primary p-button-raised p-mr-4' }}
-                                >
-                                </FileUpload>
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
+                            <div className="p-grid p-field p-mt-2 p-pl-3 p-col-12 p-sm-12 p-md-8 p-lg-12">
+                                <div className="p-mt-2 p-col-12 p-sm-3 p-md-6 p-lg-3">
+                                <script async src="https://imgbb.com/upload.js"></script>
+                                <FileUpload ref={fileUploadRef} name="foto-1" url="./upload" 
+                                            accept="image/*" maxFileSize={500000} className="p-mr-1 teste"
+                                            onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                            headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                            chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} 
+                                            />
+                                </div> 
+                                <div className="p-mt-2 p-col-12 p-sm-3 p-md-6 p-lg-3">           
+                                    <FileUpload ref={fileUploadRef} name="foto-1" url="https://api.imgur.com/3/image"
+                                                accept="image/*" maxFileSize={500000}
+                                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                                chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}
+                                                />
+                                </div> 
+                                <div className="p-mt-2 p-col-12 p-sm-3 p-md-6 p-lg-3">
+                                    <FileUpload ref={fileUploadRef} name="foto-1" url="https://primefaces.org/primereact/showcase/upload.php" 
+                                                accept="image/*" maxFileSize={500000} className="p-mr-1"
+                                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                                chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}
+                                                />
+                                </div>
+                                <div className="p-mt-2 p-col-12 p-sm-3 p-md-6 p-lg-3">
+                                    <FileUpload ref={fileUploadRef} name="foto-1" url="https://primefaces.org/primereact/showcase/upload.php" 
+                                                accept="image/*" maxFileSize={500000}
+                                                onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                                headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                                chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions}
+                                                />
+                                </div>
+                                {/* <FileUpload ref={fileUploadRef} name="foto-1" url="https://primefaces.org/primereact/showcase/upload.php" 
+                                            accept="image/*" maxFileSize={500000} className="p-mr-2 p-mt-2"
+                                            onUpload={onTemplateUpload} onSelect={onTemplateSelect} onError={onTemplateClear} onClear={onTemplateClear}
+                                            headerTemplate={headerTemplate} itemTemplate={itemTemplate} emptyTemplate={emptyTemplate}
+                                            chooseOptions={chooseOptions} uploadOptions={uploadOptions} cancelOptions={cancelOptions} 
+                                            />                                                                    */}
                             </div>
                         </div>
                     </FormControl>
                     </DialogContent>
-                    <DialogActions >
+                    <DialogActions style={{padding:'0px'}} >
                     <div className="but-save">
-                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={saveProduto} />
+                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={saveProduto} />
                         </div>
                     </DialogActions>
                 </Dialog>

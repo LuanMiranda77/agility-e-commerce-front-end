@@ -1,6 +1,7 @@
 
 import { api } from "../api";
 import {IProduto} from "../../domain/types/IProduto";
+
 export class ProdutoService {
 
     url='api/produto';
@@ -9,6 +10,7 @@ export class ProdutoService {
       const response = await api.post(this.url, pEntity);
       return response.data;
     }
+
     update(pEntity: IProduto) : void{
       api.put(this.url+`/${pEntity.id}`,pEntity);
     }

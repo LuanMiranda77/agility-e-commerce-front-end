@@ -283,10 +283,10 @@ const {{pascalCase (getName name)}}: React.FC = () => {
                     >
                     <DialogTitle id="scroll-dialog-title" style={[-1 background: 'var(--primary)'}}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                            <img src={ {{getPasta name}}Icone} alt="img" />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={[-1 color: 'var(--white)'}}>Cadastro de {{getPasta name}}</h3>
-                            <button type="button" onClick={hideDialog} className="react-modal-close" style={[-1 background: 'var(--primary)'}}>
-                                <i className="pi pi-times p-mt-2" style={[-1 'fontSize': '1.5rem','color': 'white'}} />
+                            <img src={ {{getPasta name}}Icone} alt="img" className='p-ml-5 p-mt-1' />
+                            <h3 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2" style={[-1 color: 'var(--white)'}}>Cadastro de {{getPasta name}}</h3>
+                            <button type="button" onClick={hideDialog} className="react-modal-close" style={[-1 background: 'var(--primary)', marginTop:'-10px'}}>
+                                <i className="pi pi-times p-mt-2" style={[-1 'fontSize': '1.0rem','color': 'white'}} />
                             </button>
                         </div>
                     </DialogTitle>
@@ -356,9 +356,9 @@ const {{pascalCase (getName name)}}: React.FC = () => {
 
                     </FormControl>
                     </DialogContent>
-                    <DialogActions >
+                    <DialogActions style={[-1 padding:'0px'}} >
                     <div className="but-save">
-                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={save} />
+                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={save} />
                         </div>
                     </DialogActions>
                 </Dialog>
