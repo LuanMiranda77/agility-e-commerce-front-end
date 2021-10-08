@@ -91,9 +91,21 @@ export const Container  = styled.div`
     }
 
 @media screen and (max-width: 40em) {
+    h3{
+        font-size: 8px;
+    }
+    .titulo-modal{
+        font-size: 8px;
+        color: var(--white);
+    }
     .table-header{
         margin-top: 6rem;
     }
+    .card-image{
+        width:200px;
+        background: #fff;
+    }
+
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead > tr > th,
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot > tr > td {
         display: none !important;
@@ -168,6 +180,15 @@ export const FormControl = styled.form`
     .but-save{
         width:"100%";
         float:right;
+    }
+    @media screen and (max-width: 40em) {
+        h3{
+            font-size: 8px;
+        }
+        .titulo-modal{
+            font-size: 8px;
+            color: var(--white);
+        }
     }
    
 `;

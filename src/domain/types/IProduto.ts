@@ -1,3 +1,4 @@
+import { FileArquivo } from "./FileUpload";
 import { ImagemProduto } from "./ImagemProduto";
 
 export interface IProduto{
@@ -9,5 +10,5 @@ export interface IProduto{
   quantidade: number;
   descricao: string;
   estrelas: number;
-  imagens: ImagemProduto[];
+  imagens: FileArquivo[];
 }
