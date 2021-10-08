@@ -149,13 +149,7 @@ const {{pascalCase (getName name)}}: React.FC = () => {
     }
 
     const imageBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
-        
         return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="store.{{getPasta name}}-image" />
-       //return null;
-    }
-
-    const priceBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
-        return formatCurrency(rowData.tributoDinheiro);
     }
 
     const actionBodyTemplate = (rowData: I{{pascalCase (getName name)}}) => {
