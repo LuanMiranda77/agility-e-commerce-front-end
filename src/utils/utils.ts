@@ -1,3 +1,6 @@
+import { RefObject } from "hoist-non-react-statics/node_modules/@types/react";
+import { Toast } from "primereact/toast";
+import { IFrete } from "../domain/types/IFrente";
 
 export  class  Utils{
 /**
@@ -35,6 +38,25 @@ export  class  Utils{
 
     static formatCurrency = (value: number) => {
         return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+    }
+    //@params de type = 'success', 'error', 'info','warn' 
+    static messagemShow = (toast: RefObject<Toast>, type: string, title: string, body: string, time: number) => {
+        if (toast.current != null) {
+            toast.current.show({ severity: type, summary: title, detail: body, life: time });
+        }
+
+    }
+
+    static  calculaFrete = (Frete: IFrete) =>{
+
+    }
+
+    static  buscaCEP = (CEP: string) =>{
+
+    }
+
+    static  rastreioPedido = (codigo: string) =>{
+
     }
 
 }
