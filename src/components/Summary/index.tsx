@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from './styles';
 import { Card } from 'primereact/card';
-import { formatCurrency } from '../../utils/formatCurrency';
+import { Utils } from '../../utils/utils';
 
 interface CardProps {
   label: string;
@@ -12,7 +12,7 @@ interface CardProps {
 }
 
 const Summary: React.FC<CardProps> = (props) => {
-  const valor = formatCurrency(props.value);
+  const valor = Utils.formatCurrency(props.value);
   return <Container>
     <Card className="card">
       <div className="p-flex">

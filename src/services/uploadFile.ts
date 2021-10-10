@@ -1,3 +1,4 @@
+import { FileImg } from "../domain/types/FileImg";
 import { imgur } from "./api";
 
 export class UploadFile{
@@ -6,8 +7,11 @@ export class UploadFile{
         if (file && file.size < 5e6) {
           const formData = new FormData();
           formData.append('image', file);
+          const img: FileImg={objectURL: '', hash: ''}
           const response = await imgur.post(`https://api.imgur.com/3/image`, formData)
-          return response.data.data;
+          img.objectURL = response.data.data.link;
+          img.hash = response.data.data.deletehash;
+          return img;
         };
       }
       
