@@ -361,7 +361,7 @@ export function HeaderAdmin() {
   return (
 
     <div className={classes.grow} >
-      <AppBar position="fixed" style={{background: 'var(--white)'}}>
+      <AppBar position="fixed" style={{background: 'var(--white)', zIndex: 999}}>
         <Toolbar>
           <IconButton
             edge="start"

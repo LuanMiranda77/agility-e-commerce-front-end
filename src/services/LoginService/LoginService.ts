@@ -11,7 +11,6 @@ export class LoginService {
     public async login(pEntity : IUser) {
         
         api.post(this.auth, {email:'admin',password:'Ads%$#@!Ads'}).then(response =>{
-            console.log(response.data);
             login(response.data);
 
         });
