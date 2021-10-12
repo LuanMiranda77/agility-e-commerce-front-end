@@ -15,6 +15,7 @@ export const Container = styled.div`
         font-size: 18px;
         font-weight: bold;
     }
+    
     .diveder{
         margin-top: -1rem;
         margin-bottom: 0.5rem;
@@ -168,6 +169,12 @@ export const FormControl = styled.form`
     }
     label{
         color: var(--primary);
+    }
+    .table-images{
+        margin-top: 0px;
+    }
+    .header-imgs{
+        
     }
 
     .multiselect-custom .p-multiselect-label:not(.p-placeholder):not(.p-multiselect-items-label) {
