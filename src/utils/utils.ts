@@ -1,6 +1,8 @@
 import { RefObject } from "hoist-non-react-statics/node_modules/@types/react";
 import { Toast } from "primereact/toast";
+import { FileImg } from "../domain/types/FileImg";
 import { IFrete } from "../domain/types/IFrente";
+import { IProduto } from "../domain/types/IProduto";
 
 export  class  Utils{
 /**
@@ -58,5 +60,35 @@ export  class  Utils{
     static  rastreioPedido = (codigo: string) =>{
 
     }
+
+    public static validarProduto(produto: IProduto) : string {
+        let response = '';
+        let soma= Number(produto.comprimento)  + Number(produto.altura)  + Number(produto.largura);
+        if(produto.comprimento  < 15 || produto.altura < 5 || produto.largura < 10){
+            response = 'Limite minino do produto é comprimento=15cm, altura=5cm, largura=10cm';
+        }else if(produto.peso<0.3){
+            response = 'Limite minino do produto é peso=300g';
+        }else if(produto.peso>30){
+            response = 'Limite máximo do produto é peso=30kg';
+        }else if(soma > 200){
+            response = 'Limite máximo do produto é 200cm';
+        }else if(produto.comprimento  > 105 || produto.altura > 105 || produto.largura > 105){
+            response = 'Limite máximo do produto é comprimento=105cm, altura=105cm, largura=105cm';
+        }else if(produto.categorias.length === 0){
+            response = 'Selecione uma categoria';
+        }
+        return response;
+    }
+
+    public static convertFileByFileImg(file: any) : FileImg{
+        const imge: FileImg={objectURL: '', hash: '', size: 0, name: ''}
+        imge.objectURL = file.objectURL;
+        imge.hash = file.hash;
+        imge.name =  file.name;
+        imge.size = file.size;
+
+        return imge;
+    }
+  
 
 }

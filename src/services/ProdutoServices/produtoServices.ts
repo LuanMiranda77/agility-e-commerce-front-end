@@ -1,36 +1,69 @@
+import { FileImg } from "../../domain/types/FileImg";
+import { IProduto } from "../../domain/types/IProduto";
+import { api } from "../api";
 import { UploadFile } from './../uploadFile';
 
-import { api } from "../api";
-import {IProduto} from "../../domain/types/IProduto";
-import { FileImg } from "../../domain/types/FileImg";
+
 
 export class ProdutoService {
 
     url='api/produto';
   
-    async save(pEntity: IProduto,  file: File[]){
+   public async save(pEntity: IProduto,  file: File[]) : Promise<IProduto>{
       const updateFile = new UploadFile();
       file.forEach(e  =>  {
-        const img = updateFile.uploadImg(e);
-        const imge: FileImg={objectURL: '', hash: ''}
-        pEntity.imagens.push(img);
+        updateFile.uploadImg(e).then(res =>{
+          // const imge: FileImg={objectURL: '', hash: '', size: 0}
+          // imge.hash = res?.hash ? res.hash : "";
+          // imge.objectURL = res?.objectURL ? res.objectURL : '';
+          // imge.size = e.size;
+          pEntity.imagens.push(res);
+        }).catch(error => {
+        return Promise.reject(error.response.data);
+      });;
+      })
+      const response = await api.post(this.url, pEntity)
+      .then(response => {
+        return response.data;
+      }).catch(error => {
+        return Promise.reject(error.response.data[0]);
       });
-      const response = await api.post(this.url, pEntity);
-      return response.data;
+      return response;
     }
 
-    update(pEntity: IProduto) : void{
-      api.put(this.url+`/${pEntity.id}`,pEntity);
+    public async update(pEntity: IProduto) : Promise<IProduto>{
+      const response = await api.put(this.url+`/${pEntity.id}`,pEntity)
+      .then(response => {
+        return response.data;
+      }).catch(error => {
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
     }
-    delete(id:number){
-      api.delete(this.url+`/${id}`);
+
+    public async delete(id:number){
+      const response = await api.delete(this.url+`/${id}`).catch(error => {
+        return Promise.reject(error.response.data[0]);
+      });;
+      return response;
     }
-    deleteAll(array: IProduto[]){
-      api.post(this.url+`/deleteall`, array);
+
+    public async deleteAll(array: IProduto[]){
+      const response = await api.post(this.url+`/deleteall`, array).then(response => {
+        return response.data;
+      }).catch(error => {
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
     }
-    async getProdutos() {
-        const response = await api.get(this.url);
-      return response.data;
+
+    public async getProdutos() : Promise<IProduto[]> {
+        const response = await api.get(this.url).then(response =>{
+          return response.data;
+        }).catch(error=>{
+          return Promise.reject(error);
+        });
+      return response;
     }
 
   
