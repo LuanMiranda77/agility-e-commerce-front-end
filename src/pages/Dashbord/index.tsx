@@ -3,13 +3,13 @@ import React, { useEffect, useContext, useState } from 'react';
 import Summary from '../../components/Summary';
 import { Container } from './styles';
 import { Card } from 'primereact/card';
-import { formatCurrency } from '../../utils/formatCurrency';
 import { HeaderAdmin } from '../../components/HeaderAdmin';
 import FooterAdmin from '../../components/FooterAdmin';
 import { Carousel } from 'primereact/carousel';
 import { IProduto } from '../../domain/types/IProduto';
 import { ProdutoService } from '../../services/ProdutoServices/produtoServices';
 import ProdutoStore from "../../stores/ProdutoStore"
+import { Utils } from '../../utils/utils';
 
 
 const Dashbord: React.FC = () => {
@@ -17,7 +17,7 @@ const Dashbord: React.FC = () => {
   const pedidoRealizados = 300000;
   const pedidoPagos = 500000;
   const pedidoCancelados = 30000;
-  const total = formatCurrency(5000);
+  const total = Utils.formatCurrency(5000);
 
   const store = useContext(ProdutoStore);
   const [produtos, setProduto]= useState([]);
@@ -55,10 +55,10 @@ const Dashbord: React.FC = () => {
       <div className="product-item">
         <div className="product-item-content">
           <div className="p-mb-3">
-            <img src={product.imagens[0].url} style={{ width: '3rem' }} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.nome} className="product-image" />
+            <img src={product.imagens[0].objectURL} style={{ width: '3rem' }} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="product-image" />
           </div>
           <div>
-            <h4 className="p-mb-1">{"Nome:" + product.nome}</h4>
+            <h4 className="p-mb-1">{"Nome:" + product.titulo}</h4>
             <h6 className="p-mt-0 p-mb-1">{"500 itens vendidos | Ultima venda 4 horas"}</h6>
           </div>
         </div>

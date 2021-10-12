@@ -60,10 +60,6 @@ const Pedido: React.FC = () => {
 
     }, []);
 
-    const formatCurrency = (value: number) => {
-        return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-    }
-
     const openDialog = () => {
         store.novo();
         setSubmitted(false);
@@ -160,7 +156,7 @@ const Pedido: React.FC = () => {
     }
 
     const priceBodyTemplate = (rowData: IPedido) => {
-        return formatCurrency(rowData.valorTotal);
+        return Utils.formatCurrency(rowData.valorTotal);
     }
 
     const actionBodyTemplate = (rowData: IPedido) => {
@@ -205,7 +201,7 @@ const Pedido: React.FC = () => {
     }
 
     const bodyTemplateColumnD = (rowData: IPedido) => {
-        const p = formatCurrency(rowData.valorDesconto);
+        const p = Utils.formatCurrency(rowData.valorDesconto);
         return (
             <div>
                 <span className="p-column-title">V. Desconto:</span>
@@ -215,7 +211,7 @@ const Pedido: React.FC = () => {
     }
 
     const bodyTemplateColumnE = (rowData: IPedido) => {
-        const p = formatCurrency(rowData.valorFrete);
+        const p = Utils.formatCurrency(rowData.valorFrete);
         return (
             <div>
                 <span className="p-column-title">V. Frete:</span>
@@ -225,7 +221,7 @@ const Pedido: React.FC = () => {
     }
 
     const bodyTemplateColumnF = (rowData: IPedido) => {
-        const p = formatCurrency(rowData.valorTotal);
+        const p = Utils.formatCurrency(rowData.valorTotal);
         return (
             <div>
                 <span className="p-column-title">V. Total:</span>
