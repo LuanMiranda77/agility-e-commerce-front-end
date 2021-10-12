@@ -27,7 +27,7 @@ const selectedCountriesTemplate = (option: any) => {
         return (
             <div className="country-item country-item-value">
                 {/* <img alt={option.name} src="showcase/demo/images/flag_placeholder.png" onError={(e) => e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className={`flag flag-${option.code.toLowerCase()}`} /> */}
-                <div>{option.name}</div>
+                <div>{option.nome}</div>
             </div>
         );
     }
@@ -38,7 +38,7 @@ const countryTemplate = (option: any) => {
     return (
         <div className="country-item">
             {/* <img alt={option.name} src="showcase/demo/images/flag_placeholder.png" onError={(e) => e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className={`flag flag-${option.code.toLowerCase()}`} /> */}
-            <div>{option.name}</div>
+            <div>{option.nome}</div>
         </div>
     );
 }
