@@ -382,7 +382,7 @@ const Produto: React.FC = () => {
                     <DialogTitle id="dialog-title" style={{ background: 'var(--primary)', padding: '0px' }}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
                             <img src={produtoIcone} alt="img" className='p-ml-5 p-mt-1' />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h3>
+                            <h5 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h5>
                             <button type="button" onClick={hideDialog} className="react-modal-close" style={{ background: 'var(--primary)', marginTop: '-10px' }}>
                                 <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.0rem', 'color': 'white' }} />
                             </button>
