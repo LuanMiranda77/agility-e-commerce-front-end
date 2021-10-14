@@ -1,22 +1,23 @@
-import { FileImg } from "../domain/types/FileImg";
 import { imgur } from "./api";
 
 export class UploadFile{
 
-    async uploadImg(file: File) {
-        const img: FileImg={objectURL: '', hash: '', size:0, name:''}
-        if (file && file.size < 5e6) {
+    public uploadImg(file: any[]){
+      
+      file.forEach(f => {
+        if (f && f.size < 5e6) {
           const formData = new FormData();
-          formData.append('image', file);
-          const response = await imgur.post(`https://api.imgur.com/3/image`, formData)
-          img.objectURL = response.data.data.link;
-          img.hash = response.data.data.deletehash;
-          img.size = file.size;
-          img.name = file.name;
-          
-        };
-        return img;
-      }
+          formData.append('image', f);
+          imgur.post(`https://api.imgur.com/3/image`, formData).then(res =>{
+            f.objectURL = res.data.data.link;
+            f.hash = res.data.data.deletehash;
+          }).catch(error =>{
+              return Promise.reject(error.response.data[0]);
+          });
+        }
+      });
+      return file;
+    };
       
     async deleteImg(hash: string) {
         const response = await imgur.delete(`https://api.imgur.com/3/image/${hash}`);

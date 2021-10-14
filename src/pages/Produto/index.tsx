@@ -20,9 +20,9 @@ import { classNames } from 'primereact/utils'
 import React, { useContext, useEffect, useRef, useState } from "react"
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
+import { ComboMultSelect } from "../../components/ComboMultSelect"
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
-import { FileBase } from '../../domain/types/FileBase'
 import { ICategoria } from '../../domain/types/ICategoria'
 import { IProduto } from "../../domain/types/IProduto"
 import { CategoriaService } from '../../services/CategoriaService/categoriaService'
@@ -30,7 +30,6 @@ import { ProdutoService } from "../../services/ProdutoServices/produtoServices"
 import ProdutoStore from "../../stores/ProdutoStore"
 import { Utils } from "../../utils/utils"
 import { Container, FormControl } from "./styles"
-import {ComboMultSelect} from "../../components/ComboMultSelect"
 
 
 
@@ -46,7 +45,6 @@ const Produto: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
     const toast = useRef<Toast>(null);
-    const [selectCategorias, setSelectedCategorias] = useState([]);
     const produtoService = new ProdutoService();
     const categoriaService = new CategoriaService();
 
@@ -73,8 +71,7 @@ const Produto: React.FC = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProdutoDialog(false);
-        setSelectedCategorias([]);
-        setArrayFile([]);
+        store.novo();
         setTotalSize(0);
     }
 
@@ -95,33 +92,30 @@ const Produto: React.FC = () => {
         if (store.produto.descricao.trim()) {
             const produtoValidado = Utils.validarProduto(store.produto);
 
-            store.produto.categorias = selectCategorias;
-
             if(produtoValidado !== ''){
-                Utils.messagemShow(toast,'error', 'Error na atualização', produtoValidado,5000);
+                Utils.messagemShow(toast,'error', 'Error na validação do produto', produtoValidado,5000);
                 return false;
             }
 
-            if (store.produto.id == 0) {
+            if (store.produto.id !== 0) {
                 produtoService.update(store.produto).then((res) => {
                     const index = store.findIndexById(store.produto.id);
                     store.produtos[index] = store.produto;
                     Utils.messagemShow(toast,'success', 'Alterado com sucesso!',`Item: ${store.produto.titulo}`, 3000);
-                    setProdutoDialog(false);
+                    hideDialog();
                     
                 }).catch((error) => {
                     Utils.messagemShow(toast,'error', 'Error na atualização', error.mensagemUsuario,3000);
                     return false;
                 });
             }else{
-                produtoService.save(store.produto, arrayFile).then(res => { 
-                    setProdutoDialog(false);
+                produtoService.save(store.produto).then(res => { 
                     store.add(res);
                     Utils.messagemShow(toast,'success', 'Cadastro com sucesso!',`Item: ${store.produto.titulo}`, 3000);
-                    setSelectedCategorias([]);
+                    hideDialog();
 
                 }).catch(error=>{
-                    Utils.messagemShow(toast,'error', 'Error na atualização', error.mensagemUsuario,3000);
+                    Utils.messagemShow(toast,'error', 'Error no cadastro', error.mensagemUsuario,3000);
                     return false;
                 });
             }
@@ -132,13 +126,6 @@ const Produto: React.FC = () => {
     }
     const editar = (produto: IProduto) => {
         store.update(produto);
-        if(fileUploadRef !== undefined || fileUploadRef !== null){
-            store.produto.imagens.forEach(img =>{
-
-                itemTemplate(img, fileUploadRef.current?.context);
-        })
-        }
-        
         setProdutoDialog(true);
     }
 
@@ -161,12 +148,11 @@ const Produto: React.FC = () => {
     }
 
     const deleteSelectedAll = () => {
-        store.load(store.produtos.filter(valor => !selectedProdutos.includes(valor)));
         let produtosDelete = store.produtos.filter(valor => selectedProdutos.includes(valor));
         produtoService.deleteAll(produtosDelete);
-        setDeleteprodutosDialog(false);
+        store.load(store.produtos.filter(valor => !produtosDelete.includes(valor)));
         setSelectedprodutos([]);
-        // history.push("/produto");
+        setDeleteprodutosDialog(false);
     }
     
     const rightToolbarTemplate = () => {
@@ -179,11 +165,17 @@ const Produto: React.FC = () => {
     }
 
     const imageBodyTemplate = (rowData: IProduto) => {
-        return <img 
-            src={rowData.imagens[0].objectURL}
-            onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
-            className="produto-image"
-        />
+        let  imgURL = ''
+        if(rowData.imagens[0]){
+            imgURL = rowData.imagens[0].objectURL;
+        }
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return <img
+                id='link' 
+                src={imgURL}
+                onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
+                className="product-image"
+             />
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
@@ -258,86 +250,64 @@ const Produto: React.FC = () => {
         );
     }
 
-    //====================template imgages==========================//
+    //=====================template imgages==========================//
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef<FileUpload>(null);
-    const [arrayFile, setArrayFile] = useState<File[]>([]);
+ 
+    const [selectDelImges, setSelectDelImges] = useState<File[]>([]);
 
     const onTemplateSelect = (file: FileUploadFilesParam) => {
-        if(arrayFile.length<4){
-            let v = Utils.convertFileByFileImg(file.files[0]);
+        if(store.produto.imagens.length<4){
+            let v = file.files[0];
             store.produto.imagens.push(v);
-            let _totalSize = totalSize + v.size;
-            setTotalSize(_totalSize);
+            setTotalSize(totalSize + v.size);
         }else{
             Utils.messagemShow(toast,'error','Erro ao adicionar imagens', 'Só é permitido 4 imagens', 5000);
+            return false;
         }
         
     }
 
-    const onTemplateUpload = (arrayFile: FileUploadFilesParam) => {
-        let _totalSize = 0;
-        console.log(arrayFile);
-        arrayFile.files.forEach(file => {
-            _totalSize += (file.size || 0);
+    const deleteSelectedAllImges = () => {
+        let array = store.produto.imagens.filter(valor => selectDelImges.includes(valor));
+        let soma=0;
+        array.forEach(e =>{
+            soma += e.size;
         });
-        setTotalSize(_totalSize);
-        
+        store.produto.imagens=array;
+        setTotalSize(soma);
+        // history.push("/produto");
+    }
+
+    const actionBody = (rowData: File) => {
+        return (
+            <div className="buttonAction">
+                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => onTemplateRemove(rowData)} />
+            </div>
+        );
     }
 
     const onTemplateRemove = (file: File) => {
-        let _array = arrayFile.filter(f => f.name!==file.name);
-
-        // let imgFile = Utils.convertFileByFileImg(file.files[0]);
-        // setArrayFile(_array);
-        // setTotalSize(totalSize - file.size);
+        let _array = store.produto.imagens.filter(f => f.name!==file.name);
+        store.produto.imagens=_array;
+        setTotalSize(totalSize - file.size);
         // callback();
-    }
-
-    const onTemplateClear = () => {
-        setArrayFile([]);
-        setTotalSize(0);
-    }
-
-    const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
-        const { className, chooseButton, uploadButton, cancelButton } = options;
-        const value = totalSize / 5000;
-        const formatedValue = fileUploadRef && fileUploadRef.current ? Utils.fileConvertSizeByte(totalSize) : '0 B';
-
-        return (
-            <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
-                {chooseButton}
-                {/* {uploadButton} */}
-                {cancelButton}
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} | 1MB`} style={{ width: '50%', height: '20px', marginLeft: 'auto' }}></ProgressBar>
-            </div>
-        );
     }
 
     const itemTemplate = (file: any, props: any) => {
         return (
             <div className="p-ai-center p-col-12">
                 <div className="p-ai-center p-sm-12 p-md-12 p-lg-12 p-xl-12 p-flex">
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={'100%'} height={200} />
-                    <Tag value={Utils.fileConvertSizeByte(file.size)} severity="warning" className="p-px-1 p-mt-2 p-mb-2 p-py-1 p-sm-12 p-md-12 p-lg-8 p-xl-8 p-mr-6" />
-                    {/* <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger p-ml-auto p-mt-2" onClick={() => onTemplateRemove(file, props.onRemove)} /> */}
+                    <img alt={file.name} role="presentation" src={file.objectURL} width={'80%'} height={200} />
+                    <Tag value={Utils.fileConvertSizeByte(file.size)} severity="warning" className="p-px-1 p-mt-2 p-mb-2 p-py-1 p-sm-8 p-md-9 p-lg-8 p-xl-8 p-mr-6" />
+                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger p-ml-auto p-mt-2" onClick={() => onTemplateRemove(file)} />
                     <Divider/>
                 </div>
             </div>
         )
     }
 
-    const emptyTemplate = () => {
-        return (
-            <div className="p-d-flex p-ai-center p-dir-col">
-                <i className="pi pi-image p-mt-3 p-p-5" style={{ 'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-                <span style={{ 'fontSize': '1.2em', color: 'var(--text-color-secondary)' }} className="p-my-5">Arraste e solte a imagem aqui</span>
-            </div>
-        )
-    }
     const chooseOptions = { icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined' };
-    const uploadOptions = { icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined' };
-    const cancelOptions = { icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
 
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
@@ -532,64 +502,49 @@ const Produto: React.FC = () => {
                                 </div>
                             </div>
                             <div className="p-grid p-col-12">
-                            <div className="p-card p-field p-mt-4  p-p-3 p-sm-12 p-md-12 p-lg-5 p-xl-6">
-                                <label htmlFor="description">Descrição</label>
-                                <InputTextarea
-                                    id="description"
-                                    style={{height: '60vh', width: '90vh'}}
-                                    value={store.produto.descricao}
-                                    onChange={(e) => store.produto.descricao = e.target.value}
-                                    required
-                                    rows={3}
-                                    cols={20} />
-                            </div>
+                                <div className="p-card p-field p-mt-4  p-p-2 p-sm-12 p-md-12 p-lg-5 p-xl-6 descri-campo">
+                                    <label htmlFor="description">Descrição</label>
+                                    <InputTextarea
+                                        id="description"
+                                        style={{height: '50vh', width: '100%'}}
+                                        value={store.produto.descricao}
+                                        onChange={(e) => store.produto.descricao = e.target.value}
+                                        required
+                                        rows={3}
+                                        cols={20} />
+                                </div>
 
-                            <div className="p-card p-p-3 p-sm-12 p-md-12 p-lg-6 p-mt-4 text-area">
-                                <label htmlFor="imagens">Imagens</label>
-                                <div className="p-grid p-field p-mt-2 p-pl-3 p-col-12 ">
-                                    <div className="p-sm-3 p-md-6 p-lg-12">
-                                        {/* <FileUpload ref={fileUploadRef} 
-                                            name="foto-1"
-                                            className="p-mr-1 teste"
-                                            accept="image/*" 
-                                            maxFileSize={1000000} 
-                                            onUpload={onTemplateUpload} 
-                                            onSelect={onTemplateSelect} 
-                                            onError={onTemplateClear} 
-                                            onClear={onTemplateClear} 
-                                            headerTemplate={headerTemplate} 
-                                            itemTemplate={itemTemplate}    
-                                            emptyTemplate={emptyTemplate}                                  
-                                            chooseOptions={chooseOptions} 
-                                            uploadOptions={uploadOptions} 
-                                            cancelOptions={cancelOptions}
-                                        /> */}
-                                        <div className="table-images">
-                                            <div className="p-grid p-flex p-mr-4 p-p-2">
-                                                <FileUpload mode="basic" 
-                                                chooseOptions={chooseOptions} 
-                                                name="button-upload"
-                                                accept="image/*" 
-                                                maxFileSize={1000000}
-                                                onSelect={onTemplateSelect}
-                                                auto chooseLabel="" 
-                                                />
-                                                <ButtonBase label="" icon="pi pi-times" className="p-ml-4 p-button-rounded p-button-danger p-button-outlined"/>
+                                <div className="p-card p-p-3 p-sm-12 p-md-12 p-lg-6 p-mt-4  mama">
+                                    <label htmlFor="imagens">Imagens</label>
+                                    <div className="p-grid p-field p-mt-2 p-pl-3 p-col-12 ">
+                                        <div className="p-sm-12 p-md-12 p-lg-12">
+                                            <div className="table-images">
+                                                <div className="p-grid p-flex p-mr-4 p-p-2">
+                                                    <FileUpload mode="basic" 
+                                                    chooseOptions={chooseOptions} 
+                                                    name="button-upload"
+                                                    accept="image/*" 
+                                                    maxFileSize={1000000}
+                                                    onSelect={onTemplateSelect}
+                                                    auto chooseLabel="" 
+                                                    />
+                                                    <ButtonBase label="" icon="pi pi-times" className="p-ml-4 p-button-rounded p-button-danger p-button-outlined" onClick={deleteSelectedAllImges}/>
+                                                    <ProgressBar className='p-mt-2' value={(totalSize/10000)} displayValueTemplate={() => `${Utils.fileConvertSizeByte(totalSize)} | 1MB`} style={{ width: '70%', height: '20px', marginLeft: 'auto' }}></ProgressBar>
+                                                </div>
+                                                <DataTable
+                                                    value={store.produto.imagens} selection={selectDelImges}
+                                                    onSelectionChange={(e) => setSelectDelImges(e.value)}
+                                                    dataKey="id"
+                                                    scrollable
+                                                    scrollHeight={'20rem'}
+                                                    className="p-datatable-responsive-demo"
+                                                >
+                                                    {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                                                    <Column header="" body={itemTemplate}></Column>
+                                                    {/* <Column body={actionBody}></Column> */}
+                                                </DataTable>
                                             </div>
-                                            <DataTable
-                                                value={store.produto.imagens} selection={selectedProdutos}
-                                                onSelectionChange={(e) => setSelectedprodutos(e.value)}
-                                                dataKey="id"
-                                                scrollable
-                                                scrollHeight={'20rem'}
-                                                className="p-datatable-responsive-demo"
-                                            >
-                                                <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                                                <Column header="" body={itemTemplate}></Column>
-                                                <Column body={actionBodyTemplate}></Column>
-                                            </DataTable>
                                         </div>
-                                    </div>
                                     
                                     
                                 </div>
