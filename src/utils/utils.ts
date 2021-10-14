@@ -81,11 +81,10 @@ export  class  Utils{
     }
 
     public static convertFileByFileImg(file: any) : FileImg{
-        const imge: FileImg={objectURL: '', hash: '', size: 0, name: ''}
+        const imge : FileImg={objectURL: '', name: '',size: 0, hash:''};
         imge.objectURL = file.objectURL;
-        imge.hash = file.hash;
+        imge.hash = '';
         imge.name =  file.name;
-        imge.size = file.size;
 
         return imge;
     }
