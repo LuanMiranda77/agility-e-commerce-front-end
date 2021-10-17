@@ -30,7 +30,7 @@ function Login() {
                     history.push("/produto");
                 }
         }).catch(err =>{
-            Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
+              Utils.messagemShow(msg,'info', `AVISO`, err, 3000);
         });
     }
     return (

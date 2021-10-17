@@ -1,14 +1,13 @@
 import Dialog, { DialogProps } from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { observer } from 'mobx-react-lite'
 import { Button } from "primereact/button"
 import { Column } from 'primereact/column'
 import { DataTable } from 'primereact/datatable'
 import { Divider } from "primereact/divider"
-import { FileUpload, FileUploadFilesParam, FileUploadHeaderTemplateOptions } from 'primereact/fileupload'
+import { FileUpload, FileUploadFilesParam } from 'primereact/fileupload'
 import { InputNumber } from 'primereact/inputnumber'
 import { InputText } from "primereact/inputtext"
 import { InputTextarea } from 'primereact/inputtextarea'
@@ -21,6 +20,7 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { ComboMultSelect } from "../../components/ComboMultSelect"
+import { DialogConfirme } from '../../components/DialogConfirme'
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
 import { ICategoria } from '../../domain/types/ICategoria'
@@ -126,6 +126,11 @@ const Produto: React.FC = () => {
     }
     const editar = (produto: IProduto) => {
         store.update(produto);
+        let soma = 0;
+        store.produto.imagens.forEach(e => {
+            soma+=e.size;
+        } );
+        setTotalSize(soma);
         setProdutoDialog(true);
     }
 
@@ -269,13 +274,8 @@ const Produto: React.FC = () => {
     }
 
     const deleteSelectedAllImges = () => {
-        let array = store.produto.imagens.filter(valor => selectDelImges.includes(valor));
-        let soma=0;
-        array.forEach(e =>{
-            soma += e.size;
-        });
-        store.produto.imagens=array;
-        setTotalSize(soma);
+        store.produto.imagens=[];
+        setTotalSize(0);
         // history.push("/produto");
     }
 
@@ -287,8 +287,8 @@ const Produto: React.FC = () => {
         );
     }
 
-    const onTemplateRemove = (file: File) => {
-        let _array = store.produto.imagens.filter(f => f.name!==file.name);
+    const onTemplateRemove = (file: any) => {
+        let _array = store.produto.imagens.filter(f => f.objectURL!==file.objectURL);
         store.produto.imagens=_array;
         setTotalSize(totalSize - file.size);
         // callback();
@@ -382,7 +382,7 @@ const Produto: React.FC = () => {
                     <DialogTitle id="dialog-title" style={{ background: 'var(--primary)', padding: '0px' }}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
                             <img src={produtoIcone} alt="img" className='p-ml-5 p-mt-1' />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h3>
+                            <h5 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h5>
                             <button type="button" onClick={hideDialog} className="react-modal-close" style={{ background: 'var(--primary)', marginTop: '-10px' }}>
                                 <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.0rem', 'color': 'white' }} />
                             </button>
@@ -560,44 +560,14 @@ const Produto: React.FC = () => {
                 </Dialog>
 
             </div>
-            <Dialog
-                open={deleteProdutoDialog}
-                onClose={hideDeleteProdutoDialog}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogContent style={{background: '#fffaf3bd', border: '5px solid #FFA726', borderRight: '0', borderTop: '0', borderBottom: '0'}}>
-                    <div className="p-text-center p-pt-4">
-                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem', color: 'var(--red)' }} />
-                    </div>
-                    <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir o ítem?"}</DialogTitle>
-                    <DialogContentText id="alert-dialog-slide-description">
-                        O ítem {store.produto.titulo}
-                    </DialogContentText>
-                    <DialogActions>
-                        <ButtonBase label="Sim" icon="" className="p-button-success p-pl-6 p-pr-6 p-mr-3" onClick={hideDeleteProdutoDialog} />
-                        <ButtonBase onClick={() => { setDeleteprodutoDialog(false)}} label="Não" icon="" className="p-button-danger  p-pl-6 p-pr-6 p-mr-3" />
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
 
-            <Dialog
-                open={deleteProdutosDialog}
-                onClose={hideDialogConfirme}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogContent style={{background: '#fffaf3bd', border: '5px solid #FFA726', borderRight: '0', borderTop: '0', borderBottom: '0'}}>
-                    <div className="p-text-center p-pt-4">
-                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem', color: 'var(--red)' }} />
-                    </div>
-                    <DialogTitle id="alert-dialog-slide-title">Tem certeza que deseja excluir os  ítens selecionados?</DialogTitle>
-                    <DialogActions>
-                        <ButtonBase label="Sim" icon="" className="p-button-success p-pl-6 p-pr-6 p-mr-3" onClick={deleteSelectedAll} />
-                        <ButtonBase onClick={hideDialogConfirme} label="Não" icon="" className="p-button-danger  p-pl-6 p-pr-6 p-mr-3" />
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
+            <DialogConfirme show={deleteProdutoDialog} text={"item: "+store.produto.titulo} titulo='Realmente deseja deletar o item?'
+                            setFunctionButtonSim={hideDeleteProdutoDialog}  
+                            setFunctionButtonNao={() => setDeleteprodutoDialog(false)}/>
+
+            <DialogConfirme show={deleteProdutosDialog} text='' titulo='Realmente deseja deletar os  ítens selecionados?' 
+                            setFunctionButtonSim={deleteSelectedAll}  
+                            setFunctionButtonNao={hideDialogConfirme}/>
            
             <Toast ref={toast} />
         </Container>
