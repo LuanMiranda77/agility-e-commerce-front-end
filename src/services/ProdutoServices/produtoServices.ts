@@ -1,8 +1,5 @@
-import { FileImg } from "../../domain/types/FileImg";
 import { IProduto } from "../../domain/types/IProduto";
-import { Utils } from "../../utils/utils";
 import { api, imgur } from "../api";
-import { UploadFile } from './../uploadFile';
 
 
 
@@ -26,7 +23,6 @@ export class ProdutoService {
       }
       const response = await api.post(this.url, pEntity)
       .then(response => {
-        console.log(pEntity);
         return response.data;
       }).catch(error => {
         return Promise.reject(error.response.data[0]);
@@ -37,7 +33,6 @@ export class ProdutoService {
     public async update(pEntity: IProduto) : Promise<IProduto>{
       const response = await api.put(this.url+`/${pEntity.id}`,pEntity)
       .then(response => {
-        console.log(pEntity);
         return response.data;
       }).catch(error => {
         return Promise.reject(error.response.data[0]);
