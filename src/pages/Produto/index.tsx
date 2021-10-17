@@ -1,14 +1,13 @@
 import Dialog, { DialogProps } from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { observer } from 'mobx-react-lite'
 import { Button } from "primereact/button"
 import { Column } from 'primereact/column'
 import { DataTable } from 'primereact/datatable'
 import { Divider } from "primereact/divider"
-import { FileUpload, FileUploadFilesParam, FileUploadHeaderTemplateOptions } from 'primereact/fileupload'
+import { FileUpload, FileUploadFilesParam } from 'primereact/fileupload'
 import { InputNumber } from 'primereact/inputnumber'
 import { InputText } from "primereact/inputtext"
 import { InputTextarea } from 'primereact/inputtextarea'
@@ -21,9 +20,9 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { ComboMultSelect } from "../../components/ComboMultSelect"
+import { DialogConfirme } from '../../components/DialogConfirme'
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
-import { FileImg } from "../../domain/types/FileImg"
 import { ICategoria } from '../../domain/types/ICategoria'
 import { IProduto } from "../../domain/types/IProduto"
 import { CategoriaService } from '../../services/CategoriaService/categoriaService'
@@ -32,10 +31,11 @@ import ProdutoStore from "../../stores/ProdutoStore"
 import { Utils } from "../../utils/utils"
 import { Container, FormControl } from "./styles"
 
+
+
 const Produto: React.FC = () => {
 
     const store = useContext(ProdutoStore);
-    const { produto, produtos } = store;
     const [produtoDialog, setProdutoDialog] = useState(false);
     const [deleteProdutoDialog, setDeleteprodutoDialog] = useState(false);
     const [deleteProdutosDialog, setDeleteprodutosDialog] = useState(false);
@@ -45,17 +45,22 @@ const Produto: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
     const toast = useRef<Toast>(null);
-    const [selectCategorias, setSelectedCategorias] = useState([]);
     const produtoService = new ProdutoService();
     const categoriaService = new CategoriaService();
 
     useEffect(() => {
-        produtoService.getProdutos().then(data => {store.load(data)});
+        produtoService.getProdutos().then(data => {
+            store.load(data)
+        }).catch(error=>{
+            Utils.messagemShow(toast,'info', `AVISO`, error.mensagemUsuario, 3000);
+        });;
     }, []);
 
-    // useEffect(() => {
-    //     categoriaService.getCategorias().then(data => {setCategorias(data)});
-    // }, []);
+    useEffect(() => {
+        categoriaService.getCategorias().then(data => {
+            setCategorias(data);
+        });
+    }, []);
 
     const openDialog = () => {
         store.novo();
@@ -66,6 +71,8 @@ const Produto: React.FC = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProdutoDialog(false);
+        store.novo();
+        setTotalSize(0);
     }
 
     const hideDialogConfirme = () => {
@@ -73,8 +80,8 @@ const Produto: React.FC = () => {
     }
 
     const hideDeleteProdutoDialog = () => {
-        produtoService.delete(produto.id);
-        store.remove(produto.id);
+        produtoService.delete(store.produto.id);
+        store.remove(store.produto.id);
         //produtos.splice(produtos.indexOf(produto), 1);
         setDeleteprodutoDialog(false);
         
@@ -82,24 +89,48 @@ const Produto: React.FC = () => {
 
     const saveProduto = () => {
         setSubmitted(true);
-        if (produto.descricao.trim()) {
-            produtoService.save(produto).then(res => { 
-                setProdutoDialog(false);
-                if (produto.id===0) {
-                    const index = store.findIndexById(produto.id);
-                    produtos[index] = produto;
-                    Utils.messagemShow(toast,'success',`Item: ${produto.titulo}`, 'Alterado com sucesso!', 3000);
-                }
-                else {
+        if (store.produto.descricao.trim()) {
+            const produtoValidado = Utils.validarProduto(store.produto);
+
+            if(produtoValidado !== ''){
+                Utils.messagemShow(toast,'error', 'Error na validação do produto', produtoValidado,5000);
+                return false;
+            }
+
+            if (store.produto.id !== 0) {
+                produtoService.update(store.produto).then((res) => {
+                    const index = store.findIndexById(store.produto.id);
+                    store.produtos[index] = store.produto;
+                    Utils.messagemShow(toast,'success', 'Alterado com sucesso!',`Item: ${store.produto.titulo}`, 3000);
+                    hideDialog();
+                    
+                }).catch((error) => {
+                    Utils.messagemShow(toast,'error', 'Error na atualização', error.mensagemUsuario,3000);
+                    return false;
+                });
+            }else{
+                produtoService.save(store.produto).then(res => { 
                     store.add(res);
-                    Utils.messagemShow(toast,'success', `Item: ${produto.titulo}`, 'Cadastro com sucesso!', 3000);
-                }
-                
-             });
+                    Utils.messagemShow(toast,'success', 'Cadastro com sucesso!',`Item: ${store.produto.titulo}`, 3000);
+                    hideDialog();
+
+                }).catch(error=>{
+                    Utils.messagemShow(toast,'error', 'Error no cadastro', error.mensagemUsuario,3000);
+                    return false;
+                });
+            }
+        }else{
+            Utils.messagemShow(toast,'error', 'Error no cadastro', 'Descrição inválida',3000);
+            return false;
         }
     }
     const editar = (produto: IProduto) => {
         store.update(produto);
+        let soma = 0;
+        store.produto.imagens.forEach(e => {
+            soma+=e.size;
+        } );
+        setTotalSize(soma);
         setProdutoDialog(true);
     }
 
@@ -117,13 +148,16 @@ const Produto: React.FC = () => {
         setDeleteprodutosDialog(true);
     }
 
+    const setCategoria = (categoria: ICategoria[]) =>{
+        store.produto.categorias = categoria;
+    }
+
     const deleteSelectedAll = () => {
-        store.load(produtos.filter(valor => !selectedProdutos.includes(valor)));
-        let produtosDelete = produtos.filter(valor => selectedProdutos.includes(valor));
+        let produtosDelete = store.produtos.filter(valor => selectedProdutos.includes(valor));
         produtoService.deleteAll(produtosDelete);
-        setDeleteprodutosDialog(false);
+        store.load(store.produtos.filter(valor => !produtosDelete.includes(valor)));
         setSelectedprodutos([]);
-        // history.push("/produto");
+        setDeleteprodutosDialog(false);
     }
     
     const rightToolbarTemplate = () => {
@@ -136,12 +170,17 @@ const Produto: React.FC = () => {
     }
 
     const imageBodyTemplate = (rowData: IProduto) => {
-
-        return <img 
-            src={rowData.imagens[0].objectURL}
-            onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
-            className="produto-image"
-        />
+        let  imgURL = ''
+        if(rowData.imagens[0]){
+            imgURL = rowData.imagens[0].objectURL;
+        }
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return <img
+                id='link' 
+                src={imgURL}
+                onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
+                className="product-image"
+             />
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
@@ -216,86 +255,59 @@ const Produto: React.FC = () => {
         );
     }
 
-    //====================template imgages==========================//
+    //=====================template imgages==========================//
     const [totalSize, setTotalSize] = useState(0);
     const fileUploadRef = useRef<FileUpload>(null);
-    const [arrayFile, setArrayFile] = useState<File[]>([]);
+ 
+    const [selectDelImges, setSelectDelImges] = useState<File[]>([]);
 
     const onTemplateSelect = (file: FileUploadFilesParam) => {
-        if(arrayFile.length<4){
+        if(store.produto.imagens.length<4){
             let v = file.files[0];
-            let _array = arrayFile;
-            _array.push(v);
-            setArrayFile(_array);
-            let _totalSize = totalSize + v.size;
-            setTotalSize(_totalSize);
+            store.produto.imagens.push(v);
+            setTotalSize(totalSize + v.size);
         }else{
             Utils.messagemShow(toast,'error','Erro ao adicionar imagens', 'Só é permitido 4 imagens', 5000);
+            return false;
         }
         
     }
 
-    const onTemplateUpload = (arrayFile: FileUploadFilesParam) => {
-        let _totalSize = 0;
-        console.log(arrayFile);
-        arrayFile.files.forEach(file => {
-            _totalSize += (file.size || 0);
-        });
-        setTotalSize(_totalSize);
-        
-    }
-
-    const onTemplateRemove = (file: File, callback: any) => {
-        let _array = arrayFile.filter(f => f.name!==file.name);
-        setArrayFile(_array);
-        setTotalSize(totalSize - file.size);
-        callback();
-    }
-
-    const onTemplateClear = () => {
-        setArrayFile([]);
+    const deleteSelectedAllImges = () => {
+        store.produto.imagens=[];
         setTotalSize(0);
+        // history.push("/produto");
     }
 
-    const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
-        const { className, chooseButton, uploadButton, cancelButton } = options;
-        const value = totalSize / 5000;
-        const formatedValue = fileUploadRef && fileUploadRef.current ? Utils.fileConvertSizeByte(totalSize) : '0 B';
-
+    const actionBody = (rowData: File) => {
         return (
-            <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
-                {chooseButton}
-                {/* {uploadButton} */}
-                {cancelButton}
-                <ProgressBar value={value} displayValueTemplate={() => `${formatedValue} | 1MB`} style={{ width: '50%', height: '20px', marginLeft: 'auto' }}></ProgressBar>
+            <div className="buttonAction">
+                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => onTemplateRemove(rowData)} />
             </div>
         );
     }
 
-    const itemTemplate = (file: FileImg, props: any) => {
+    const onTemplateRemove = (file: any) => {
+        let _array = store.produto.imagens.filter(f => f.objectURL!==file.objectURL);
+        store.produto.imagens=_array;
+        setTotalSize(totalSize - file.size);
+        // callback();
+    }
+
+    const itemTemplate = (file: any, props: any) => {
         return (
             <div className="p-ai-center p-col-12">
                 <div className="p-ai-center p-sm-12 p-md-12 p-lg-12 p-xl-12 p-flex">
-                    <img alt={file.name} role="presentation" src={file.objectURL} width={'100%'} height={200} />
-                    <Tag value={props.formatSize} severity="warning" className="p-px-1 p-mt-2 p-mb-2 p-py-1 p-sm-12 p-md-12 p-lg-8 p-xl-8 p-mr-6" />
-                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger p-ml-auto p-mt-2" onClick={() => onTemplateRemove(file, props.onRemove)} />
+                    <img alt={file.name} role="presentation" src={file.objectURL} width={'80%'} height={200} />
+                    <Tag value={Utils.fileConvertSizeByte(file.size)} severity="warning" className="p-px-1 p-mt-2 p-mb-2 p-py-1 p-sm-8 p-md-9 p-lg-8 p-xl-8 p-mr-6" />
+                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger p-ml-auto p-mt-2" onClick={() => onTemplateRemove(file)} />
                     <Divider/>
                 </div>
             </div>
         )
     }
 
-    const emptyTemplate = () => {
-        return (
-            <div className="p-d-flex p-ai-center p-dir-col">
-                <i className="pi pi-image p-mt-3 p-p-5" style={{ 'fontSize': '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>
-                <span style={{ 'fontSize': '1.2em', color: 'var(--text-color-secondary)' }} className="p-my-5">Arraste e solte a imagem aqui</span>
-            </div>
-        )
-    }
     const chooseOptions = { icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined' };
-    const uploadOptions = { icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined' };
-    const cancelOptions = { icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
 
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
@@ -333,7 +345,7 @@ const Produto: React.FC = () => {
             <div className="datatable-crud-demo datatable-responsive-demo">
                 <div className="table">
                     <DataTable
-                        value={produtos} selection={selectedProdutos}
+                        value={store.produtos} selection={selectedProdutos}
                         onSelectionChange={(e) => setSelectedprodutos(e.value)}
                         dataKey="id" paginator rows={10}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -370,7 +382,7 @@ const Produto: React.FC = () => {
                     <DialogTitle id="dialog-title" style={{ background: 'var(--primary)', padding: '0px' }}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
                             <img src={produtoIcone} alt="img" className='p-ml-5 p-mt-1' />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h3>
+                            <h5 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h5>
                             <button type="button" onClick={hideDialog} className="react-modal-close" style={{ background: 'var(--primary)', marginTop: '-10px' }}>
                                 <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.0rem', 'color': 'white' }} />
                             </button>
@@ -383,22 +395,22 @@ const Produto: React.FC = () => {
                                     <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field" >
                                         <label htmlFor="codigo" className="p-col-12 p-mb-2">Código</label>
                                         <InputText id="barras"
-                                            value={produto.codigoBarras} onChange={(e) => produto.codigoBarras = e.target.value}
+                                            value={store.produto.codigoBarras} onChange={(e) => store.produto.codigoBarras = e.target.value}
                                             required autoFocus
-                                            className={classNames({ 'p-invalid': submitted && !produto.titulo },'p-col-2' )}
+                                            className={classNames({ 'p-invalid': submitted && !store.produto.titulo },'p-col-2' )}
                                         />
-                                        {submitted && !produto.titulo && <small className="p-error">Código é obtigatorio.</small>}
+                                        {submitted && !store.produto.titulo && <small className="p-error">Código é obtigatorio.</small>}
                                     </div>
                                     <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field">
                                         <label htmlFor="name">Titulo</label>
                                         <InputText id="name"
-                                            value={produto.titulo}
-                                            onChange={(e) => produto.titulo = e.target.value}
+                                            value={store.produto.titulo}
+                                            onChange={(e) => store.produto.titulo = e.target.value}
                                             required
-                                            className={classNames({ 'p-invalid': submitted && !produto.titulo })}
+                                            className={classNames({ 'p-invalid': submitted && !store.produto.titulo })}
                                             style={{ width: '100%' }}
                                         />
-                                        {submitted && !produto.titulo && <small className="p-error">Titulo é obtigatorio.</small>}
+                                        {submitted && !store.produto.titulo && <small className="p-error">Titulo é obtigatorio.</small>}
                                     </div>
                                 </div>
                                 <div className="p-formgrid p-grid">
@@ -406,8 +418,8 @@ const Produto: React.FC = () => {
                                         <label htmlFor="quantidade" className='p-col-12'>Quantidade</label>
                                         <InputNumber
                                             id="quantidade"
-                                            value={produto.quantidade}
-                                            onValueChange={(e) => produto.quantidade = e.target.value}
+                                            value={store.produto.quantidade}
+                                            onValueChange={(e) => store.produto.quantidade = e.target.value}
                                             className='p-col-12'
                                         />
                                     </div>
@@ -415,8 +427,8 @@ const Produto: React.FC = () => {
                                         <label htmlFor="pricovarejo"className='p-col-12' >Preço de Varejo</label>
                                         <InputNumber
                                             id="pricevarejo"
-                                            value={produto.precoVarejo}
-                                            onValueChange={(e) => produto.precoVarejo = e.target.value}
+                                            value={store.produto.precoVarejo}
+                                            onValueChange={(e) => store.produto.precoVarejo = e.target.value}
                                             mode="currency"
                                             currency="BRL"
                                             locale="pt-br"
@@ -427,8 +439,8 @@ const Produto: React.FC = () => {
                                         <label htmlFor="priceatacado" className='p-col-12'>Preço de Atacado</label>
                                         <InputNumber
                                             id="priceatacado"
-                                            value={produto.precoAtacado}
-                                            onValueChange={(e) => produto.precoAtacado = e.target.value}
+                                            value={store.produto.precoAtacado}
+                                            onValueChange={(e) => store.produto.precoAtacado = e.target.value}
                                             mode="currency"
                                             currency="BRL"
                                             locale="pt-br"
@@ -437,7 +449,7 @@ const Produto: React.FC = () => {
                                     </div>
 
                                     <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
-                                        <ComboMultSelect options={categorias} label='Categoria' selectOptions={selectCategorias} setFunction={setSelectedCategorias}/>
+                                        <ComboMultSelect options={categorias} label='Categoria' selectOptions={store.produto.categorias} setFunction={setCategoria}/>
                                     </div>
                                 </div>
                                 <div className="p-formgrid p-grid">
@@ -445,9 +457,9 @@ const Produto: React.FC = () => {
                                         <label htmlFor="peso" className="p-col-12" >Peso kg</label>
                                         <InputNumber
                                             id="peso"
-                                            value={produto.peso}
-                                            onValueChange={(e) => produto.peso = e.target.value}
-                                            mode="decimal" minFractionDigits={2}
+                                            value={store.produto.peso}
+                                            onValueChange={(e) => store.produto.peso = e.target.value}
+                                            mode="decimal" minFractionDigits={1}
                                             className="p-col-12"
                                             
                                         />
@@ -456,8 +468,8 @@ const Produto: React.FC = () => {
                                         <label htmlFor="comprimento"  className="p-col-12">Comprimento cm</label>
                                         <InputNumber
                                             id="comprimento"
-                                            value={produto.comprimento}
-                                            onValueChange={(e) => produto.comprimento = e.target.value}
+                                            value={store.produto.comprimento}
+                                            onValueChange={(e) => store.produto.comprimento = e.target.value}
                                             mode="decimal" minFractionDigits={2}
                                             className="p-col-12"
                                             
@@ -467,8 +479,8 @@ const Produto: React.FC = () => {
                                         <label htmlFor="altura" className="p-col-12" >Altura cm</label>
                                         <InputNumber
                                             id="altura"
-                                            value={produto.altura}
-                                            onValueChange={(e) => produto.altura = e.target.value}
+                                            value={store.produto.altura}
+                                            onValueChange={(e) => store.produto.altura = e.target.value}
                                             mode="decimal" minFractionDigits={2}
                                             className="p-col-12"
                                             
@@ -479,8 +491,8 @@ const Produto: React.FC = () => {
                                         <InputNumber
                                             id="peso"
                                             min={0} max={100}
-                                            value={produto.largura}
-                                            onValueChange={(e) => produto.largura = e.target.value}
+                                            value={store.produto.largura}
+                                            onValueChange={(e) => store.produto.largura = e.target.value}
                                             mode="decimal" minFractionDigits={2}
                                             className="p-col-12"
                                             
@@ -490,39 +502,51 @@ const Produto: React.FC = () => {
                                 </div>
                             </div>
                             <div className="p-grid p-col-12">
-                            <div className="p-card p-field p-mt-4  p-p-3 p-sm-12 p-md-12 p-lg-5 p-xl-6">
-                                <label htmlFor="description">Descrição</label>
-                                <InputTextarea
-                                    id="description"
-                                    style={{height: '60vh', width: '90vh'}}
-                                    value={produto.descricao}
-                                    onChange={(e) => produto.descricao = e.target.value}
-                                    required
-                                    rows={3}
-                                    cols={20} />
-                            </div>
+                                <div className="p-card p-field p-mt-4  p-p-2 p-sm-12 p-md-12 p-lg-5 p-xl-6 descri-campo">
+                                    <label htmlFor="description">Descrição</label>
+                                    <InputTextarea
+                                        id="description"
+                                        style={{height: '50vh', width: '100%'}}
+                                        value={store.produto.descricao}
+                                        onChange={(e) => store.produto.descricao = e.target.value}
+                                        required
+                                        rows={3}
+                                        cols={20} />
+                                </div>
 
-                            <div className="p-card p-p-3 p-sm-12 p-md-12 p-lg-6 p-mt-4 text-area">
-                                <label htmlFor="imagens">Imagens</label>
-                                <div className="p-grid p-field p-mt-2 p-pl-3 p-col-12 ">
-                                    <div className="p-sm-3 p-md-6 p-lg-12">
-                                        <FileUpload ref={fileUploadRef} 
-                                            name="foto-1"
-                                            className="p-mr-1 teste"
-                                            accept="image/*" 
-                                            maxFileSize={1000000} 
-                                            onUpload={onTemplateUpload} 
-                                            onSelect={onTemplateSelect} 
-                                            onError={onTemplateClear} 
-                                            onClear={onTemplateClear} 
-                                            headerTemplate={headerTemplate} 
-                                            itemTemplate={itemTemplate}
-                                            emptyTemplate={emptyTemplate}
-                                            chooseOptions={chooseOptions} 
-                                            uploadOptions={uploadOptions} 
-                                            cancelOptions={cancelOptions}
-                                        />
-                                    </div>
+                                <div className="p-card p-p-3 p-sm-12 p-md-12 p-lg-6 p-mt-4  mama">
+                                    <label htmlFor="imagens">Imagens</label>
+                                    <div className="p-grid p-field p-mt-2 p-pl-3 p-col-12 ">
+                                        <div className="p-sm-12 p-md-12 p-lg-12">
+                                            <div className="table-images">
+                                                <div className="p-grid p-flex p-mr-4 p-p-2">
+                                                    <FileUpload mode="basic" 
+                                                    chooseOptions={chooseOptions} 
+                                                    name="button-upload"
+                                                    accept="image/*" 
+                                                    maxFileSize={1000000}
+                                                    onSelect={onTemplateSelect}
+                                                    auto chooseLabel="" 
+                                                    />
+                                                    <ButtonBase label="" icon="pi pi-times" className="p-ml-4 p-button-rounded p-button-danger p-button-outlined" onClick={deleteSelectedAllImges}/>
+                                                    <ProgressBar className='p-mt-2' value={(totalSize/10000)} displayValueTemplate={() => `${Utils.fileConvertSizeByte(totalSize)} | 1MB`} style={{ width: '70%', height: '20px', marginLeft: 'auto' }}></ProgressBar>
+                                                </div>
+                                                <DataTable
+                                                    value={store.produto.imagens} selection={selectDelImges}
+                                                    onSelectionChange={(e) => setSelectDelImges(e.value)}
+                                                    dataKey="id"
+                                                    scrollable
+                                                    scrollHeight={'20rem'}
+                                                    className="p-datatable-responsive-demo"
+                                                >
+                                                    {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                                                    <Column header="" body={itemTemplate}></Column>
+                                                    {/* <Column body={actionBody}></Column> */}
+                                                </DataTable>
+                                            </div>
+                                        </div>
+                                    
+                                    
                                 </div>
                             </div>
                             </div>
@@ -536,44 +560,14 @@ const Produto: React.FC = () => {
                 </Dialog>
 
             </div>
-            <Dialog
-                open={deleteProdutoDialog}
-                onClose={hideDeleteProdutoDialog}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogContent style={{background: '#fffaf3bd', border: '5px solid #FFA726', borderRight: '0', borderTop: '0', borderBottom: '0'}}>
-                    <div className="p-text-center p-pt-4">
-                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem', color: 'var(--red)' }} />
-                    </div>
-                    <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir o ítem?"}</DialogTitle>
-                    <DialogContentText id="alert-dialog-slide-description">
-                        O ítem {produto.titulo}
-                    </DialogContentText>
-                    <DialogActions>
-                        <ButtonBase label="Sim" icon="" className="p-button-success p-pl-6 p-pr-6 p-mr-3" onClick={hideDeleteProdutoDialog} />
-                        <ButtonBase onClick={() => { setDeleteprodutoDialog(false)}} label="Não" icon="" className="p-button-danger  p-pl-6 p-pr-6 p-mr-3" />
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
 
-            <Dialog
-                open={deleteProdutosDialog}
-                onClose={hideDialogConfirme}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogContent style={{background: '#fffaf3bd', border: '5px solid #FFA726', borderRight: '0', borderTop: '0', borderBottom: '0'}}>
-                    <div className="p-text-center p-pt-4">
-                        <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem', color: 'var(--red)' }} />
-                    </div>
-                    <DialogTitle id="alert-dialog-slide-title">Tem certeza que deseja excluir os  ítens selecionados?</DialogTitle>
-                    <DialogActions>
-                        <ButtonBase label="Sim" icon="" className="p-button-success p-pl-6 p-pr-6 p-mr-3" onClick={deleteSelectedAll} />
-                        <ButtonBase onClick={hideDialogConfirme} label="Não" icon="" className="p-button-danger  p-pl-6 p-pr-6 p-mr-3" />
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
+            <DialogConfirme show={deleteProdutoDialog} text={"item: "+store.produto.titulo} titulo='Realmente deseja deletar o item?'
+                            setFunctionButtonSim={hideDeleteProdutoDialog}  
+                            setFunctionButtonNao={() => setDeleteprodutoDialog(false)}/>
+
+            <DialogConfirme show={deleteProdutosDialog} text='' titulo='Realmente deseja deletar os  ítens selecionados?' 
+                            setFunctionButtonSim={deleteSelectedAll}  
+                            setFunctionButtonNao={hideDialogConfirme}/>
            
             <Toast ref={toast} />
         </Container>

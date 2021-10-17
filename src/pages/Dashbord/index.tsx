@@ -1,5 +1,5 @@
 import { Divider } from 'primereact/divider';
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useRef } from 'react';
 import Summary from '../../components/Summary';
 import { Container } from './styles';
 import { Card } from 'primereact/card';
@@ -10,6 +10,7 @@ import { IProduto } from '../../domain/types/IProduto';
 import { ProdutoService } from '../../services/ProdutoServices/produtoServices';
 import ProdutoStore from "../../stores/ProdutoStore"
 import { Utils } from '../../utils/utils';
+import { Toast } from 'primereact/toast';
 
 
 const Dashbord: React.FC = () => {
@@ -18,18 +19,19 @@ const Dashbord: React.FC = () => {
   const pedidoPagos = 500000;
   const pedidoCancelados = 30000;
   const total = Utils.formatCurrency(5000);
+  const msg = useRef<Toast>(null);
 
   const store = useContext(ProdutoStore);
-  const [produtos, setProduto]= useState([]);
+  const [produtos, setProduto]= useState<IProduto[]>([]);
 
 
   const produtoService = new ProdutoService();
 
   useEffect(() => {
-    produtoService.getProdutos().then(data => {
-      setProduto(data);
+    produtoService.getProdutos().then(data => setProduto(data))
+    .catch(error => {
+      Utils.messagemShow(msg,'error', 'Erro de listagem', error.mensagemUsuario,5000);
     });
-
   }, []);
 
   const responsiveOptions = [
@@ -109,6 +111,7 @@ const Dashbord: React.FC = () => {
           autoplayInterval={5000} itemTemplate={productTemplate} />
     </div>
     <FooterAdmin />
+    <Toast ref={msg} />
   </Container>;
 }
 

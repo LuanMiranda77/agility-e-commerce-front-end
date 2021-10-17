@@ -1,36 +1,68 @@
-import { UploadFile } from './../uploadFile';
+import { IProduto } from "../../domain/types/IProduto";
+import { api, imgur } from "../api";
 
-import { api } from "../api";
-import {IProduto} from "../../domain/types/IProduto";
-import { FileImg } from "../../domain/types/FileImg";
+
 
 export class ProdutoService {
 
     url='api/produto';
   
-    async save(pEntity: IProduto,  file: File[]){
-      const updateFile = new UploadFile();
-      file.forEach(e  =>  {
-        const img = updateFile.uploadImg(e);
-        const imge: FileImg={objectURL: '', hash: ''}
-        pEntity.imagens.push(img);
+   public async save(pEntity: IProduto) : Promise<IProduto>{
+      let cont=0;
+      for(let f of pEntity.imagens) {
+        if (f && f.size < 5e6) {
+            const formData = new FormData();
+            formData.append('image', f);
+            const res = await imgur.post(`https://api.imgur.com/3/image`, formData);
+            pEntity.imagens[cont].objectURL =res.data.data.link;
+            pEntity.imagens[cont].hash = res.data.data.deletehash;
+            pEntity.imagens[cont].nome = "|"+f.name;
+            pEntity.imagens[cont].tam = "|"+res.data.data.size;
+        }
+        cont++;
+      }
+      const response = await api.post(this.url, pEntity)
+      .then(response => {
+        return response.data;
+      }).catch(error => {
+        return Promise.reject(error.response.data[0]);
       });
-      const response = await api.post(this.url, pEntity);
-      return response.data;
+      return response;
     }
 
-    update(pEntity: IProduto) : void{
-      api.put(this.url+`/${pEntity.id}`,pEntity);
+    public async update(pEntity: IProduto) : Promise<IProduto>{
+      const response = await api.put(this.url+`/${pEntity.id}`,pEntity)
+      .then(response => {
+        return response.data;
+      }).catch(error => {
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
     }
-    delete(id:number){
-      api.delete(this.url+`/${id}`);
+
+    public async delete(id:number){
+      const response = await api.delete(this.url+`/${id}`).catch(error => {
+        return Promise.reject(error.response.data[0]);
+      });;
+      return response;
     }
-    deleteAll(array: IProduto[]){
-      api.post(this.url+`/deleteall`, array);
+
+    public async deleteAll(array: IProduto[]){
+      const response = await api.post(this.url+`/deleteall`, array).then(response => {
+        return response.data;
+      }).catch(error => {
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
     }
-    async getProdutos() {
-        const response = await api.get(this.url);
-      return response.data;
+
+    public async getProdutos() : Promise<IProduto[]> {
+        const response = await api.get(this.url).then(response =>{
+          return response.data;
+        }).catch(error=>{
+          return Promise.reject(error);
+        });
+      return response;
     }
 
   

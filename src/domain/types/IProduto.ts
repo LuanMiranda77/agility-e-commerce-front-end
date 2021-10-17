@@ -1,6 +1,5 @@
-import { FileImg } from "./FileImg";
+
 import { ICategoria } from "./ICategoria";
-import { ImagemProduto } from "./ImagemProduto";
 
 export interface IProduto{
   id: number;
@@ -15,6 +14,6 @@ export interface IProduto{
   comprimento: number;
   altura: number;
   largura: number;
-  imagens: FileImg[];
-  categorias: ICategoria[];
+  imagens: Array<any>;
+  categorias: Array<ICategoria>;
 }

@@ -7,8 +7,10 @@ import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
 import { InputGroup } from '../../components/InputGroup';
 import { LoginService } from '../../services/LoginService/LoginService';
 import { observer} from 'mobx-react-lite';
-import {useContext} from 'react';
+import {useContext, useRef} from 'react';
 import UserStore from "../../stores/userStore";
+import { Toast } from 'primereact/toast';
+import { Utils } from '../../utils/utils';
 
 
 // ========================================
@@ -18,18 +20,17 @@ import UserStore from "../../stores/userStore";
 function Login() {
     const store = useContext(UserStore);
     const history = useHistory();
-    const {user} = store;
+    const msg = useRef<Toast>(null);
     const loginService = new LoginService();
 
     const logar = () => {
         
-        loginService.login(user).then(data => {
-            console.log(data);
-            if (data === true) {
-                history.push("/produto");
-            }else {
-               console.log("errro");
-            }
+        loginService.login(store.user).then(response => {
+                if(response===true){
+                    history.push("/produto");
+                }
+        }).catch(err =>{
+              Utils.messagemShow(msg,'info', `AVISO`, err, 3000);
         });
     }
     return (
@@ -46,10 +47,10 @@ function Login() {
                         <div className="p-fluid">
                             <h3>Login</h3>
                             <div className="p-field">
-                                <InputGroup type="text" label="E-mail" placeholder="Digite seu e-mail" icon="pi pi-user" onChange={(e) => user.email = e.target.value} required autoFocus></InputGroup>
+                                <InputGroup type="text" label="E-mail" placeholder="Digite seu e-mail" icon="pi pi-user" onChange={(e) => store.user.email = e.target.value} required autoFocus></InputGroup>
                             </div>
                             <div className="p-field">
-                                <InputGroup label="Senha" placeholder="Digite a senha" icon="pi pi-key" type="password" onChange={(e) => user.password = e.target.value} required autoFocus></InputGroup>
+                                <InputGroup label="Senha" placeholder="Digite a senha" icon="pi pi-key" type="password" onChange={(e) => store.user.password = e.target.value} required autoFocus></InputGroup>
                             </div>
                             <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" onClick={logar} />
                             <div className="div-link">
@@ -72,6 +73,7 @@ function Login() {
                 </div>
               
             </div>
+            <Toast ref={msg}/>
 
         </Container>
 
