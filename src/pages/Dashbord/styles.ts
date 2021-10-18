@@ -3,6 +3,11 @@ import styled from "styled-components";
 export const Container = styled.div`
   margin-top: 7rem;
 
+  img{
+        max-width: 4rem;
+        max-height: 5rem;
+  }
+
 .title{
   margin:0 8rem;
   color: var(--secondary);
@@ -11,7 +16,7 @@ export const Container = styled.div`
   padding-top: 2rem;
   
 }
-.card{
+.card-total{
   background: var(--white);
   text-align: left;
 }
@@ -21,8 +26,8 @@ export const Container = styled.div`
   padding-bottom: 2rem;
 }
 .total-style{
-  margin:0 7.5rem;
-  font-size: 100px;
+  margin-top: 3rem;
+  font-size: 50px;
   color: var(--green);
   text-align:center;
 }
@@ -30,6 +35,7 @@ export const Container = styled.div`
  .center{
   margin:0 auto;
   justify-content: center;
+  padding: 0;
   
  }
  /* CarouselDemo.css */

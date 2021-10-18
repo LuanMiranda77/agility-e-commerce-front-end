@@ -6,6 +6,7 @@ width:100%;
 top: 0;
 z-index: 12;
 
+
 .card-admin{
   height:70px;
 
@@ -16,7 +17,7 @@ z-index: 12;
 }
 .logo{
   margin-top: -10px;
-  width: 6.5rem;
+  max-width: 5rem;
 }
 
 

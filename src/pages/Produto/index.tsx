@@ -21,6 +21,7 @@ import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { ComboMultSelect } from "../../components/ComboMultSelect"
 import { DialogConfirme } from '../../components/DialogConfirme'
+import FooterAdmin from '../../components/FooterAdmin'
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
 import { ICategoria } from '../../domain/types/ICategoria'
@@ -570,6 +571,7 @@ const Produto: React.FC = () => {
                             setFunctionButtonNao={hideDialogConfirme}/>
            
             <Toast ref={toast} />
+            <FooterAdmin />
         </Container>
     )
 }
