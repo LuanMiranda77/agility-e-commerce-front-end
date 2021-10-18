@@ -163,8 +163,6 @@ const Categoria: React.FC = () => {
             </div>
             
             <div className="datatable-crud-demo datatable-responsive-demo">
-                <Toast />
-
                 <div className="table">
                     <DataTable 
                          value={store.categorias} selection={selectedCategorias} 

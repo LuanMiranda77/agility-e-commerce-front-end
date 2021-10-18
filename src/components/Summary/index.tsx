@@ -16,7 +16,7 @@ const Summary: React.FC<CardProps> = (props) => {
   return <Container>
     <Card className="card">
       <div className="p-flex">
-        <label id='valor' className="p-col-12 p-mr-6" style={{ color: props.color}}>{valor}</label>
+        <label id='valor' className="p-col-12" style={{ color: props.color}}>{valor}</label>
         <i id={props.icon} className={"icon " + props.icon} style={{ fontSize: '2em', color: props.color}}></i>
       </div>
         <h5 className="p-pb-1 p-pl-2">{props.description}</h5>
