@@ -27,7 +27,7 @@ import { InputSearch } from "../../components/InputSearch"
 import { ICategoria } from '../../domain/types/ICategoria'
 import { IProduto } from "../../domain/types/IProduto"
 import { CategoriaService } from '../../services/CategoriaService/categoriaService'
-import { ProdutoService } from "../../services/ProdutoServices/produtoServices"
+import { ProdutoService } from "../../services/ProdutoService/produtoServices"
 import ProdutoStore from "../../stores/ProdutoStore"
 import { Utils } from "../../utils/utils"
 import { Container, FormControl } from "./styles"
