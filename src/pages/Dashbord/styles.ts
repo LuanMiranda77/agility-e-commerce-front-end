@@ -3,6 +3,11 @@ import styled from "styled-components";
 export const Container = styled.div`
   margin-top: 7rem;
 
+  img{
+        max-width: 4rem;
+        max-height: 5rem;
+  }
+
 .title{
   margin:0 8rem;
   color: var(--secondary);
@@ -11,7 +16,7 @@ export const Container = styled.div`
   padding-top: 2rem;
   
 }
-.card{
+.card-total{
   background: var(--white);
   text-align: left;
 }
@@ -21,8 +26,8 @@ export const Container = styled.div`
   padding-bottom: 2rem;
 }
 .total-style{
-  margin:0 7.5rem;
-  font-size: 100px;
+  margin-top: 3rem;
+  font-size: 50px;
   color: var(--green);
   text-align:center;
 }
@@ -30,8 +35,14 @@ export const Container = styled.div`
  .center{
   margin:0 auto;
   justify-content: center;
+  padding: 0;
   
  }
+ 
+ .datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+        display: none;
+  }
+  
  /* CarouselDemo.css */
 
 .carousel-demo .product-item .product-item-content {
@@ -68,7 +79,34 @@ export const Container = styled.div`
         width: 89%;
         font-size: 22px;
       }
-  }
- 
 
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead > tr > th,
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot > tr > td {
+        display: none !important;
+        
+    }
+
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td {
+        text-align: left;
+        display: block;
+        width: 30rem;
+        float: left;
+        clear: left;
+        border: 0 none;
+        background: #fff;
+    }
+
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+        padding: .4rem;
+        min-width: 30%;
+        display: inline-block;
+        margin: -.4em 1em -.4em -.4rem;
+        font-weight: bold;
+    }
+
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td:last-child {
+        border-bottom: 1px solid var(--surface-d);
+    }
+  
+  }
 `;

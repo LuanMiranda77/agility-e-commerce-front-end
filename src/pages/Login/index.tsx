@@ -27,7 +27,7 @@ function Login() {
         
         loginService.login(store.user).then(response => {
                 if(response===true){
-                    history.push("/produto");
+                    history.push("/dashbord");
                 }
         }).catch(err =>{
               Utils.messagemShow(msg,'info', `AVISO`, err, 3000);
