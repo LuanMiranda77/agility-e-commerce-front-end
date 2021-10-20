@@ -5,6 +5,7 @@ import { IFrete } from "../domain/types/IFrente";
 import { IProduto } from "../domain/types/IProduto";
 
 export class Utils {
+
     /**
     * Format bytes as human-readable text.
     * 
@@ -15,6 +16,11 @@ export class Utils {
     * 
     * @return Formatted string.
     */
+    /**
+     *@momen lib que formata datas e horas
+    */
+    
+
     static fileConvertSizeByte = (bytes: number) => {
         const si = true, dp = 1
         const thresh = si ? 1000 : 1024;
@@ -102,31 +108,25 @@ export class Utils {
     }
 
     public static getUltimasHoras(){
-        let data = new Date();
+        const moment = require('moment');
         const horas = [];
         for (let i = 0; i < 12; i++) {
-            let hora = new Date().getHours() - i;
-            horas.push(hora.toString().padStart(4,'00:'));
+            let hora = moment(moment().subtract(i, 'hour').zone("-03:00")).format('HH:mm');
+            horas.push(hora);
         }
-        return horas;
+        return horas.reverse();
         
     }
 
-    public static getNomesCategorias(array: any[]){
-        const nomes: string[] = [];
-        array.forEach(item => {
-            nomes.push(item.nome);
-        });
-        
-        return nomes;
+    public static convertArrayNumberByArrayMoney(array: any[]){
+        let _array = array.map(valor => this.formatCurrency(valor));
+        return _array;
     }
 
-    public static getNomesClientes(array: any[]){
-        const nomes: string[] = [];
-        array.forEach(item => {
-            nomes.push(item.nome);
-        });
-        
-        return nomes;
+    public static subtrairDiasByData(dias: number){
+       const moment = require('moment');
+       return moment().subtract(dias, 'days');
     }
+
+    
 }
