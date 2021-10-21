@@ -23,6 +23,15 @@ export const Container  = styled.div`
         }
     }
 
+    .react-modal-voltar{
+        background: #fff;
+        border: 0;
+    }
+
+    
+
+    
+
     .card { 
         position: fixed;
         width: 100%;
@@ -147,8 +156,28 @@ export const FormControl = styled.form`
     button{
         background: 'ffff';
     }
+
+    .product-image {
+        width: 100px;
+        height: 100px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .datatable-responsive-demo .p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+        display: none;
+    }
+
     label{
         color: var(--primary);
+    }
+
+    .button-status{
+        background: #fff;
+        border: 0;
+        i{
+            font-size: 30px;
+            color: var(--text-title);
+        }
     }
 
     .card{
@@ -169,5 +198,85 @@ export const FormControl = styled.form`
         width:"100%";
         float:right;
     }
+    .button-action{
+        max-height: 40px;
+        color: var(--white);
+        font-weight: bold;
+        border-radius: 0.5rem;
+        margin-top: -10px;
+        margin-bottom: 20px;
+    }
+
+    /* TimelineDemo.css */
+
+    .timeline-demo .custom-marker {
+        display: flex;
+        width: 2rem;
+        height: 2rem;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        border-radius: 50%;
+        z-index: 1;
+    }
+
+    .timeline-demo .p-timeline-event-content,
+    .timeline-demo .p-timeline-event-opposite {
+        line-height: 1;
+    }
+
+
+    @media screen and (max-width: 40em) {
+
+  .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead > tr > th,
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot > tr > td {
+        display: none !important;
+        
+    }
+
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td {
+        text-align: left;
+        display: block;
+        width: 30rem;
+        float: left;
+        clear: left;
+        border: 0 none;
+        background: #fff;
+    }
+
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td .p-column-title {
+        padding: .4rem;
+        min-width: 30%;
+        display: inline-block;
+        margin: -.4em 1em -.4em -.4rem;
+        font-weight: bold;
+    }
+
+    .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td:last-child {
+        border-bottom: 1px solid var(--surface-d);
+    }
+
+    .button-action{
+        max-height: 40px;
+        color: var(--white);
+        font-weight: bold;
+        border-radius: 0.5rem;
+        margin-right: 10px;
+    }
+
+    .timeline-demo .customized-timeline .p-timeline-event:nth-child(even) {
+        flex-direction: row !important;
+    }
+    .timeline-demo .customized-timeline .p-timeline-event:nth-child(even) .p-timeline-event-content {
+        text-align: left !important;
+    }
+    .timeline-demo .customized-timeline .p-timeline-event-opposite {
+        flex: 0;
+    }
+    .timeline-demo .customized-timeline .p-card {
+        margin-top: 1rem;
+    }
+  
+  }
    
 `;

@@ -33,6 +33,7 @@ import { red } from "@material-ui/core/colors"
 import { Tag } from 'primereact/tag'
 import iconCarrinho from '../../assets/iconCarrinho.svg';
 import { Utils } from "../../utils/utils"
+import { DetalhePedido } from "./detalhe"
 
 
 const Pedido: React.FC = () => {
@@ -323,47 +324,10 @@ const Pedido: React.FC = () => {
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
-{/* =============================================inicio do modal==========================================================================*/}
-                <Dialog 
-                    className="teste"
-                    open={modalDialog}
-                    onClose={hideDialog}
-                    scroll={scroll}
-                    aria-labelledby="scroll-dialog-title"
-                    aria-describedby="scroll-dialog-description"
-                    maxWidth="lg"
-                    >
-                    <DialogTitle id="scroll-dialog-title" style={{ background: 'var(--primary)'}}>
-                        <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                            {/* <img src={ pedidoIcone} alt="img" /> */}
-                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={{ color: 'var(--white)'}}>Cadastro de pedido</h3>
-                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{ background: 'var(--primary)'}}>
-                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.5rem','color': 'white'}} />
-                            </button>
-                        </div>
-                    </DialogTitle>
-                    <DialogContent dividers={scroll === 'paper'} style={{ background: 'var(--background)'}}>
-                    <FormControl>
-                        <div className="card p-p-4">
-                           
-                        </div>
-
-                    </FormControl>
-                    </DialogContent>
-                    <DialogActions >
-                    <div className="but-save">
-                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={save} />
-                        </div>
-                    </DialogActions>
-                </Dialog>
-
             </div>
-       
-    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success">
-            Item Cadastrado com Sucesso!
-        </Alert>
-    </Snackbar>
+{/* =============================================inicio do modal==========================================================================*/}
+    <DetalhePedido modalDialog={modalDialog} closeFuncion={hideDialog} store={store}/>
+    
     </Container>
   );
 }
