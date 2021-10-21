@@ -9,13 +9,13 @@ class PedidoStore{
   objNew = {
    //adicionar atributos aqui
    id: 0,
-   dataCriacao: new Date,
-   dataFechamento: new Date,
+   dataCriacao: new Date(),
+   dataFechamento: new Date(),
    valorTotal: 0,
    valorDesconto: 0,
    valorFrete: 0,
    status: '',
-   cliente: ''
+   cliente: 'fddfdf'
   };
 
   @observable
