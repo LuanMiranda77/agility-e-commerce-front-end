@@ -43,7 +43,6 @@ class ProdutoStore {
   @action
   novo = () => {
     this.produto = this.objNew;
-    console.log(this.produto);
   }
 
   @action

@@ -48,6 +48,7 @@ export const Container = styled.div`
 
     .product-image {
         width: 100px;
+        height: 100px;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     }
 
@@ -170,11 +171,15 @@ export const FormControl = styled.form`
     label{
         color: var(--primary);
     }
+    .mama{
+        margin-right: -1rem;
+        margin-left: 1rem
+    }
     .table-images{
         margin-top: 0px;
     }
-    .header-imgs{
-        
+    .descri-campo{
+      margin-bottom: -1px;
     }
 
     .multiselect-custom .p-multiselect-label:not(.p-placeholder):not(.p-multiselect-items-label) {
@@ -225,13 +230,22 @@ export const FormControl = styled.form`
         width:"100%";
         float:right;
     }
+    
     @media screen and (max-width: 40em) {
         h3{
-            font-size: 8px;
+            font-size: 4px;
         }
         .titulo-modal{
-            font-size: 8px;
+            font-size: 18px;
             color: var(--white);
+        }
+        .table-images{
+            margin-top: 0px;
+        }
+
+        .mama{
+            margin-right: 0rem;
+            margin-left: 1rem;     
         }
     }
    

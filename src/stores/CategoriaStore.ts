@@ -9,7 +9,7 @@ class CategoriaStore{
   objNew = {
    //adicionar atributos aqui
    id: 0,
-  descricao: ''
+  nome: ''
   };
 
   @observable

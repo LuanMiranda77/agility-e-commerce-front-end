@@ -35,6 +35,7 @@ import iconCarrinho from '../../assets/iconCarrinho.svg';
 import InputDateBase from "../../components/InputDateBase"
 import { Calendar } from 'primereact/calendar';
 import { Utils } from "../../utils/utils"
+import { DetalhePedido } from "./detalhe"
 
 const Pedido: React.FC = () => {
     const store = useContext(PedidoStore);
@@ -347,6 +348,7 @@ const Pedido: React.FC = () => {
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
+<<<<<<< HEAD
                 {/* =============================================inicio do modal==========================================================================*/}
                 <Dialog
                     className="teste"
@@ -389,6 +391,14 @@ const Pedido: React.FC = () => {
             </Snackbar>
         </Container>
     );
+=======
+            </div>
+{/* =============================================inicio do modal==========================================================================*/}
+    <DetalhePedido modalDialog={modalDialog} closeFuncion={hideDialog} store={store}/>
+    
+    </Container>
+  );
+>>>>>>> test
 }
 
 export default observer(Pedido);

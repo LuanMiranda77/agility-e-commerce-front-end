@@ -1,7 +1,5 @@
-import { FileImg } from "../../domain/types/FileImg";
 import { IProduto } from "../../domain/types/IProduto";
-import { api } from "../api";
-import { UploadFile } from './../uploadFile';
+import { api, imgur } from "../api";
 
 
 
@@ -9,19 +7,20 @@ export class ProdutoService {
 
     url='api/produto';
   
-   public async save(pEntity: IProduto,  file: File[]) : Promise<IProduto>{
-      const updateFile = new UploadFile();
-      file.forEach(e  =>  {
-        updateFile.uploadImg(e).then(res =>{
-          // const imge: FileImg={objectURL: '', hash: '', size: 0}
-          // imge.hash = res?.hash ? res.hash : "";
-          // imge.objectURL = res?.objectURL ? res.objectURL : '';
-          // imge.size = e.size;
-          pEntity.imagens.push(res);
-        }).catch(error => {
-        return Promise.reject(error.response.data);
-      });;
-      })
+   public async save(pEntity: IProduto) : Promise<IProduto>{
+      let cont=0;
+      for(let f of pEntity.imagens) {
+        if (f && f.size < 5e6) {
+            const formData = new FormData();
+            formData.append('image', f);
+            const res = await imgur.post(`https://api.imgur.com/3/image`, formData);
+            pEntity.imagens[cont].objectURL =res.data.data.link;
+            pEntity.imagens[cont].hash = res.data.data.deletehash;
+            pEntity.imagens[cont].nome = "|"+f.name;
+            pEntity.imagens[cont].tam = "|"+res.data.data.size;
+        }
+        cont++;
+      }
       const response = await api.post(this.url, pEntity)
       .then(response => {
         return response.data;
