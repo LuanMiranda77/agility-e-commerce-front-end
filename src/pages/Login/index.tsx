@@ -1,3 +1,4 @@
+import React, { useState} from 'react';
 import { Container } from './styles'
 import { Divider } from 'primereact/divider';
 import { useHistory } from 'react-router-dom';
@@ -11,6 +12,8 @@ import {useContext, useRef} from 'react';
 import UserStore from "../../stores/userStore";
 import { Toast } from 'primereact/toast';
 import { Utils } from '../../utils/utils';
+import { ModalRecuperaSenha } from './modalRecuperaSenha';
+
 
 
 // ========================================
@@ -33,6 +36,13 @@ function Login() {
               Utils.messagemShow(msg,'info', `AVISO`, err, 3000);
         });
     }
+
+    const [modalSenha, setModalSenha] = useState(false);
+
+    const closeModalSenha = () =>{
+        setModalSenha(false);
+    }
+
     return (
         <Container>
             <div className="card">
@@ -55,7 +65,9 @@ function Login() {
                             <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" onClick={logar} />
                             <div className="div-link">
                                 <a href="/user" ><span className="cadastro">Cadastre-se</span></a>
-                                <a href="/esquece"><span className="esquece">Esquece a senha</span></a>
+                                <a onClick={()=> setModalSenha(true)} style={{cursor:'pointer'}} >
+                                    <span className="esquece">Esquece a senha</span>
+                                </a>
                             </div>
 
                         </div>
@@ -74,7 +86,7 @@ function Login() {
               
             </div>
             <Toast ref={msg}/>
-
+            <ModalRecuperaSenha modalDialog={modalSenha} closeFuncion={closeModalSenha}/>
         </Container>
 
     )

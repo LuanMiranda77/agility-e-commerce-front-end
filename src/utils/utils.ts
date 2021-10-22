@@ -47,7 +47,9 @@ export class Utils {
     static formatCurrency = (value: number) => {
         return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
     }
-    //@params de type = 'success', 'error', 'info','warn' 
+    /**
+     * @params de type = 'success', 'error', 'info','warn'
+    */ 
     static messagemShow = (toast: RefObject<Toast>, type: string, title: string, body: string, time: number) => {
         if (toast.current != null) {
             toast.current.show({ severity: type, summary: title, detail: body, life: time });

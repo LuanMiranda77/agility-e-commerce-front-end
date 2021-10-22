@@ -5,7 +5,7 @@ import { IUser } from "../../domain/types/IUser";
 
 export class LoginService {
 
-    url='api/usuario/login';
+    url='api/usuario';
     auth='/tokken';
     erro='';
 
@@ -15,7 +15,18 @@ export class LoginService {
             login(response.data);
 
         });
-        const response = await api.post(this.url, pEntity)
+        const response = await api.post(this.url+'/login', pEntity)
+        .then( resp =>{
+            return resp.data;
+        })
+        .catch(error => {
+            return Promise.reject(error.response.data[0]);
+        });
+        return response;
+    }
+
+    public async recuperarSenha(email: string){
+        const response = await api.post(this.url+'/recuperar-senha', email)
         .then( resp =>{
             return resp.data;
         })
