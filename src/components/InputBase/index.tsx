@@ -12,7 +12,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const InputBase: React.FC<InputProps> = (props) => {
   let id = props.label.replaceAll(" ","").toLowerCase();
   return (
-    <Container>
+    <Container className="p-flex p-grid">
         <label htmlFor={props.label}>{props.label}</label>
         <InputText id={id} name={id} {...props}></InputText>
     </Container>
