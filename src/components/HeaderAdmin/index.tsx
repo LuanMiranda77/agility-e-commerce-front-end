@@ -193,7 +193,7 @@ export function HeaderAdmin() {
     );
   }
   const [state, setStatus] = useState(false);
-
+// Lógica de links do menu
   const toggleDrawer = (open: boolean,  page: string) => (
     event: React.KeyboardEvent | React.MouseEvent,
   ) => {
@@ -204,6 +204,7 @@ export function HeaderAdmin() {
     ) {
       return;
     }
+    
     setStatus(open);
     if(page==='dashbord'){
       history.push(`/${page}`);
@@ -211,6 +212,8 @@ export function HeaderAdmin() {
       history.push(`/${page}`);
     }else  if(page==='categoria'){
       history.push(`/${page}`);
+    }else if(page==='pedido'){
+      history.push(`/${page}`)
     }
     
   };
@@ -271,7 +274,7 @@ export function HeaderAdmin() {
             labelInfo="733"
             color="#3c8039"
             bgColor="#e6f4ea"
-            onClick={toggleDrawer(false,'')}
+            onClick={toggleDrawer(false,'pedido')}
           />
       </StyledTreeItem>
       <Divider />

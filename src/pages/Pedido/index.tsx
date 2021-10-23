@@ -36,6 +36,7 @@ import InputDateBase from "../../components/InputDateBase"
 import { Calendar } from 'primereact/calendar';
 import { Utils } from "../../utils/utils"
 import { DetalhePedido } from "./detalhe"
+import { IEndereco } from "../../domain/types/IEndereco"
 
 const Pedido: React.FC = () => {
     const store = useContext(PedidoStore);
@@ -47,12 +48,7 @@ const Pedido: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
     const pedidoService = new PedidoService();
-    const Transition = React.forwardRef(function Transition(
-        props: TransitionProps & { children?: React.ReactElement<any, any> },
-        ref: React.Ref<unknown>,
-    ) {
-        return <Slide direction="up" ref={ref} {...props} />;
-    });
+  
 
     useEffect(() => {
         pedidoService.getPedidos().then(data => {
@@ -110,7 +106,7 @@ const Pedido: React.FC = () => {
             handleOpen();
 
         }
-        pedidoService.save(store.pedido).then(res => { store.pedidos.push(res) });
+        // pedidoService.save(store.pedido).then(res => { store.pedidos.push(res) });
         //  }
     }
     const editar = (pedido: IPedido) => {
@@ -164,16 +160,11 @@ const Pedido: React.FC = () => {
         return (
             <div className="buttonAction">
                 <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() => editar(rowData)} />
-                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => openConfirmeDeleteDialog(rowData)} />
+                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => setModalDialog(true)} />
             </div>
         );
     }
 
-    const header = (
-        <div className="table-header">
-            <h5 className="p-m-0">Listagem de pedidos</h5>
-        </div>
-    );
 
     const bodyTemplateColumnA = (rowData: IPedido) => {
         return (
@@ -196,7 +187,7 @@ const Pedido: React.FC = () => {
         return (
             <div>
                 <span className="p-column-title">Data da compra:</span>
-                {rowData.dataCriacao}
+                {/* {rowData.dataCriacao} */}
             </div>
         );
     }
@@ -261,11 +252,14 @@ const Pedido: React.FC = () => {
     const [dateInicail, setDateInicail] = useState<Date | Date[] | undefined>(new Date());
     const [dateFinal, setDateFinal] = useState<Date | Date[] | undefined>(new Date());
     
+
+    
+
     return (
         <Container>
             <HeaderAdmin />
             <div className="card">
-                <div className="p-grid p-mt-3" >
+                <div className="p-grid p-mt-1" >
                     <div id='titulo-pedido' className="p-grid  p-sm-12 p-col-3 p-md-12 p-lg-3 p-xl-3 p-ml-2">
                         <img src={iconCarrinho} alt="img" className="p-ml-2 p-mb-2" />
                         <label className="p-ml-2 p-mt-2">Gerenciamento de Pedidos</label>
@@ -320,10 +314,8 @@ const Pedido: React.FC = () => {
 
             </div>
 
-            <div className="datatable-crud-demo datatable-responsive-demo">
-                <Toast />
-
-                <div className="table">
+            <div className="datatable-crud-demo datatable-responsive-demo table">
+                <div className="">
                     <DataTable
                         value={store.pedidos} selection={selectedPedidos}
                         onSelectionChange={(e) => setSelectedPedidos(e.value)}
@@ -331,7 +323,6 @@ const Pedido: React.FC = () => {
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
                         globalFilter={globalFilter}
-                        header={header}
                         scrollable
                         scrollHeight={te}
                         className="p-datatable-responsive-demo"

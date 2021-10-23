@@ -1,5 +1,6 @@
 import { api } from "../api";
 import { IPedido } from "../../domain/types/IPedido";
+import { IEndereco } from "../../domain/types/IEndereco";
 export class PedidoService {
 
     url='api/pedido';
@@ -18,8 +19,14 @@ export class PedidoService {
       api.post(this.url+`/deleteall`, array);
     }
     async getPedidos() {
-        const response = await api.get(this.url);
-      return response.data;
+        const response = [{id: 1, dataCriacao: null,  dataFechamento: null,
+          valorTotal: 1000,
+          valorDesconto: 10,
+          valorFrete: 50,
+          status: 'FINALIZADO',
+          cliente: null},];
+        // await api.get(this.url);
+      return response;
     }
 
   

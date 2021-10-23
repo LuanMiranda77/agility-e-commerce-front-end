@@ -1,21 +1,32 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { IPedido } from "../domain/types/IPedido";
 import {createContext}from "react";
+import { IEndereco } from "../domain/types/IEndereco";
+import {ICliente} from "../domain/types/ICliente";
 
 class PedidoStore{
   
   byId = observable.map();
 
+  cliente: ICliente = { id: 0,
+              usuario: {email:'', password: ''},
+              cpfCnpj: '',
+              tipoDeCliente: '',
+              enderecos: new Array<IEndereco>(),
+              telefone: '',
+              celular: ''
+  };
+
   objNew = {
    //adicionar atributos aqui
    id: 0,
-   dataCriacao: new Date(),
-   dataFechamento: new Date(),
+  //  dataCriacao: new Date(),
+  //  dataFechamento: new Date(),
    valorTotal: 0,
    valorDesconto: 0,
    valorFrete: 0,
    status: '',
-   cliente: 'fddfdf'
+   cliente: {nome:'Carlão'},
   };
 
   @observable

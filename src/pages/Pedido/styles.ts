@@ -15,6 +15,9 @@ export const Container  = styled.div`
         font-size: 18px;
         font-weight: bold;
     } */
+    .table{
+        margin-top: 50rem;
+    }
     .diveder{
         margin-top: -1rem;
         margin-bottom: 0.5rem;
