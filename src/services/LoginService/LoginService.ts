@@ -26,8 +26,8 @@ export class LoginService {
         return response;
     }
 
-    public async recuperarSenha(email: string){
-        const response = await api.post(this.url+'/recuperar-senha', email)
+    public async recuperarSenha(pEntity : IUser){
+        const response = await api.post(this.url+'/recuperasenha', pEntity)
         .then( resp =>{
             return resp.data;
         })

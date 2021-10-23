@@ -10,6 +10,7 @@ import { Utils } from '../../utils/utils';
 
 
 interface ModalProps {
+    store: any;
     closeFuncion: Function;
     modalDialog: boolean;
 }
@@ -26,13 +27,13 @@ export const ModalRecuperaSenha: React.FC<ModalProps> = (props) => {
     const [submit, setSubmit] = useState(false);
 
     const recuperarSenha = () => {
-        console.log(email);
-        if(email === ''){
+    
+        if(props.store.user.email === ''){
             setSubmit(true);
             Utils.messagemShow(msg, 'error', `Erro e-mail`, 'Campo e-mail em branco', 5000);
             return false;
         }
-        loginService.recuperarSenha(email)
+        loginService.recuperarSenha(props.store.user)
         .then(res =>{
             Utils.messagemShow(msg, 'sucess', `E-mail enviado`, 'Verifique sua caixa de e-mail!', 5000);
         }).catch(error => {
@@ -62,7 +63,7 @@ export const ModalRecuperaSenha: React.FC<ModalProps> = (props) => {
                         <div className='p-col-12 p-field'>
                             {/* <label htmlFor="" className='p-text-bold' style={{color: 'var(--green)'}}>{'E-mail'}</label> */}
                             <InputBase type="text" label='E-mail' placeholder='Digite o e-mail cadastrado'
-                                className='p-col-12 p-xl-12 p-lg-12' onChange={e => setEmail(e.target.value)} 
+                                className='p-col-12 p-xl-12 p-lg-12' onChange={e => props.store.user.email = e.target.value} 
                             />
                             {submit === true  && <small className="p-error">E-mail é obtigatorio.</small>}
                         </div>
