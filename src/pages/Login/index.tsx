@@ -29,11 +29,17 @@ function Login() {
     const logar = () => {
         
         loginService.login(store.user).then(response => {
-                if(response===true){
+                if(response.role === 'MASTER'){
                     history.push("/dashbord");
+                }else if(response.role === 'ADMIN'){
+                    history.push("/dashbord");
+                }else if(response.role === 'SEPARADOR'){
+                    history.push("/dashbord");
+                }else{
+                    history.push("/home");
                 }
         }).catch(err =>{
-              Utils.messagemShow(msg,'info', `AVISO`, err, 3000);
+              Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
         });
     }
 
