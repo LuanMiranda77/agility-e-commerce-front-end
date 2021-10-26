@@ -7,9 +7,11 @@ import { InputBase } from '../../components/InputBase';
 import { Logo } from '../../components/logo';
 import { LoginService } from '../../services/LoginService/LoginService';
 import { Utils } from '../../utils/utils';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 
 interface ModalProps {
+    store: any;
     closeFuncion: Function;
     modalDialog: boolean;
 }
@@ -24,20 +26,27 @@ export const ModalRecuperaSenha: React.FC<ModalProps> = (props) => {
 
     const [email, setEmail] = useState('');
     const [submit, setSubmit] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+
+    const sendEmail = (item: any) => {
+        setEmail(item.email);
+        props.store.user.email = item;
+    }
 
     const recuperarSenha = () => {
-        console.log(email);
-        if(email === ''){
+        if (email === '') {
             setSubmit(true);
             Utils.messagemShow(msg, 'error', `Erro e-mail`, 'Campo e-mail em branco', 5000);
             return false;
         }
-        loginService.recuperarSenha(email)
-        .then(res =>{
-            Utils.messagemShow(msg, 'sucess', `E-mail enviado`, 'Verifique sua caixa de e-mail!', 5000);
-        }).catch(error => {
-            Utils.messagemShow(msg, 'error', `Erro ao enviar e-mail`, error.mensagemUsuario, 5000);
-        });
+        setEnviando(true);
+        loginService.recuperarSenha(props.store.user)
+            .then(res => {
+                Utils.messagemShow(msg, 'success', `E-mail enviado`, 'Verifique sua caixa de e-mail!', 5000);
+                setEnviando(false);
+            }).catch(error => {
+                Utils.messagemShow(msg, 'error', `Erro ao enviar e-mail`, error.mensagemUsuario, 5000);
+            });
     }
 
     return (
@@ -62,19 +71,26 @@ export const ModalRecuperaSenha: React.FC<ModalProps> = (props) => {
                         <div className='p-col-12 p-field'>
                             {/* <label htmlFor="" className='p-text-bold' style={{color: 'var(--green)'}}>{'E-mail'}</label> */}
                             <InputBase type="text" label='E-mail' placeholder='Digite o e-mail cadastrado'
-                                className='p-col-12 p-xl-12 p-lg-12' onChange={e => setEmail(e.target.value)} 
+                                className='p-col-12 p-xl-12 p-lg-12' onChange={e => sendEmail(e.target.value)}
                             />
-                            {submit === true  && <small className="p-error">E-mail é obtigatorio.</small>}
+                            {submit === true && <small className="p-error">E-mail é obtigatorio.</small>}
                         </div>
                         <div className='p-col-12 p-text-center'>
-                            <ButtonBase label='CONTINUAR' icon='' className='p-button-success p-pr-6 p-pl-6' onClick={recuperarSenha} />
+                            {enviando === false &&
+                                <ButtonBase id='button-recuperar' label='CONTINUAR' icon='' className='p-button-success p-pr-6 p-pl-6' onClick={recuperarSenha} />
+                            }
                         </div>
 
+                        <Toast ref={msg} />
+                        {enviando === true &&
+                            <div className='p-col-12 p-text-center'>
+                                <ProgressSpinner strokeWidth="4" fill="#ffff" animationDuration=".8s" />
+                            </div>
+                        }
                     </div>
-                    <Toast ref={msg}/>
                 </Card>
             </Dialog>
-            
+
         </>
 
     );

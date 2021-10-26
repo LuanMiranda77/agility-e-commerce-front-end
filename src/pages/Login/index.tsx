@@ -92,7 +92,7 @@ function Login() {
               
             </div>
             <Toast ref={msg}/>
-            <ModalRecuperaSenha modalDialog={modalSenha} closeFuncion={closeModalSenha}/>
+            <ModalRecuperaSenha store={store} modalDialog={modalSenha} closeFuncion={closeModalSenha}/>
         </Container>
 
     )
