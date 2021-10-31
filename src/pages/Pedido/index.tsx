@@ -70,13 +70,7 @@ const Pedido: React.FC = () => {
         setModalDialog(false);
     }
 
-    const hideDeleteDialog = () => {
-        pedidoService.delete(store.pedido.id);
-        store.remove(store.pedido.id);
-        setModalDeleteDialog(false);
-        window.location.reload();
 
-    }
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -91,26 +85,6 @@ const Pedido: React.FC = () => {
         setOpen(false);
     };
 
-    function Alert(props: AlertProps) {
-        return <MuiAlert elevation={6} variant="filled" {...props} />;
-    }
-    const save = () => {
-        setSubmitted(true);
-        // if (store.pedido.descricao.trim()) {
-        setModalDialog(false);
-        if (store.pedido.id) {
-            const index = store.findIndexById(store.pedido.id);
-            store.pedidos[index] = store.pedido;
-            handleOpen();
-        }
-        else {
-            store.add(store.pedido);
-            handleOpen();
-
-        }
-        // pedidoService.save(store.pedido).then(res => { store.pedidos.push(res) });
-        //  }
-    }
     const editar = (pedido: IPedido) => {
         store.update(store.pedido);
         setModalDialog(true);
@@ -130,15 +104,6 @@ const Pedido: React.FC = () => {
         setModalDeletesDialog(true);
     }
 
-    const deleteSelecteds = () => {
-        store.load(store.pedidos.filter(valor => !selectedPedidos.includes(valor)));
-        let pedidosDelete = store.pedidos.filter(valor => selectedPedidos.includes(valor));
-        pedidoService.deleteAll(pedidosDelete);
-        setModalDeletesDialog(false);
-        setSelectedPedidos([]);
-        window.location.reload();
-
-    }
     const rightToolbarTemplate = () => {
         return (
             <div>
@@ -146,12 +111,6 @@ const Pedido: React.FC = () => {
                 <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />
             </div>
         )
-    }
-
-    const imageBodyTemplate = (rowData: IPedido) => {
-
-        // return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="store.pedido-image" />
-        //return null;
     }
 
     const priceBodyTemplate = (rowData: IPedido) => {
@@ -240,7 +199,7 @@ const Pedido: React.FC = () => {
             </div>
         );
     }
-    const filterPedidoStatus = (value: IPedido, filter: any) =>{
+    const filterPedidoStatus = (value: IPedido, filter: any) => {
         if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
             return true;
         }
@@ -249,9 +208,6 @@ const Pedido: React.FC = () => {
             return false;
         }
 
-        
-        //Falar com luan fazer array
-        //return value.status === activeIndex
     }
 
     /**
@@ -261,23 +217,24 @@ const Pedido: React.FC = () => {
     const bodyTabMenuPedidoFiltroEstado = () => {
 
         const items = [
-            { label: 'Todos', icon: 'pi pi-fw pi-home' },
-            { label: 'Não Pagos', icon: 'pi pi-fw pi-calendar' },
-            { label: 'A Enviar', icon: 'pi pi-fw pi-pencil' },
-            { label: 'Concluíndo', icon: 'pi pi-fw pi-file' },
-            { label: 'Devolução/Reembolso', icon: 'pi pi-fw pi-cog' }
+            { label: 'Todos', icon: 'pi pi-fw pi-check-square' },
+            { label: 'Não Pagos', icon: 'pi pi-fw pi-ban' },
+            { label: 'A Enviar', icon: 'pi pi-fw pi-send' },
+            { label: 'Concluíndo', icon: 'pi pi-fw pi-dollar' },
+            { label: 'Devolução/Reembolso', icon: 'pi pi-fw pi-exclamation-circle' }
         ];
         const filterPedido = (e: TabMenuTabChangeParams) => {
             console.log(e.index);
-            
+            setActiveIndex(e.index);
+
         };
         return (
             <div>
                 <TabMenu model={items} activeIndex={activeIndex} onTabChange={filterPedido} />
             </div>
         );
-        
-        
+
+
     }
 
 
@@ -311,33 +268,8 @@ const Pedido: React.FC = () => {
                     </div>
 
                     <div className="p-col-9 p-grid p-p-2">
-
                         {bodyTabMenuPedidoFiltroEstado()}
-                        
-                       {/*  <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                            <ButtonBase label="TODOS" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                        </div>
-                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-2 p-ml-3 p-mr-5" >
-                            <ButtonBase label="NÃO PAGOS" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                        </div>
-                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-2 p-ml-3 p-mr-5" >
-                            <ButtonBase label="A ENVIAR" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                        </div>
-                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                            <ButtonBase label="ENVIADO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                        </div>
-                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                            <ButtonBase label="CONCLUÍDO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                        </div>
-                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                            <ButtonBase label="CANCELADO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                        </div> */}
                     </div>
-
-                    {/* <div className="p-grid  p-sm-6 p-md-6 p-lg-3 buttonAdd" >
-                        <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openDialog} />
-                        <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" onClick={confirmDeleteSelected} />
-                    </div> */}
                 </div>
 
                 <Divider className="diveder p-mb-4" />
@@ -378,9 +310,9 @@ const Pedido: React.FC = () => {
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column field="id" header="Código" body={bodyTemplateColumnA} sortable></Column>
-                        <Column field="cliente" header="Cliente" body={bodyTemplateColumnB} sortable></Column>
-                        <Column field="dataCriacao" header="Data da compra" body={bodyTemplateColumnC} sortable></Column>
-                        <Column field="valorDesconto" header="V. Desconto" body={bodyTemplateColumnD} sortable></Column>
+                        <Column field="cliente" header="Cliente" body={bodyTemplateColumnB} headerStyle={{ width: '25%' }}sortable></Column>
+                        <Column field="dataCriacao" header="Data da compra" body={bodyTemplateColumnC} headerStyle={{ width: '13%' }}sortable></Column>
+                        <Column field="valorDesconto" header="V. Desconto" body={bodyTemplateColumnD} headerStyle={{ width: '12%' }}sortable></Column>
                         <Column field="valorFrete" header="V. Frete" body={bodyTemplateColumnE} sortable></Column>
                         <Column field="valorTotal" header="V. Total" body={bodyTemplateColumnF} sortable></Column>
                         <Column field="status" header="Status" body={bodyTemplateColumnG} sortable filterFunction={filterPedidoStatus} ></Column>
