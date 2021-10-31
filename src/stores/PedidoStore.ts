@@ -3,13 +3,19 @@ import { IPedido } from "../domain/types/IPedido";
 import {createContext}from "react";
 import { IEndereco } from "../domain/types/IEndereco";
 import {ICliente} from "../domain/types/ICliente";
+import { IPagamento } from "../domain/types/IPagamento";
+import { IUser } from "../domain/types/IUser";
 
 class PedidoStore{
+
+
   
   byId = observable.map();
 
+  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: ''};
+
   cliente: ICliente = { id: 0,
-              usuario: {email:'', password: ''},
+              usuario: this.usuario,
               cpfCnpj: '',
               tipoDeCliente: '',
               enderecos: new Array<IEndereco>(),
@@ -17,16 +23,40 @@ class PedidoStore{
               celular: ''
   };
 
+  pagamento: IPagamento = {
+    id: 0,
+    numeroDeParcelas: 0,
+    dataEmissao: new Date,
+    dataVencimento: new Date,
+    dataPagamento: new Date ,
+    TipoPagemtno: '',
+    EstatusPagamento: '',
+  };
+
+  endereco: IEndereco = {
+    id: 0,
+    logradouro: '',
+    numero: '',
+    complento: '',
+    bairro: '',
+    cidade: '',
+    cep: '',
+    uf : '',
+
+  };
+
   objNew = {
    //adicionar atributos aqui
    id: 0,
-  //  dataCriacao: new Date(),
-  //  dataFechamento: new Date(),
+   dataCriacao: new Date(),
+   dataFechamento: new Date(),
+   pagamento: this.pagamento,
+   cliente: this.cliente,
+   enderecoDeEntrega: this.endereco,
    valorTotal: 0,
-   valorDesconto: 0,
    valorFrete: 0,
+   valorDesconto: 0,
    status: '',
-   cliente: {nome:'Carlão'},
   };
 
   @observable

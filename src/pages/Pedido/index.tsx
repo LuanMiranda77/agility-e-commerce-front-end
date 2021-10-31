@@ -37,6 +37,8 @@ import { Calendar } from 'primereact/calendar';
 import { Utils } from "../../utils/utils"
 import { DetalhePedido } from "./detalhe"
 import { IEndereco } from "../../domain/types/IEndereco"
+import { TabMenu, TabMenuTabChangeParams } from 'primereact/tabmenu';
+
 
 const Pedido: React.FC = () => {
     const store = useContext(PedidoStore);
@@ -48,7 +50,7 @@ const Pedido: React.FC = () => {
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
     const pedidoService = new PedidoService();
-  
+    const [activeIndex, setActiveIndex] = useState(0); // usado pelo  filtro de pedido
 
     useEffect(() => {
         pedidoService.getPedidos().then(data => {
@@ -159,8 +161,7 @@ const Pedido: React.FC = () => {
     const actionBodyTemplate = (rowData: IPedido) => {
         return (
             <div className="buttonAction">
-                <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() => editar(rowData)} />
-                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => setModalDialog(true)} />
+                <Button label="" icon="pi pi-chart-bar" className="p-button-primary p-mr-2 p-mb-2" tooltip="Ver detalhes" onClick={() => detalhesPedido(rowData)} />
             </div>
         );
     }
@@ -239,6 +240,46 @@ const Pedido: React.FC = () => {
             </div>
         );
     }
+    const filterPedidoStatus = (value: IPedido, filter: any) =>{
+        if (filter === undefined || filter === null || (typeof filter === 'string' && filter.trim() === '')) {
+            return true;
+        }
+
+        if (value === undefined || value === null) {
+            return false;
+        }
+
+        
+        //Falar com luan fazer array
+        //return value.status === activeIndex
+    }
+
+    /**
+     * @author carlos.avelino2.0@gmail.com
+     * @returns JSX referente ao render do filtro de pedidos
+     */
+    const bodyTabMenuPedidoFiltroEstado = () => {
+
+        const items = [
+            { label: 'Todos', icon: 'pi pi-fw pi-home' },
+            { label: 'Não Pagos', icon: 'pi pi-fw pi-calendar' },
+            { label: 'A Enviar', icon: 'pi pi-fw pi-pencil' },
+            { label: 'Concluíndo', icon: 'pi pi-fw pi-file' },
+            { label: 'Devolução/Reembolso', icon: 'pi pi-fw pi-cog' }
+        ];
+        const filterPedido = (e: TabMenuTabChangeParams) => {
+            console.log(e.index);
+            
+        };
+        return (
+            <div>
+                <TabMenu model={items} activeIndex={activeIndex} onTabChange={filterPedido} />
+            </div>
+        );
+        
+        
+    }
+
 
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
@@ -251,9 +292,13 @@ const Pedido: React.FC = () => {
 
     const [dateInicail, setDateInicail] = useState<Date | Date[] | undefined>(new Date());
     const [dateFinal, setDateFinal] = useState<Date | Date[] | undefined>(new Date());
-    
 
-    
+    const detalhesPedido = (pedido: any) => {
+        setModalDialog(true);
+        store.pedido = pedido;
+    }
+
+
 
     return (
         <Container>
@@ -266,25 +311,28 @@ const Pedido: React.FC = () => {
                     </div>
 
                     <div className="p-col-9 p-grid p-p-2">
-                    <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                        <ButtonBase label="TODOS" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+
+                        {bodyTabMenuPedidoFiltroEstado()}
+                        
+                       {/*  <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
+                            <ButtonBase label="TODOS" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+                        </div>
+                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-2 p-ml-3 p-mr-5" >
+                            <ButtonBase label="NÃO PAGOS" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+                        </div>
+                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-2 p-ml-3 p-mr-5" >
+                            <ButtonBase label="A ENVIAR" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+                        </div>
+                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
+                            <ButtonBase label="ENVIADO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+                        </div>
+                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
+                            <ButtonBase label="CONCLUÍDO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+                        </div>
+                        <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
+                            <ButtonBase label="CANCELADO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
+                        </div> */}
                     </div>
-                    <div className="p-col-1 p-md-6 p-sm-12 p-lg-2 p-ml-3 p-mr-5" >
-                        <ButtonBase label="NÃO PAGOS" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                    </div>
-                    <div className="p-col-1 p-md-6 p-sm-12 p-lg-2 p-ml-3 p-mr-5" >
-                        <ButtonBase label="A ENVIAR" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                    </div>
-                    <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                        <ButtonBase label="ENVIADO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                    </div>
-                    <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                        <ButtonBase label="CONCLUÍDO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                    </div>
-                    <div className="p-col-1 p-md-6 p-sm-12 p-lg-1 p-ml-3 p-mr-5" >
-                        <ButtonBase label="CANCELADO" icon="" className="" style={{ background: '#ffff', color: 'var(--text-title)', border: 0, fontWeight: 'bold' }} onClick={openDialog} />
-                    </div>
-                </div>
 
                     {/* <div className="p-grid  p-sm-6 p-md-6 p-lg-3 buttonAdd" >
                         <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={openDialog} />
@@ -293,10 +341,10 @@ const Pedido: React.FC = () => {
                 </div>
 
                 <Divider className="diveder p-mb-4" />
-                
-                
 
-                <div className= "p-fluid p-grid p-formgrid p-col-12">
+
+
+                <div className="p-fluid p-grid p-formgrid p-col-12">
                     <div className="p-p-2  p-sm-12 p-md-12 p-lg-5 p-xl-6 p-ml-2 p-mr-6 pesquisar">
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
                     </div>
@@ -304,7 +352,7 @@ const Pedido: React.FC = () => {
                         <label>Data inicial</label>
                         <Calendar id="icon" value={dateInicail} onChange={(e) => setDateInicail(e.value)} showIcon />
                     </div>
-                    
+
                     <div className="p-field p-sm-12 p-md-12 p-lg-2 p-xl-2 button-calendario">
                         <label  >Data final</label>
                         <Calendar id="icon" value={dateFinal} onChange={(e) => setDateFinal(e.value)} showIcon />
@@ -335,16 +383,16 @@ const Pedido: React.FC = () => {
                         <Column field="valorDesconto" header="V. Desconto" body={bodyTemplateColumnD} sortable></Column>
                         <Column field="valorFrete" header="V. Frete" body={bodyTemplateColumnE} sortable></Column>
                         <Column field="valorTotal" header="V. Total" body={bodyTemplateColumnF} sortable></Column>
-                        <Column field="status" header="Status" body={bodyTemplateColumnG} sortable></Column>
+                        <Column field="status" header="Status" body={bodyTemplateColumnG} sortable filterFunction={filterPedidoStatus} ></Column>
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
             </div>
-{/* =============================================inicio do modal==========================================================================*/}
-    <DetalhePedido modalDialog={modalDialog} closeFuncion={hideDialog} store={store}/>
-    
-    </Container>
-  );
+            {/* =============================================inicio do modal==========================================================================*/}
+            <DetalhePedido modalDialog={modalDialog} closeFuncion={hideDialog} store={store} />
+
+        </Container>
+    );
 }
 
 export default observer(Pedido);

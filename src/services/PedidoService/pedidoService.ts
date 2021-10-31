@@ -19,17 +19,12 @@ export class PedidoService {
       api.post(this.url+`/deleteall`, array);
     }
     async getPedidos() {
-        const response = [{id: 1, dataCriacao: null,  dataFechamento: null,
-          valorTotal: 1000,
-          valorDesconto: 10,
-          valorFrete: 50,
-          status: 'FINALIZADO',
-          cliente: null},];
-        // await api.get(this.url);
+      const response = new Array<IPedido>();
+      // = await api.get(this.url).then(response =>{
+      //   return response.data;
+      // }).catch(error=>{
+      //   return Promise.reject(error);
+      // });
       return response;
     }
-
-  
-
-  
 }
