@@ -20,20 +20,60 @@ import { ProdutoService } from '../../services/ProdutoService/produtoServices';
 import DashboardStore from '../../stores/DashboardStore';
 import ProdutoStore from "../../stores/ProdutoStore";
 import { Utils } from '../../utils/utils';
+import { UtilsDate } from '../../utils/utilsDate';
 import { Container } from './styles';
+import { IFilterDash } from "../../domain/types/FilterDahs";
+import { IDashboard } from '../../domain/types/Dashboard';
+
 
 
 const Dashbord: React.FC = () => {
 
+  let objNew = {
+    ticketMedio: {total:0, quantidade:0},
+    totalPedidoRealizado: {total:0, quantidade:0},
+    totalPedidoPago: {total:0, quantidade:0},
+    totalPedidoCancelado: {total:0, quantidade:0},
+    totalGeralMes: 0,
+    totalGeralMesPassado: 0,
+    totalVarejo: 0,
+    totalAtacado: 0,
+    totalVarejoCredito: 0,
+    totalVarejoBoleto: 0,
+    totalAtacadoCredito: 0,
+    totalAtacadoBoleto: 0,
+    arrayVendaPorHoras: new Array<any>(),
+    arrayVendaPorCategorias: new Array<any>(),
+    arrayFormasPagamentos: new Array<any>(),
+    arrayTopClientes: new Array<any>(),
+    arrayMarketplaces: new Array<any>(),
+    arrayFaturamentoAnual: new Array<any>(),
+    arrayFaturamentoMensal: new Array<any>()
+};
+
   const pedidoPagos = 5;
   const msg = useRef<Toast>(null);
-  const storeBoard = useContext(DashboardStore);
+  const [storeBoard, setDashboard ]= useState<IDashboard>(objNew);
   const store = useContext(ProdutoStore);
   const [produtos, setProduto] = useState<IProduto[]>([]);
+  
+  const [dtIni, setDtIni] = useState<Date | Date[] | undefined>(new Date(UtilsDate.subtrairDiasByData(30)));
+  const [dtFin, setDtFin] = useState<Date | Date[] | undefined>(new Date());
+  
+  let filterDash: IFilterDash = {dataDeCriacao: UtilsDate.formatByYYYYMMDD( UtilsDate.subtrairhoraByData(12)), dataFechamento: UtilsDate.formatByYYYYMMDD( new Date())};
 
 
   const produtoService = new ProdutoService();
   const dashboardService = new DashboardService();
+
+  const loadDashbord = (filterDash: IFilterDash)=> {
+      dashboardService.getBashboard(filterDash).then(data =>{
+        setDashboard(data);
+      }
+      ).catch(error => {
+        Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+      });
+  }
 
   useEffect(() => {
     produtoService.getProdutos().then(
@@ -42,11 +82,11 @@ const Dashbord: React.FC = () => {
       Utils.messagemShow(msg, 'error', 'Erro de listagem', error.mensagemUsuario, 5000);
     });
   }, []);
+
   useEffect(() => {
-    dashboardService.getBashboard().then(data => 
-      {
-        storeBoard.dashboard=data
-      }
+    dashboardService.getBashboard(filterDash).then(data =>{
+      setDashboard(data);
+    }
     ).catch(error => {
       Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
     });
@@ -101,8 +141,8 @@ const Dashbord: React.FC = () => {
     { emogi: Utils.getEmogi()[4], text: 'Este mês a Loja não fez vendas sugiro reavaliar seu Marketing' }
     ];
     let messagem = null;
-    let totalPedidosMes = storeBoard.dashboard.totalGeralMes;
-    let totalPedidosMesPassado = storeBoard.dashboard.totalGeralMesPassado;
+    let totalPedidosMes = storeBoard.totalGeralMes;
+    let totalPedidosMesPassado = storeBoard.totalGeralMesPassado;
     if (totalPedidosMes === 0) {
       messagem = emo[4];
     } else if (((totalPedidosMes - totalPedidosMesPassado) / 1000) * 100 <= 25) {
@@ -199,11 +239,11 @@ const Dashbord: React.FC = () => {
   const { basicOptions, horizontalOptions, lightOptions } = getLightTheme();
   // logica do grafico de formas de pagamentos===============
   const faturamentoHora = {
-    labels: Utils.getUltimasHoras(),
+    labels: UtilsDate.getUltimasHoras(),
     datasets: [
       {
         label: 'Faturamento dos últimas 12 horas',
-        data: storeBoard.dashboard.arrayFaturamentoMensal,
+        data: storeBoard.arrayFaturamentoMensal,
         fill: true,
         tension: .4,
         borderColor: '#53e79d',
@@ -227,7 +267,7 @@ const Dashbord: React.FC = () => {
     datasets: [
       {
         label: 'Faturamento dos ultimos 12 meses',
-        data: storeBoard.dashboard.arrayFaturamentoMensal,
+        data: storeBoard.arrayFaturamentoMensal,
         fill: true,
         tension: .4,
         borderColor: '#42A5F5',
@@ -250,7 +290,7 @@ const Dashbord: React.FC = () => {
     labels: ['Cartão de crédito', 'Dinheiro', 'Outros'],
     datasets: [
       {
-        data: storeBoard.dashboard.arrayFormasPagamentos,
+        data: storeBoard.arrayFormasPagamentos,
         backgroundColor: [
           "#E74C3C",
           "#62A9A5",
@@ -266,35 +306,35 @@ const Dashbord: React.FC = () => {
   };
   // ==============logica grafico de categorias vendidas=========================
   const topDezCategorias = {
-    labels: storeBoard.dashboard.arrayVendaPorCategorias.map(item => item.nome),
+    labels: storeBoard.arrayVendaPorCategorias.map(item => item.nome),
     datasets: [
       {
         label: 'top 10 das categorias',
         backgroundColor: '#42A5F5',
-        data: storeBoard.dashboard.arrayVendaPorCategorias.map(item =>  item.valor)
+        data: storeBoard.arrayVendaPorCategorias.map(item =>  item.valor)
       },
     ]
   };
   // ==============logica grafico de categorias vendidas=========================
   const topDezCliente = {
-    labels: storeBoard.dashboard.arrayTopClientes.map(item => item.nome),
+    labels: storeBoard.arrayTopClientes.map(item => item.nome),
     datasets: [
       {
         label: 'Clientes com recorrência',
         backgroundColor: '#42A5F5',
-        data: storeBoard.dashboard.arrayTopClientes.map(item => item.valor)
+        data: storeBoard.arrayTopClientes.map(item => item.valor)
       },
     ]
   };
 
   // ==============logica grafico de faturamento anual=========================
   const dataFaturamentoAnual = {
-    labels: Utils.getUltimosAnos(),
+    labels: UtilsDate.getUltimosAnos(),
     datasets: [
       {
         label: 'Vendas dos últimos 5 anos',
         backgroundColor: '#42A5F5',
-        data: storeBoard.dashboard.arrayFaturamentoAnual
+        data: storeBoard.arrayFaturamentoAnual
       },
     ]
   };
@@ -350,11 +390,13 @@ const Dashbord: React.FC = () => {
     let t_pagos: number = 0;
     let t_pedentes: number = 0;
 
-    storeBoard.dashboard.arrayMarketplaces.forEach(item => {
-      t_finalizados += item.finalizado;
-      t_pagos += item.pago;
-      t_pedentes += item.cancelado;
-    });
+    if(storeBoard.arrayMarketplaces){
+      storeBoard.arrayMarketplaces.forEach(item => {
+        t_finalizados += item.finalizado;
+        t_pagos += item.pago;
+        t_pedentes += item.cancelado;
+      });
+    }
 
     setFinalizados(t_finalizados);
     setPagos(t_pagos);
@@ -362,34 +404,52 @@ const Dashbord: React.FC = () => {
 
   }
 
+  
+
   const items = [
     {
       label: 'Últimos 5 dias',
       icon: 'pi pi-calendar',
       command: () => {
-        console.log("alal");
+        let dtIni = UtilsDate.subtrairDiasByData(5);
+        dtIni = UtilsDate.formatByYYYYMMDD(dtIni);
+        filterDash.dataDeCriacao=dtIni;
+        filterDash.dataFechamento = UtilsDate.formatByYYYYMMDD(new Date());
+        loadDashbord(filterDash);
       }
     },
     {
       label: 'Últimos 15 dias',
       icon: 'pi pi-calendar-minus',
       command: () => {
-        console.log("alal");
+        let dtIni = UtilsDate.subtrairDiasByData(15);
+        dtIni = UtilsDate.formatByYYYYMMDD(dtIni);
+        filterDash.dataDeCriacao=dtIni;
+        filterDash.dataFechamento = UtilsDate.formatByYYYYMMDD(new Date());
+        loadDashbord(filterDash);
       }
     },
     {
       label: 'Últimos 30 dias',
       icon: 'pi pi-calendar-plus',
       command: () => {
-        console.log("alal");
+        let dtIni = UtilsDate.subtrairDiasByData(30);
+        dtIni = UtilsDate.formatByYYYYMMDD(dtIni);
+        filterDash.dataDeCriacao=dtIni;
+        filterDash.dataFechamento = UtilsDate.formatByYYYYMMDD(new Date());
+        loadDashbord(filterDash);
       }
     },
   ];
 
+  const filterByDashByDate = ()  =>{
+    filterDash.dataDeCriacao = UtilsDate.formatByYYYYMMDD(dtIni);
+    filterDash.dataFechamento = UtilsDate.formatByYYYYMMDD(dtFin);
+    loadDashbord(filterDash);
+  }
+
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
-  const [dtIni, setIni] = useState<Date | Date[] | undefined>(new Date());
-  const [dtFin, setFin] = useState<Date | Date[] | undefined>(new Date());
   const [dataVisible, setDataVisible] = useState('none');
   const [filrtoVisible, setFiltroVisible] = useState('block');
 
@@ -426,11 +486,14 @@ const Dashbord: React.FC = () => {
           </div>
           <div className="p-field p-col-12" style={{ display: `${dataVisible}` }}>
             <label htmlFor="icon">Data Inicial</label>
-            <Calendar id="icon" value={dtIni} onChange={(e) => setIni(e.value)} showIcon />
+            <Calendar id="icon" value={dtIni} dateFormat="dd/mm/yy" onChange={(e) => setDtIni(e.value)} showIcon />
           </div>
           <div className="p-field p-col-12" style={{ display: `${dataVisible}` }}>
             <label htmlFor="icon">Data Final</label>
-            <Calendar id="icon" value={dtFin} onChange={(e) => setFin(e.value)} showIcon />
+            <Calendar id="icon" value={dtFin} dateFormat="dd/mm/yy" onChange={(e) => setDtFin(e.value)} showIcon />
+          </div>
+          <div className="p-field p-col-12" style={{ display: `${dataVisible}` }}>
+            <ButtonBase label="Filtrar" icon="pi pi-filter" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={filterByDashByDate} />
           </div>
         </div>
       </div>
@@ -440,16 +503,16 @@ const Dashbord: React.FC = () => {
     {/* =========================gird listagem 01============================ */}
     <div className="p-grid  p-mb-2 p-col-12 center">
       <div className="p-col-12  p-lg-3 p-xl-3 p-mb-2" >
-        <Summary label="Ticket médio" description={storeBoard.dashboard.ticketMedio.quantidade + "- item por pedido"} value={storeBoard.dashboard.ticketMedio.total} icon="pi pi-money-bill" color="#2C73D2" />
+        <Summary label="Ticket médio" description={storeBoard.ticketMedio.quantidade + "- item por pedido"} value={storeBoard.ticketMedio.total} icon="pi pi-money-bill" color="#2C73D2" />
       </div>
       <div className="p-col-12  p-lg-3 p-xl-3 p-mb-2" >
-        <Summary label="Pedido realizados" description={storeBoard.dashboard.totalPedidoRealizado.quantidade + "- item por pedido"} value={storeBoard.dashboard.totalPedidoRealizado.total} icon="pi pi-shopping-cart" color="#1ABC9C" />
+        <Summary label="Pedido realizados" description={storeBoard.totalPedidoRealizado.quantidade + "- item por pedido"} value={storeBoard.totalPedidoRealizado.total} icon="pi pi-shopping-cart" color="#1ABC9C" />
       </div>
       <div className="p-col-12  p-lg-3 p-xl-3 p-mb-2" >
-        <Summary label="Pedido pagos" description={storeBoard.dashboard.totalPedidoPago.quantidade + "- item por pedido"} value={storeBoard.dashboard.totalPedidoPago.total} icon="pi pi-shopping-cart" color="#62A9A5" />
+        <Summary label="Pedido pagos" description={storeBoard.totalPedidoPago.quantidade + "- item por pedido"} value={storeBoard.totalPedidoPago.total} icon="pi pi-shopping-cart" color="#62A9A5" />
       </div>
       <div className="p-col-12 p-lg-3 p-xl-3 p-mb-2" >
-        <Summary label="Pedidos cancelados" description={storeBoard.dashboard.totalPedidoCancelado.quantidade + "- item por pedido"} value={storeBoard.dashboard.totalPedidoCancelado.total} icon="pi pi-shopping-cart" color="#E74C3C" />
+        <Summary label="Pedidos cancelados" description={storeBoard.totalPedidoCancelado.quantidade + "- item por pedido"} value={storeBoard.totalPedidoCancelado.total} icon="pi pi-shopping-cart" color="#E74C3C" />
       </div>
     </div>
     {/* =========================gird listagem 02============================ */}
@@ -461,7 +524,7 @@ const Dashbord: React.FC = () => {
             {emogi()?.emogi}
             <p className='p-ml-2 p-col-10' style={{ fontSize: '20px' }}>{emogi()?.text}</p>
           </div>
-          <label className="p-col-12 p-pb-3 p-text-bold total-style">{Utils.formatCurrency(storeBoard.dashboard.totalGeralMes)}</label>
+          <label className="p-col-12 p-pb-3 p-text-bold total-style">{Utils.formatCurrency(storeBoard.totalGeralMes)}</label>
         </div>
       </div>
       {/* card 02 */}
@@ -472,17 +535,17 @@ const Dashbord: React.FC = () => {
             <div className="p-field p-col-5">
               <p className="p-field p-mt-3">Varejo</p>
               <div className="p-text-bold p-field p-col-12">
-                <label className='p-col-12' style={{ color: 'var(--blue)' }} >{Utils.formatCurrency(storeBoard.dashboard.totalVarejo)}
+                <label className='p-col-12' style={{ color: 'var(--blue)' }} >{Utils.formatCurrency(storeBoard.totalVarejo)}
                   <br />
                   <small style={{ color: 'black' }}>Total das  vendas</small></label>
               </div>
               <div className="p-text-bold p-field p-col-12">
-                <label className='p-col-12' style={{ color: 'var(--red)' }}>{Utils.formatCurrency(storeBoard.dashboard.totalVarejoCredito)}
+                <label className='p-col-12' style={{ color: 'var(--red)' }}>{Utils.formatCurrency(storeBoard.totalVarejoCredito)}
                   <br />
                   <small style={{ color: 'black' }}>Cartão de crédito</small></label>
               </div>
               <div className="p-text-bold p-field p-col-12">
-                <label className='p-col-12' style={{ color: 'var(--green)' }}>{Utils.formatCurrency(storeBoard.dashboard.totalVarejoBoleto)}
+                <label className='p-col-12' style={{ color: 'var(--green)' }}>{Utils.formatCurrency(storeBoard.totalVarejoBoleto)}
                   <br />
                   <small style={{ color: 'black' }}>Boleto / Dinheiro</small></label>
               </div>
@@ -491,17 +554,17 @@ const Dashbord: React.FC = () => {
             <div className="p-field  p-col-5">
               <p className="p-field p-mt-3">Atacado</p>
               <div className="p-text-bold p-field p-col-12">
-                <label className='p-col-12' style={{ color: 'var(--blue)' }} >{Utils.formatCurrency(storeBoard.dashboard.totalAtacado)}
+                <label className='p-col-12' style={{ color: 'var(--blue)' }} >{Utils.formatCurrency(storeBoard.totalAtacado)}
                   <br />
                   <small style={{ color: 'black' }}>Total das  vendas</small></label>
               </div>
               <div className="p-text-bold p-field p-col-12">
-                <label className='p-col-12' style={{ color: 'var(--red)' }}>{Utils.formatCurrency(storeBoard.dashboard.totalAtacadoCredito)}
+                <label className='p-col-12' style={{ color: 'var(--red)' }}>{Utils.formatCurrency(storeBoard.totalAtacadoCredito)}
                   <br />
                   <small style={{ color: 'black' }}>Cartão de crédito</small></label>
               </div>
               <div className="p-text-bold p-field p-col-12">
-                <label className='p-col-12' style={{ color: 'var(--green)' }}>{Utils.formatCurrency(storeBoard.dashboard.totalAtacadoBoleto)}
+                <label className='p-col-12' style={{ color: 'var(--green)' }}>{Utils.formatCurrency(storeBoard.totalAtacadoBoleto)}
                   <br />
                   <small style={{ color: 'black' }}>Boleto / Dinheiro</small></label>
               </div>
@@ -573,7 +636,7 @@ const Dashbord: React.FC = () => {
           <div className="datatable-crud-demo datatable-responsive-demo">
             <div className="table">
               <DataTable
-                value={storeBoard.dashboard.arrayMarketplaces}
+                value={storeBoard.arrayMarketplaces}
                 dataKey="id"
                 scrollable
                 className="p-datatable-responsive-demo"
