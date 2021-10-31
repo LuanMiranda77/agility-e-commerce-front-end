@@ -571,7 +571,7 @@ const Produto: React.FC = () => {
                             setFunctionButtonNao={hideDialogConfirme}/>
            
             <Toast ref={toast} />
-            <FooterAdmin />
+            {/* <FooterAdmin /> */}
         </Container>
     )
 }

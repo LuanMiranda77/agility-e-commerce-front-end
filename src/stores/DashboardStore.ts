@@ -1,4 +1,4 @@
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { createContext } from "react";
 import { IDashboard } from "../domain/types/Dashboard";
 
@@ -33,6 +33,11 @@ class DashboardStore {
     constructor() {
         this.dashboard = this.objNew;
         makeObservable(this);
+    }
+
+    @action
+    loadDashbord(data: IDashboard){
+        this.dashboard = {...data};
     }
 
 
