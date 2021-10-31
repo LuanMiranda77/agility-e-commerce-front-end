@@ -101,34 +101,14 @@ export class Utils {
         return ['🤑', '😀', '😱', '😰', '😥'];
     }
 
-    public static getUltimosAnos() {
-        const anos = [];
-        for (let i = 0; i < 5; i++) {
-            anos.push(new Date().getFullYear() - i);
-        }
-        return anos.reverse();
-    }
-
-    public static getUltimasHoras(){
-        const moment = require('moment');
-        const horas = [];
-        for (let i = 0; i < 12; i++) {
-            let hora = moment(moment().subtract(i, 'hour').zone("-03:00")).format('HH:mm');
-            horas.push(hora);
-        }
-        return horas.reverse();
-        
-    }
+  
 
     public static convertArrayNumberByArrayMoney(array: any[]){
         let _array = array.map(valor => this.formatCurrency(valor));
         return _array;
     }
 
-    public static subtrairDiasByData(dias: number){
-       const moment = require('moment');
-       return moment().subtract(dias, 'days');
-    }
+  
 
     
 }
