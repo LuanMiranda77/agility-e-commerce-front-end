@@ -26,4 +26,22 @@ export class PedidoService {
       });
       return response;
     }
+    async findPedidoByEstatus(pEntity: IPedido) {
+      console.log(pEntity);
+      const response = await api.post(this.url+'/find-data', pEntity).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+    async findPedidoByData(pEntity: IPedido) {
+      console.log(pEntity);
+      const response = await api.post(this.url+'/find-data-all', pEntity).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
 }

@@ -22,7 +22,7 @@ class UserStore {
                 dataAtualizacao: null, 
                 status: '', 
                 password: '', 
-                role: ''
+                role: 'MASTER'
   };
   }
 

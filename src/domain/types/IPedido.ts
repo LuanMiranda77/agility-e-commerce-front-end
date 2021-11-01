@@ -7,7 +7,7 @@ export interface IPedido{
   //adicionar os atributos
   //Autor Carlos Avelino - AE-30
   id: number;
-  dataCriacao: Date;
+  dataDeCriacao: Date;
   dataFechamento: Date;
   pagamento: IPagamento;
   cliente: ICliente;
@@ -15,5 +15,5 @@ export interface IPedido{
   valorTotal: number;
   valorFrete: number;
   valorDesconto: number;
-  status: string;
+  estatus: string;
 }

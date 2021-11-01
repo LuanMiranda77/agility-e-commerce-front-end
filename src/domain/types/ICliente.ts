@@ -5,7 +5,7 @@ export interface ICliente{
     id: number;
     usuario: IUser;
     cpfCnpj: String;
-    tipoDeCliente: String;
+    tipo: String;
     enderecos: Array<IEndereco>;
     telefone: String;
     celular: String;

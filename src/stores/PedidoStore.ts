@@ -5,6 +5,7 @@ import { IEndereco } from "../domain/types/IEndereco";
 import {ICliente} from "../domain/types/ICliente";
 import { IPagamento } from "../domain/types/IPagamento";
 import { IUser } from "../domain/types/IUser";
+import { UtilsDate } from "../utils/utilsDate";
 
 class PedidoStore{
 
@@ -12,12 +13,12 @@ class PedidoStore{
   
   byId = observable.map();
 
-  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: ''};
+  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: 'MASTER'};
 
   cliente: ICliente = { id: 0,
               usuario: this.usuario,
               cpfCnpj: '',
-              tipoDeCliente: '',
+              tipo: 'VAREJO',
               enderecos: new Array<IEndereco>(),
               telefone: '',
               celular: ''
@@ -26,29 +27,29 @@ class PedidoStore{
   pagamento: IPagamento = {
     id: 0,
     numeroDeParcelas: 0,
-    dataEmissao: new Date,
-    dataVencimento: new Date,
-    dataPagamento: new Date ,
-    TipoPagemtno: '',
-    EstatusPagamento: '',
+    // dataEmissao: new Date,
+    dataVencimento: UtilsDate.formatByYYYYMMDD(new Date),
+    dataPagamento: UtilsDate.formatByYYYYMMDD(new Date) ,
+    tipo: 'BOLETO',
+    estatus: 'APROVADO',
   };
 
   endereco: IEndereco = {
     id: 0,
     logradouro: '',
     numero: '',
-    complento: '',
+    complemento: '',
     bairro: '',
     cidade: '',
     cep: '',
-    uf : '',
+    uf : 'PB',
 
   };
 
   objNew = {
    //adicionar atributos aqui
    id: 0,
-   dataCriacao: new Date(),
+   dataDeCriacao: new Date(),
    dataFechamento: new Date(),
    pagamento: this.pagamento,
    cliente: this.cliente,
@@ -56,7 +57,7 @@ class PedidoStore{
    valorTotal: 0,
    valorFrete: 0,
    valorDesconto: 0,
-   status: '',
+   estatus: '',
   };
 
   @observable
@@ -94,7 +95,8 @@ class PedidoStore{
 
   @action
   load(pedidos: IPedido[]): void {
-    this.pedidos = pedidos;
+    console.log(pedidos) 
+    // this.pedidos = pedidos;
   }
   
   @action
