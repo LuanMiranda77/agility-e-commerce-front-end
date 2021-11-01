@@ -7,13 +7,16 @@ export const Container  = styled.div`
         max-height: 5rem;
     }
 
-    label{
+    /* label{
         display: flex;
         color: var(--text-title);
         margin-top: 0.5rem;
         margin-left: 0.5rem;
         font-size: 18px;
         font-weight: bold;
+    } */
+    .table{
+        margin-top: 50rem;
     }
     .diveder{
         margin-top: -1rem;
@@ -23,6 +26,15 @@ export const Container  = styled.div`
         }
     }
 
+    .button-calendario{
+        margin-top: -1.4rem;
+        padding-bottom: 0;
+        /* margin:0; */
+        float: right;
+        text-align: right;
+        /* display: table; */
+        /* margin-left:-1rem; */
+    }
     .react-modal-voltar{
         background: #fff;
         border: 0;

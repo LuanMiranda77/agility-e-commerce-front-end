@@ -1,21 +1,63 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { IPedido } from "../domain/types/IPedido";
 import {createContext}from "react";
+import { IEndereco } from "../domain/types/IEndereco";
+import {ICliente} from "../domain/types/ICliente";
+import { IPagamento } from "../domain/types/IPagamento";
+import { IUser } from "../domain/types/IUser";
+import { UtilsDate } from "../utils/utilsDate";
 
 class PedidoStore{
+
+
   
   byId = observable.map();
+
+  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: 'MASTER'};
+
+  cliente: ICliente = { id: 0,
+              usuario: this.usuario,
+              cpfCnpj: '',
+              tipo: 'VAREJO',
+              enderecos: new Array<IEndereco>(),
+              telefone: '',
+              celular: ''
+  };
+
+  pagamento: IPagamento = {
+    id: 0,
+    numeroDeParcelas: 0,
+    // dataEmissao: new Date,
+    dataVencimento: UtilsDate.formatByYYYYMMDD(new Date),
+    dataPagamento: UtilsDate.formatByYYYYMMDD(new Date) ,
+    tipo: 'BOLETO',
+    estatus: 'APROVADO',
+  };
+
+  endereco: IEndereco = {
+    id: 0,
+    logradouro: '',
+    numero: '',
+    complemento: '',
+    bairro: '',
+    cidade: '',
+    cep: '',
+    uf : 'PB',
+
+  };
 
   objNew = {
    //adicionar atributos aqui
    id: 0,
-   dataCriacao: new Date(),
+   dataDeCriacao: new Date(),
    dataFechamento: new Date(),
+   pagamento: this.pagamento,
+   cliente: this.cliente,
+   enderecoDeEntrega: this.endereco,
    valorTotal: 0,
-   valorDesconto: 0,
    valorFrete: 0,
-   status: '',
-   cliente: 'fddfdf'
+   valorDesconto: 0,
+   estatus: '',
   };
 
   @observable
@@ -53,7 +95,8 @@ class PedidoStore{
 
   @action
   load(pedidos: IPedido[]): void {
-    this.pedidos = pedidos;
+    console.log(pedidos) 
+    // this.pedidos = pedidos;
   }
   
   @action

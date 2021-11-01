@@ -45,7 +45,11 @@ export class Utils {
     }
 
     static formatCurrency = (value: number) => {
-        return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+        let valor = '';
+        if(value !== undefined){
+           valor = value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+        }
+        return valor;
     }
     /**
      * @params de type = 'success', 'error', 'info','warn'

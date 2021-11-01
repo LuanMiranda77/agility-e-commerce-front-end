@@ -11,7 +11,7 @@ export class UtilsDate{
     public static formatByDDMMYYYY = (data: Date) =>{
         const moment = require('moment');
   
-        data = moment(data).format('DD-MM-YYYY HH:mm:ss');
+        data = moment(data).format('DD/MM/YYYY HH:mm:ss');
          
         return data;
     } 
