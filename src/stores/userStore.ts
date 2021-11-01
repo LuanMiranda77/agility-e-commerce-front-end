@@ -14,9 +14,15 @@ class UserStore {
   constructor() {
     makeObservable(this);
     this.users = [];
-    this.user = {
-      email: '',
-      password: '',
+    this.user = {id: 0,
+                nome:'', 
+                login:'', 
+                email:'', 
+                dataCriacao: null, 
+                dataAtualizacao: null, 
+                status: '', 
+                password: '', 
+                role: 'MASTER'
   };
   }
 
