@@ -20,7 +20,7 @@ class UserStore {
                 email:'', 
                 dataCriacao: null, 
                 dataAtualizacao: null, 
-                status: '', 
+                status: 'ATIVO', 
                 password: '', 
                 role: 'MASTER'
   };
