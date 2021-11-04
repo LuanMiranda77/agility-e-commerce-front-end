@@ -39,10 +39,7 @@ function Login() {
                     history.push("/home");
                 }
         }).catch(err =>{
-                console.log(err);
-            //   if(err.mensagemUsuario){  
-            //     Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
-            //   }
+              Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
         });
     }
 

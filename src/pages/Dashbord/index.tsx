@@ -134,10 +134,10 @@ const Dashbord: React.FC = () => {
 
   // logica de total de vendas
   const emogi = () => {
-    let emo = [{ emogi: Utils.getEmogi()[0], text: 'Este mês a Loja foi um sucesso de vendas comparação do mês passado' },
-    { emogi: Utils.getEmogi()[1], text: 'Este mês a Loja foi bom, mais precisa melhorar fez apenas 25% maior que o mês anterior' },
-    { emogi: Utils.getEmogi()[2], text: 'Este mês a Loja foi igual ao mês passado' },
-    { emogi: Utils.getEmogi()[3], text: 'Este mês a Loja está muito abaixo do que o mês anterior' },
+    let emo = [{ emogi: Utils.getEmogi()[0], text: 'Este mês a Loja foi um sucesso de vendas comparado com o mês passado' },
+    { emogi: Utils.getEmogi()[1], text: 'Este mês a Loja está de parabéns, mas precisa melhorar fez apenas 25% maior que o mês anterior' },
+    { emogi: Utils.getEmogi()[2], text: 'Este mês a Loja foi igual ao mês passado, sugiro melhorar seu Marketing ' },
+    { emogi: Utils.getEmogi()[3], text: 'Este mês a Loja fez poucas vendas do que o mês anterior' },
     { emogi: Utils.getEmogi()[4], text: 'Este mês a Loja não fez vendas sugiro reavaliar seu Marketing' }
     ];
     let messagem = null;
