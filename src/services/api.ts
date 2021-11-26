@@ -7,6 +7,10 @@ const api = axios.create({
  
 });
 
+const integrador = axios.create({
+    baseURL: "http://localhost:5000/",
+});
+
 const imgur = axios.create({
   baseURL: "",
   headers: {
@@ -27,3 +31,4 @@ api.interceptors.request.use(async config => {
 
 export {api};
 export {imgur};
+export {integrador};
