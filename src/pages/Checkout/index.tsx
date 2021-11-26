@@ -11,16 +11,19 @@ import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { ButtonBase } from '../../components/ButtonBase';
 import { ListItem } from '../../components/ListItem';
+import { Toast } from 'primereact/toast';
 
 const Checkout: React.FC = () => {
   const store = useContext(CheckoutStore);
-  const [tipoFrete, setTipoFrete] = useState('');
-  const [valorFrete, setValorFrete] = useState(0);
-  const [valorCompra, setValorCompra] = useState(100);
-  const [totalCompra, setTotalCompra] = useState(valorCompra);
-
+  store.checkout.payment_method_id='credit_card'
   const frentePAc = 35.00;
   const frenteSedex = 80.00;
+    const msg = useRef<Toast>(null);
+  const [tipoFrete, setTipoFrete] = useState('PAC');
+  const [valorFrete, setValorFrete] = useState(frentePAc);
+  const [valorCompra, setValorCompra] = useState(100);
+  const [totalCompra, setTotalCompra] = useState(valorCompra);
+  const PUBLIC_KEY = '';
   const [selectedParcela, setSelectedParcela] = useState<any>(null);
   const parcelas = [
     { name: '1x parcelas', code: '1' },
@@ -30,6 +33,10 @@ const Checkout: React.FC = () => {
     { id: 1, name: 'Reologio ouro', quant: 1, valor: 70.00},
     { id: 2, name: 'Reologio prata', quant: 1, valor: 30.00 },
   ];
+
+  useEffect(() =>{
+    totalizador();
+  },[])
 
   const totalizador = () => {
     let res = valorCompra + valorFrete;
@@ -61,7 +68,7 @@ const Checkout: React.FC = () => {
     <Container id='form-checkout'>
       <script src="https://sdk.mercadopago.com/js/v2"></script>
       <script>
-        const mp = new MercadoPago('YOUR_PUBLIC_KEY');
+        const mp = new MercadoPago(PUBLIC_KEY);
       </script>
 
       <div className='center p-col-12 p-mb-1 p-grid p-shadow-2' style={{ background: 'var(--primary)' }}>
@@ -193,7 +200,7 @@ const Checkout: React.FC = () => {
           <div className='card center p-col-12 p-mb-3'>
             <div className='p-grid p-col-12'>
               <div className='p-col-6'><label htmlFor="resumo" className='label-title p-text-bold p-text-uppercase'>Total</label></div>
-              <div className='p-col-6'><label htmlFor="resumo" className='label-title p-text-bold'>{Utils.formatCurrency(store.checkout.transaction_amount)}</label></div>
+              <div className='p-col-6'><label htmlFor="resumo" className='label-title p-text-bold'>{Utils.formatCurrency(totalCompra)}</label></div>
             </div>
           </div>
           <Divider />
@@ -218,7 +225,7 @@ const Checkout: React.FC = () => {
       <select name="installments" id="form-checkout__installments"></select>
       <button type="submit" id="form-checkout__submit">Pagar</button>
       <progress value="0" className="progress-bar">Carregando...</progress>
-
+      <Toast ref={msg} />
     </Container>
   );
 }
