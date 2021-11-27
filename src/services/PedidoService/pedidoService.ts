@@ -1,6 +1,7 @@
-import { api } from "../api";
+import { api, inte } from "../api";
 import { IPedido } from "../../domain/types/IPedido";
 import { IEndereco } from "../../domain/types/IEndereco";
+
 export class PedidoService {
 
     url='api/pedido';
@@ -44,4 +45,15 @@ export class PedidoService {
       });
       return response;
     }
+
+    async getRastreio() {
+      const response = await api.get(this.url).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
+    
 }

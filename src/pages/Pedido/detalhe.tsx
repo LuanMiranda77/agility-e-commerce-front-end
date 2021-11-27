@@ -86,11 +86,18 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
 
     }
 
+    const iconInicio = 'pi pi-check', iconProgresso = 'pi pi-shopping-cart';
+    const corInicio = '#607D8B', corProgresso = '#FF9800';
+
+    
+    let rastreio =   { status: '', date: '', icon: 'pi pi-shopping-cart', color: '#9C27B0' };
+
     const events1 = [
-        { status: 'Moneito', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0', image: 'game-controller.jpg' },
+        { status: 'Moneito', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0' },
         { status: 'São paulo', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
         { status: 'Minas', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
         { status: 'Terra', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
+        
     ];
 
     const customizedContent = (item: any) => {
