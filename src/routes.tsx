@@ -5,7 +5,7 @@ import Pedido from './pages/Pedido';
 import Login  from './pages/Login';
 import Produto  from './pages/Produto';
 import {Notfound} from './pages/Notfound';
-import PrivateRoute from './privateRoutes';
+// import Route from './privateRoutes';
 import Categoria from './pages/Categoria';
 import Dashbord from './pages/Dashbord';
 
@@ -17,8 +17,8 @@ const Routes: React.FC = () => {
       <Route path="/login" exact component={Login}/>
       <Route path="/produto" exact component={Produto}/>
       <Route path="/dashbord" exact component={Dashbord}/>
-      <PrivateRoute path="/categoria"exact component={Categoria} />
-      <PrivateRoute path="/pedido"component={ Pedido } />
+      <Route path="/categoria"exact component={Categoria} />
+      <Route path="/pedido"component={ Pedido } />
       <Route component={Notfound}/>
     </Switch>
 

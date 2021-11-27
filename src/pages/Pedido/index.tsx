@@ -11,6 +11,7 @@ import { Tag } from 'primereact/tag'
 import { Toast } from 'primereact/toast'
 import React, { useContext, useEffect, useRef, useState } from "react"
 import iconCarrinho from '../../assets/iconCarrinho.svg'
+import { ButtonBase } from '../../components/ButtonBase'
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
 import { IPedido } from "../../domain/types/IPedido"
@@ -139,6 +140,8 @@ const Pedido: React.FC = () => {
     const filterPedidoStatus = (index: Number) => {
         store.pedido.dataDeCriacao = UtilsDate.formatByYYYYMMDD(dateInicail);
         store.pedido.dataFechamento = UtilsDate.formatByYYYYMMDD(dateFinal);
+       
+        console.log(index);
 
         if(index == 0){
             store.pedido.estatus = 'FINALIZADO';
@@ -220,6 +223,18 @@ const Pedido: React.FC = () => {
         store.pedido = pedido;
     }
 
+    const filterByDate = () =>{
+        store.pedido.estatus = 'FINALIZADO';
+        store.pedido.dataDeCriacao = UtilsDate.formatByYYYYMMDD(dateInicail);
+        store.pedido.dataFechamento = UtilsDate.formatByYYYYMMDD(dateFinal);
+
+        pedidoService.findPedidoByData(store.pedido).then(data => {
+            setPedidos(data);
+        }).catch(error => {
+            Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+        });
+    }
+
 
 
     return (
@@ -247,12 +262,17 @@ const Pedido: React.FC = () => {
                     </div>
                     <div className="p-mr-2 p-field p-sm-12 p-md-12 p-lg-2 p-xl-2 button-calendario">
                         <label>Data inicial</label>
-                        <Calendar id="icon" value={dateInicail} dateFormat="dd/mm/yy" onChange={(e) => setDateInicail(e.value)} showIcon />
+                        <Calendar id="Data inicial" name="dt_inicial" value={dateInicail} dateFormat="dd/mm/yy" onChange={(e) => setDateInicail(e.value)} showIcon />
                     </div>
 
                     <div className="p-field p-sm-12 p-md-12 p-lg-2 p-xl-2 button-calendario">
                         <label  >Data final</label>
-                        <Calendar id="icon" value={dateFinal} dateFormat="dd/mm/yy" onChange={(e) => setDateFinal(e.value)} showIcon />
+                        <Calendar id="Data final" name="dt_final" value={dateFinal} dateFormat="dd/mm/yy" onChange={(e) => setDateFinal(e.value)} showIcon />
+                    </div>
+
+                    <div className="p-field p-sm-12 p-md-12 p-lg-1 p-xl-1 button-calendario">
+                        <label></label>
+                        <ButtonBase label="Filtrar" icon="pi pi-filter" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={filterByDate} />
                     </div>
 
                 </div>

@@ -4,8 +4,13 @@ import { getToken } from "./auth";
 
 const api = axios.create({
     baseURL: "http://localhost:8080/",
+    headers: {
+      Authorization:'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MzYxNjM2ODE5NDY1fQ.ehj0iKuf95ZUvqfInm2Mm99E4SaPIErxhQdEny4UnSlFnDW-F9md-baDHxsLeOq3dDzzmrl72ssdsH7FzyR4Ow',
+      Accept: "application/json",
+    }
  
 });
+
 
 const imgur = axios.create({
   baseURL: "",
