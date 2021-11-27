@@ -3,8 +3,9 @@ import styled from "styled-components";
 export const Header = styled.header`
 position:fixed;
 width:100%;
-margin-top: -16rem;
+top: 0;
 z-index: 12;
+
 
 .card-admin{
   height:70px;
@@ -16,7 +17,7 @@ z-index: 12;
 }
 .logo{
   margin-top: -10px;
-  width: 6.5rem;
+  max-width: 5rem;
 }
 
 

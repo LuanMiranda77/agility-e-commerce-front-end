@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Container  = styled.div`
+export const Container = styled.div`
 
     img{
         max-width: 4rem;
@@ -15,6 +15,7 @@ export const Container  = styled.div`
         font-size: 18px;
         font-weight: bold;
     }
+    
     .diveder{
         margin-top: -1rem;
         margin-bottom: 0.5rem;
@@ -47,6 +48,7 @@ export const Container  = styled.div`
 
     .product-image {
         width: 100px;
+        height: 100px;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     }
 
@@ -89,11 +91,28 @@ export const Container  = styled.div`
         font-weight: 700;
         color: #66BB6A;
     }
+    .multiselect-demo .p-multiselect {
+    min-width: 15rem;
+}
+
+
 
 @media screen and (max-width: 40em) {
+    h3{
+        font-size: 8px;
+    }
+    .titulo-modal{
+        font-size: 8px;
+        color: var(--white);
+    }
     .table-header{
         margin-top: 6rem;
     }
+    .card-image{
+        width:200px;
+        background: #fff;
+    }
+
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead > tr > th,
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot > tr > td {
         display: none !important;
@@ -139,6 +158,8 @@ export const Container  = styled.div`
 
 
 
+
+
 `;
 
 
@@ -149,6 +170,46 @@ export const FormControl = styled.form`
     }
     label{
         color: var(--primary);
+    }
+    .mama{
+        margin-right: -1rem;
+        margin-left: 1rem
+    }
+    .table-images{
+        margin-top: 0px;
+    }
+    .descri-campo{
+      margin-bottom: -1px;
+    }
+
+    .multiselect-custom .p-multiselect-label:not(.p-placeholder):not(.p-multiselect-items-label) {
+        padding-top: .25rem;
+        padding-bottom: .25rem;
+        z-index: 1500;
+    }
+
+    .multiselect-custom .country-item-value {
+        padding: .25rem .5rem;
+        border-radius: 3px;
+        display: inline-flex;
+        margin-right: .5rem;
+        background-color: var(--green);
+        color: var(--white);
+        z-index: 1500;
+    }
+
+    .multiselect-custom .country-item-value img.flag {
+        width: 17px;
+        z-index: 1500;
+    }
+    .p-multiselect-panel{
+        z-index: 1500;
+    }
+    .p-component{
+        z-index: 1500;
+    }
+    .p-connected-overlay-enter-done{
+        z-index: 1500;
     }
 
     .card{
@@ -168,6 +229,24 @@ export const FormControl = styled.form`
     .but-save{
         width:"100%";
         float:right;
+    }
+    
+    @media screen and (max-width: 40em) {
+        h3{
+            font-size: 4px;
+        }
+        .titulo-modal{
+            font-size: 18px;
+            color: var(--white);
+        }
+        .table-images{
+            margin-top: 0px;
+        }
+
+        .mama{
+            margin-right: 0rem;
+            margin-left: 1rem;     
+        }
     }
    
 `;

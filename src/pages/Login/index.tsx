@@ -1,3 +1,4 @@
+import React, { useState} from 'react';
 import { Container } from './styles'
 import { Divider } from 'primereact/divider';
 import { useHistory } from 'react-router-dom';
@@ -7,8 +8,12 @@ import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
 import { InputGroup } from '../../components/InputGroup';
 import { LoginService } from '../../services/LoginService/LoginService';
 import { observer} from 'mobx-react-lite';
-import {useContext} from 'react';
+import {useContext, useRef} from 'react';
 import UserStore from "../../stores/userStore";
+import { Toast } from 'primereact/toast';
+import { Utils } from '../../utils/utils';
+import { ModalRecuperaSenha } from './modalRecuperaSenha';
+
 
 
 // ========================================
@@ -18,20 +23,32 @@ import UserStore from "../../stores/userStore";
 function Login() {
     const store = useContext(UserStore);
     const history = useHistory();
-    const {user} = store;
+    const msg = useRef<Toast>(null);
     const loginService = new LoginService();
 
     const logar = () => {
         
-        loginService.login(user).then(data => {
-            console.log(data);
-            if (data === true) {
-                history.push("/produto");
-            }else {
-               console.log("errro");
-            }
+        loginService.login(store.user).then(response => {
+                if(response.role === 'MASTER'){
+                    history.push("/dashbord");
+                }else if(response.role === 'ADMIN'){
+                    history.push("/dashbord");
+                }else if(response.role === 'SEPARADOR'){
+                    history.push("/dashbord");
+                }else{
+                    history.push("/home");
+                }
+        }).catch(err =>{
+              Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
         });
     }
+
+    const [modalSenha, setModalSenha] = useState(false);
+
+    const closeModalSenha = () =>{
+        setModalSenha(false);
+    }
+
     return (
         <Container>
             <div className="card">
@@ -46,15 +63,17 @@ function Login() {
                         <div className="p-fluid">
                             <h3>Login</h3>
                             <div className="p-field">
-                                <InputGroup type="text" label="E-mail" placeholder="Digite seu e-mail" icon="pi pi-user" onChange={(e) => user.email = e.target.value} required autoFocus></InputGroup>
+                                <InputGroup type="text" label="E-mail" placeholder="Digite seu e-mail" icon="pi pi-user" onChange={(e) => store.user.email = e.target.value} required autoFocus></InputGroup>
                             </div>
                             <div className="p-field">
-                                <InputGroup label="Senha" placeholder="Digite a senha" icon="pi pi-key" type="password" onChange={(e) => user.password = e.target.value} required autoFocus></InputGroup>
+                                <InputGroup label="Senha" placeholder="Digite a senha" icon="pi pi-key" type="password" onChange={(e) => store.user.password = e.target.value} required autoFocus></InputGroup>
                             </div>
                             <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" onClick={logar} />
                             <div className="div-link">
                                 <a href="/user" ><span className="cadastro">Cadastre-se</span></a>
-                                <a href="/esquece"><span className="esquece">Esquece a senha</span></a>
+                                <a onClick={()=> setModalSenha(true)} style={{cursor:'pointer'}} >
+                                    <span className="esquece">Esquece a senha</span>
+                                </a>
                             </div>
 
                         </div>
@@ -72,7 +91,8 @@ function Login() {
                 </div>
               
             </div>
-
+            <Toast ref={msg}/>
+            <ModalRecuperaSenha store={store} modalDialog={modalSenha} closeFuncion={closeModalSenha}/>
         </Container>
 
     )

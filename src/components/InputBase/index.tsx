@@ -12,8 +12,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const InputBase: React.FC<InputProps> = (props) => {
   let id = props.label.replaceAll(" ","").toLowerCase();
   return (
-    <Container>
-        <label htmlFor={props.label}>{props.label}</label>
+    <Container className="p-field">
+        <div>
+          <label htmlFor={props.label}>{props.label}</label>
+        </div>
         <InputText id={id} name={id} {...props}></InputText>
     </Container>
   )

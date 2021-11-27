@@ -11,7 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const ButtonBase: React.FC<ButtonProps> = (props) => {
     return (
       <Container>
-        <Button {...props}> </Button>
+        <Button id={props.label} name={props.label} {...props}> </Button>
       </Container>
     )
 }

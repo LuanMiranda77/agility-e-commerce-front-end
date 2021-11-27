@@ -1,71 +1,67 @@
-import React, { useContext, useEffect,  useState  } from "react"
-import { HeaderAdmin } from "../../components/HeaderAdmin"
-import { Container, FormControl } from "./styles"
-import { Divider } from "primereact/divider"
+import Dialog, { DialogProps } from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import { observer } from 'mobx-react-lite'
 import { Button } from "primereact/button"
+import { Column } from 'primereact/column'
+import { DataTable } from 'primereact/datatable'
+import { Divider } from "primereact/divider"
+import { FileUpload, FileUploadFilesParam } from 'primereact/fileupload'
+import { InputNumber } from 'primereact/inputnumber'
 import { InputText } from "primereact/inputtext"
-import { Toast } from 'primereact/toast';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Rating } from 'primereact/rating';
-import { FileUpload } from 'primereact/fileupload';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { classNames } from 'primereact/utils';
-import { InputNumber} from 'primereact/inputnumber';
-import Dialog, { DialogProps } from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { TransitionProps } from '@material-ui/core/transitions';
+import { InputTextarea } from 'primereact/inputtextarea'
+import { ProgressBar } from 'primereact/progressbar'
+import { Rating } from 'primereact/rating'
+import { Tag } from 'primereact/tag'
+import { Toast } from "primereact/toast"
+import { classNames } from 'primereact/utils'
+import React, { useContext, useEffect, useRef, useState } from "react"
 import produtoIcone from "../../assets/produtoIcone.svg"
 import { ButtonBase } from "../../components/ButtonBase"
+import { ComboMultSelect } from "../../components/ComboMultSelect"
+import { DialogConfirme } from '../../components/DialogConfirme'
+import FooterAdmin from '../../components/FooterAdmin'
+import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
-import { ProdutoService } from "../../services/ProdutoServices/produtoServices"
+import { ICategoria } from '../../domain/types/ICategoria'
 import { IProduto } from "../../domain/types/IProduto"
-import ProdutoStore  from "../../stores/ProdutoStore"
-import { observer} from 'mobx-react-lite';
-import { Slide } from "@material-ui/core"
-import ComboBase from "../../components/ComboBase"
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { CategoriaService } from '../../services/CategoriaService/categoriaService'
+import { ProdutoService } from "../../services/ProdutoService/produtoServices"
+import ProdutoStore from "../../stores/ProdutoStore"
+import { Utils } from "../../utils/utils"
+import { Container, FormControl } from "./styles"
 
-const Produto: React.FC = () =>  {
+
+
+const Produto: React.FC = () => {
+
     const store = useContext(ProdutoStore);
-    const {produto, produtos} = store;
     const [produtoDialog, setProdutoDialog] = useState(false);
     const [deleteProdutoDialog, setDeleteprodutoDialog] = useState(false);
     const [deleteProdutosDialog, setDeleteprodutosDialog] = useState(false);
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const categorias = [
-        { id:1, label: 'Relogio', value: 'NY' },
-        { id:2,label: 'Trilha', value: 'RM' },
-        { id:3,label: 'Chap', value: 'LDN' },
-        { id:4,label: 'Tribater', value: 'IST' },
-        { id:5,label: 'Floresta', value: 'PRS' }
-    ];
-    const [categoria, setCategoria] = useState<any>(null);
+    const [categorias,setCategorias] = useState<ICategoria[]>([]);
     const [selectedProdutos, setSelectedprodutos] = useState<IProduto[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [globalFilter, setGlobalFilter] = useState("");
+    const toast = useRef<Toast>(null);
     const produtoService = new ProdutoService();
-    const Transition = React.forwardRef(function Transition(
-        props: TransitionProps & { children?: React.ReactElement<any, any> },
-        ref: React.Ref<unknown>,
-      ) {
-        return <Slide direction="up" ref={ref} {...props} />;
-      });
+    const categoriaService = new CategoriaService();
 
     useEffect(() => {
         produtoService.getProdutos().then(data => {
-            store.load(data);
-        });
-        
+            store.load(data)
+        }).catch(error=>{
+            Utils.messagemShow(toast,'info', `AVISO`, error.mensagemUsuario, 3000);
+        });;
     }, []);
 
-    const formatCurrency = (value: number) => {
-        return value.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
-    }
+    useEffect(() => {
+        categoriaService.getCategorias().then(data => {
+            setCategorias(data);
+        });
+    }, []);
 
     const openDialog = () => {
         store.novo();
@@ -76,84 +72,95 @@ const Produto: React.FC = () =>  {
     const hideDialog = () => {
         setSubmitted(false);
         setProdutoDialog(false);
+        store.novo();
+        setTotalSize(0);
+    }
+
+    const hideDialogConfirme = () => {
+        setDeleteprodutosDialog(false);
     }
 
     const hideDeleteProdutoDialog = () => {
-        produtoService.delete(produto.id);
-        store.remove(produto.id);
+        produtoService.delete(store.produto.id);
+        store.remove(store.produto.id);
         //produtos.splice(produtos.indexOf(produto), 1);
         setDeleteprodutoDialog(false);
-        window.location.reload();
- 
+        
     }
-
-    const onChangeCategoria = (e: { value: any }) => {
-        setCategoria(e.value);
-    }
-
-    const [open, setOpen] = React.useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
-
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        setOpen(false);
-    };
-
-    function Alert(props: AlertProps) {
-        return <MuiAlert elevation={6} variant="filled" {...props} />;
-      }
 
     const saveProduto = () => {
         setSubmitted(true);
-        if (produto.descricao.trim()) {
-            setProdutoDialog(false);
-            if (produto.id) {
-                const index = store.findIndexById(produto.id);
-                produtos[index] = produto;
-                handleOpen();
+        if (store.produto.descricao.trim()) {
+            const produtoValidado = Utils.validarProduto(store.produto);
+
+            if(produtoValidado !== ''){
+                Utils.messagemShow(toast,'error', 'Error na validação do produto', produtoValidado,5000);
+                return false;
             }
-            else {
-                store.add(produto);
-                handleOpen();
+
+            if (store.produto.id !== 0) {
+                produtoService.update(store.produto).then((res) => {
+                    const index = store.findIndexById(store.produto.id);
+                    store.produtos[index] = store.produto;
+                    Utils.messagemShow(toast,'success', 'Alterado com sucesso!',`Item: ${store.produto.titulo}`, 3000);
+                    hideDialog();
+                    
+                }).catch((error) => {
+                    Utils.messagemShow(toast,'error', 'Error na atualização', error.mensagemUsuario,3000);
+                    return false;
+                });
+            }else{
+                produtoService.save(store.produto).then(res => { 
+                    store.add(res);
+                    Utils.messagemShow(toast,'success', 'Cadastro com sucesso!',`Item: ${store.produto.titulo}`, 3000);
+                    hideDialog();
+
+                }).catch(error=>{
+                    Utils.messagemShow(toast,'error', 'Error no cadastro', error.mensagemUsuario,3000);
+                    return false;
+                });
             }
-            produtoService.save(produto).then(res => { produtos.push(res) });
+        }else{
+            Utils.messagemShow(toast,'error', 'Error no cadastro', 'Descrição inválida',3000);
+            return false;
         }
     }
     const editar = (produto: IProduto) => {
         store.update(produto);
+        let soma = 0;
+        store.produto.imagens.forEach(e => {
+            soma+=e.size;
+        } );
+        setTotalSize(soma);
         setProdutoDialog(true);
     }
 
     const openConfirmeDeleteDialog = (produto: IProduto) => {
         store.produto = produto;
         setDeleteprodutoDialog(true);
+
     }
 
     const exportCSV = () => {
         // dt.current.exportCSV();
     }
-    
 
     const confirmDeleteSelected = () => {
         setDeleteprodutosDialog(true);
     }
 
-    const deleteSelectedprodutos = () => {
-        store.load(produtos.filter(valor => !selectedProdutos.includes(valor)));
-        let produtosDelete = produtos.filter(valor => selectedProdutos.includes(valor));
-        produtoService.deleteAll(produtosDelete);
-        setDeleteprodutosDialog(false);
-        setSelectedprodutos([]);
-       // history.push("/produto");
-        window.location.reload();
-        //     consttoast.current.show({ severity: 'success', summary: 'Successful', detail: 'produtos Deleted', life: 3000 });
+    const setCategoria = (categoria: ICategoria[]) =>{
+        store.produto.categorias = categoria;
     }
+
+    const deleteSelectedAll = () => {
+        let produtosDelete = store.produtos.filter(valor => selectedProdutos.includes(valor));
+        produtoService.deleteAll(produtosDelete);
+        store.load(store.produtos.filter(valor => !produtosDelete.includes(valor)));
+        setSelectedprodutos([]);
+        setDeleteprodutosDialog(false);
+    }
+    
     const rightToolbarTemplate = () => {
         return (
             <div>
@@ -164,13 +171,21 @@ const Produto: React.FC = () =>  {
     }
 
     const imageBodyTemplate = (rowData: IProduto) => {
-        
-        //return <img src={rowData.imagens[0].url} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} className="produto-image" />
-       return null;
+        let  imgURL = ''
+        if(rowData.imagens[0]){
+            imgURL = rowData.imagens[0].objectURL;
+        }
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return <img
+                id='link' 
+                src={imgURL}
+                onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
+                className="product-image"
+             />
     }
 
     const priceBodyTemplate = (rowData: IProduto) => {
-        return formatCurrency(rowData.precoAtacado);
+        return Utils.formatCurrency(rowData.precoAtacado);
     }
 
     const ratingBodyTemplate = (rowData: IProduto) => {
@@ -181,7 +196,7 @@ const Produto: React.FC = () =>  {
     const actionBodyTemplate = (rowData: IProduto) => {
         return (
             <div className="buttonAction">
-                <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() =>  editar(rowData)} />
+                <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() => editar(rowData)} />
                 <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => openConfirmeDeleteDialog(rowData)} />
             </div>
         );
@@ -189,7 +204,7 @@ const Produto: React.FC = () =>  {
 
     const header = (
         <div className="table-header">
-            <h5 className="p-m-0">Listagem de produtos</h5> 
+            <h5 className="p-m-0">Listagem de produtos</h5>
         </div>
     );
 
@@ -205,7 +220,7 @@ const Produto: React.FC = () =>  {
         return (
             <div>
                 <span className="p-column-title">Nome:</span>
-                {rowData.nome}
+                {rowData.titulo}
             </div>
         );
     }
@@ -241,12 +256,66 @@ const Produto: React.FC = () =>  {
         );
     }
 
+    //=====================template imgages==========================//
+    const [totalSize, setTotalSize] = useState(0);
+    const fileUploadRef = useRef<FileUpload>(null);
+ 
+    const [selectDelImges, setSelectDelImges] = useState<File[]>([]);
+
+    const onTemplateSelect = (file: FileUploadFilesParam) => {
+        if(store.produto.imagens.length<4){
+            let v = file.files[0];
+            store.produto.imagens.push(v);
+            setTotalSize(totalSize + v.size);
+        }else{
+            Utils.messagemShow(toast,'error','Erro ao adicionar imagens', 'Só é permitido 4 imagens', 5000);
+            return false;
+        }
+        
+    }
+
+    const deleteSelectedAllImges = () => {
+        store.produto.imagens=[];
+        setTotalSize(0);
+        // history.push("/produto");
+    }
+
+    const actionBody = (rowData: File) => {
+        return (
+            <div className="buttonAction">
+                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => onTemplateRemove(rowData)} />
+            </div>
+        );
+    }
+
+    const onTemplateRemove = (file: any) => {
+        let _array = store.produto.imagens.filter(f => f.objectURL!==file.objectURL);
+        store.produto.imagens=_array;
+        setTotalSize(totalSize - file.size);
+        // callback();
+    }
+
+    const itemTemplate = (file: any, props: any) => {
+        return (
+            <div className="p-ai-center p-col-12">
+                <div className="p-ai-center p-sm-12 p-md-12 p-lg-12 p-xl-12 p-flex">
+                    <img alt={file.name} role="presentation" src={file.objectURL} width={'80%'} height={200} />
+                    <Tag value={Utils.fileConvertSizeByte(file.size)} severity="warning" className="p-px-1 p-mt-2 p-mb-2 p-py-1 p-sm-8 p-md-9 p-lg-8 p-xl-8 p-mr-6" />
+                    <Button type="button" icon="pi pi-times" className="p-button-outlined p-button-rounded p-button-danger p-ml-auto p-mt-2" onClick={() => onTemplateRemove(file)} />
+                    <Divider/>
+                </div>
+            </div>
+        )
+    }
+
+    const chooseOptions = { icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined' };
+
     let te = "21.8rem";
     const tamanhoTela = window.screen.availHeight;
-    if(tamanhoTela>768){
-        te="40rem";
+    if (tamanhoTela > 768) {
+        te = "40rem";
     }
-    
+
     return (
         <Container>
             <HeaderAdmin />
@@ -262,7 +331,7 @@ const Produto: React.FC = () =>  {
                     </div>
                 </div>
 
-                <Divider  className="diveder"/>
+                <Divider className="diveder" />
 
                 <div className="p-grid p-p-2">
                     <div className="p-col-12 p-md-6 p-lg-5 p-ml-3 p-mr-5" >
@@ -273,13 +342,11 @@ const Produto: React.FC = () =>  {
                     </div>
                 </div>
             </div>
-            
-            <div className="datatable-crud-demo datatable-responsive-demo">
-                <Toast />
 
+            <div className="datatable-crud-demo datatable-responsive-demo">
                 <div className="table">
-                    <DataTable 
-                        value={produtos} selection={selectedProdutos} 
+                    <DataTable
+                        value={store.produtos} selection={selectedProdutos}
                         onSelectionChange={(e) => setSelectedprodutos(e.value)}
                         dataKey="id" paginator rows={10}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -289,21 +356,21 @@ const Produto: React.FC = () =>  {
                         scrollable
                         scrollHeight={te}
                         className="p-datatable-responsive-demo"
-                        
                     >
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column header="" body={imageBodyTemplate}></Column>
                         <Column field="codigoBarras" header="Codigo" body={bodyTemplateColumnA} sortable></Column>
-                        <Column field="nome" header="Nome"  body={bodyTemplateColumnB}  sortable></Column>
-                        <Column field="precoVarejo" header="Preco Varejo" body={bodyTemplateColumnC} sortable></Column>
-                        <Column field="precoAtacado" header="Preco Atacado" body={bodyTemplateColumnD} sortable></Column>
+                        <Column field="titulo" header="Titulo" body={bodyTemplateColumnB} sortable></Column>
+                        <Column field="precoVarejo" header="Pr. Varejo" body={bodyTemplateColumnC} sortable></Column>
+                        <Column field="precoAtacado" header="Pr. Atacado" body={bodyTemplateColumnD} sortable></Column>
                         <Column field="estrelas" header="Reviews" body={ratingBodyTemplate} sortable></Column>
-                        <Column field="quantidade" header="quantidade" body={bodyTemplateColumnE} sortable></Column>
+                        <Column field="quantidade" header="Quantidade" body={bodyTemplateColumnE} sortable></Column>
                         <Column body={actionBodyTemplate}></Column>
                     </DataTable>
                 </div>
-{/* =============================================inicio do modal==========================================================================*/}
-                <Dialog 
+                
+                {/* =============================================inicio do modal==========================================================================*/}
+                <Dialog
                     className="teste"
                     open={produtoDialog}
                     onClose={hideDialog}
@@ -311,169 +378,201 @@ const Produto: React.FC = () =>  {
                     aria-labelledby="scroll-dialog-title"
                     aria-describedby="scroll-dialog-description"
                     maxWidth="lg"
-                    >
-                    <DialogTitle id="scroll-dialog-title" style={{background: 'var(--primary)'}}>
+                    style={{zIndex:999}}
+                >
+                    <DialogTitle id="dialog-title" style={{ background: 'var(--primary)', padding: '0px' }}>
                         <div className="p-grid  p-col-12 p-md-6 p-lg-12">
-                            <img src={produtoIcone} alt="img" />
-                            <h3 className="p-text-bold p-text-uppercase p-mt-1 p-ml-1" style={{color: 'var(--white)'}}>Cadastro de produto</h3>
-                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{background: 'var(--primary)'}}>
-                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.5rem','color': 'white'}} />
+                            <img src={produtoIcone} alt="img" className='p-ml-5 p-mt-1' />
+                            <h5 className="p-text-bold p-text-uppercase p-mt-2 p-ml-2 titulo-modal" style={{ color: 'var(--white)' }}>Cadastro de produto</h5>
+                            <button type="button" onClick={hideDialog} className="react-modal-close" style={{ background: 'var(--primary)', marginTop: '-10px' }}>
+                                <i className="pi pi-times p-mt-2" style={{ 'fontSize': '1.0rem', 'color': 'white' }} />
                             </button>
                         </div>
                     </DialogTitle>
-                    <DialogContent dividers={scroll === 'paper'} style={{background: 'var(--background)'}}>
-                    <FormControl>
-                        <div className="card p-p-4">
-                            <div className="p-grid">
-                                <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-2 p-field" >
-                                    <label htmlFor="codigo" className="p-mb-2">Código</label>
-                                    <InputText id="barras" 
-                                    value={produto.codigoBarras} onChange={(e) => produto.codigoBarras = e.target.value} 
-                                    required autoFocus 
-                                    className={classNames({ 'p-invalid': submitted && !produto.nome })} 
-                                    />
-                                    {submitted && !produto.nome && <small className="p-error">Código é obtigatorio.</small>}
+                    <DialogContent dividers={scroll === 'paper'} style={{ background: 'var(--background)' }}>
+                        <FormControl>
+                            <div className="card p-p-3">
+                                <div className="p-grid">
+                                    <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field" >
+                                        <label htmlFor="codigo" className="p-col-12 p-mb-2">Código</label>
+                                        <InputText id="barras"
+                                            value={store.produto.codigoBarras} onChange={(e) => store.produto.codigoBarras = e.target.value}
+                                            required autoFocus
+                                            className={classNames({ 'p-invalid': submitted && !store.produto.titulo },'p-col-2' )}
+                                        />
+                                        {submitted && !store.produto.titulo && <small className="p-error">Código é obtigatorio.</small>}
+                                    </div>
+                                    <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field">
+                                        <label htmlFor="name">Titulo</label>
+                                        <InputText id="name"
+                                            value={store.produto.titulo}
+                                            onChange={(e) => store.produto.titulo = e.target.value}
+                                            required
+                                            className={classNames({ 'p-invalid': submitted && !store.produto.titulo })}
+                                            style={{ width: '100%' }}
+                                        />
+                                        {submitted && !store.produto.titulo && <small className="p-error">Titulo é obtigatorio.</small>}
+                                    </div>
                                 </div>
-                                <div className="p-felx p-col-12 p-ms-3 p-md-6 p-lg-12 p-field">
-                                    <label htmlFor="name">Nome</label>
-                                    <InputText id="name" 
-                                    value={produto.nome} 
-                                    onChange={(e) => produto.nome = e.target.value} 
-                                    required 
-                                    className={classNames({ 'p-invalid': submitted && !produto.nome })}
-                                    style={{width: '100%'}} 
-                                    />
-                                    {submitted && !produto.nome && <small className="p-error">Nome é obtigatorio.</small>}
+                                <div className="p-formgrid p-grid">
+                                    <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field" >
+                                        <label htmlFor="quantidade" className='p-col-12'>Quantidade</label>
+                                        <InputNumber
+                                            id="quantidade"
+                                            value={store.produto.quantidade}
+                                            onValueChange={(e) => store.produto.quantidade = e.target.value}
+                                            className='p-col-12'
+                                        />
+                                    </div>
+                                    <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
+                                        <label htmlFor="pricovarejo"className='p-col-12' >Preço de Varejo</label>
+                                        <InputNumber
+                                            id="pricevarejo"
+                                            value={store.produto.precoVarejo}
+                                            onValueChange={(e) => store.produto.precoVarejo = e.target.value}
+                                            mode="currency"
+                                            currency="BRL"
+                                            locale="pt-br"
+                                            className='p-col-12'
+                                        />
+                                    </div>
+                                    <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
+                                        <label htmlFor="priceatacado" className='p-col-12'>Preço de Atacado</label>
+                                        <InputNumber
+                                            id="priceatacado"
+                                            value={store.produto.precoAtacado}
+                                            onValueChange={(e) => store.produto.precoAtacado = e.target.value}
+                                            mode="currency"
+                                            currency="BRL"
+                                            locale="pt-br"
+                                            className='p-col-12'
+                                        />
+                                    </div>
+
+                                    <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
+                                        <ComboMultSelect options={categorias} label='Categoria' selectOptions={store.produto.categorias} setFunction={setCategoria}/>
+                                    </div>
+                                </div>
+                                <div className="p-formgrid p-grid">
+                                    <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
+                                        <label htmlFor="peso" className="p-col-12" >Peso kg</label>
+                                        <InputNumber
+                                            id="peso"
+                                            value={store.produto.peso}
+                                            onValueChange={(e) => store.produto.peso = e.target.value}
+                                            mode="decimal" minFractionDigits={1}
+                                            className="p-col-12"
+                                            
+                                        />
+                                    </div>
+                                    <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-xl-3 p-field">
+                                        <label htmlFor="comprimento"  className="p-col-12">Comprimento cm</label>
+                                        <InputNumber
+                                            id="comprimento"
+                                            value={store.produto.comprimento}
+                                            onValueChange={(e) => store.produto.comprimento = e.target.value}
+                                            mode="decimal" minFractionDigits={2}
+                                            className="p-col-12"
+                                            
+                                        />
+                                    </div>
+                                    <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-xl-3 p-field">
+                                        <label htmlFor="altura" className="p-col-12" >Altura cm</label>
+                                        <InputNumber
+                                            id="altura"
+                                            value={store.produto.altura}
+                                            onValueChange={(e) => store.produto.altura = e.target.value}
+                                            mode="decimal" minFractionDigits={2}
+                                            className="p-col-12"
+                                            
+                                        />
+                                    </div>
+                                    <div className="p-col-12 p-ms-3 p-md-6 p-lg-3 p-xl-3 p-field">
+                                        <label htmlFor="largura"  className="p-col-12">Lagura cm</label>
+                                        <InputNumber
+                                            id="peso"
+                                            min={0} max={100}
+                                            value={store.produto.largura}
+                                            onValueChange={(e) => store.produto.largura = e.target.value}
+                                            mode="decimal" minFractionDigits={2}
+                                            className="p-col-12"
+                                            
+                                            
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="p-formgrid p-grid">
-                                <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field" >
-                                    <label htmlFor="quantidade">Quantidade</label>
-                                    <InputNumber 
-                                        id="quantidade" 
-                                        value={produto.quantidade} 
-                                        onValueChange={(e) => produto.quantidade = e.target.value} 
-                                    />
-                                </div>
-                                <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
-                                    <label htmlFor="pricovarejo">Preço de Varejo</label>
-                                    <InputNumber 
-                                        id="pricevarejo" 
-                                        value={produto.precoVarejo}
-                                        onValueChange={(e) => produto.precoVarejo = e.target.value} 
-                                        mode="currency" 
-                                        currency="BRL" 
-                                        locale="pt-br" 
-                                     />
-                                </div>
-                                <div className="p-col-12 p-felx p-ms-3 p-md-6 p-lg-3 p-field">
-                                    <label htmlFor="priceatacado">Preço de Atacado</label>
-                                    <InputNumber 
-                                        id="priceatacado" 
-                                        value={produto.precoAtacado} 
-                                        onValueChange={(e) => produto.precoAtacado= e.target.value} 
-                                        mode="currency" 
-                                        currency="BRL" 
-                                        locale="pt-br" 
-                                    />
+                            <div className="p-grid p-col-12">
+                                <div className="p-card p-field p-mt-4  p-p-2 p-sm-12 p-md-12 p-lg-5 p-xl-6 descri-campo">
+                                    <label htmlFor="description">Descrição</label>
+                                    <InputTextarea
+                                        id="description"
+                                        style={{height: '50vh', width: '100%'}}
+                                        value={store.produto.descricao}
+                                        onChange={(e) => store.produto.descricao = e.target.value}
+                                        required
+                                        rows={3}
+                                        cols={20} />
                                 </div>
 
-                                <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
-                                    <label htmlFor="categoria">Categoria</label>
-                                    <ComboBase dados={categorias} size='11rem'/>
+                                <div className="p-card p-p-3 p-sm-12 p-md-12 p-lg-6 p-mt-4  mama">
+                                    <label htmlFor="imagens">Imagens</label>
+                                    <div className="p-grid p-field p-mt-2 p-pl-3 p-col-12 ">
+                                        <div className="p-sm-12 p-md-12 p-lg-12">
+                                            <div className="table-images">
+                                                <div className="p-grid p-flex p-mr-4 p-p-2">
+                                                    <FileUpload mode="basic" 
+                                                    chooseOptions={chooseOptions} 
+                                                    name="button-upload"
+                                                    accept="image/*" 
+                                                    maxFileSize={1000000}
+                                                    onSelect={onTemplateSelect}
+                                                    auto chooseLabel="" 
+                                                    />
+                                                    <ButtonBase label="" icon="pi pi-times" className="p-ml-4 p-button-rounded p-button-danger p-button-outlined" onClick={deleteSelectedAllImges}/>
+                                                    <ProgressBar className='p-mt-2' value={(totalSize/10000)} displayValueTemplate={() => `${Utils.fileConvertSizeByte(totalSize)} | 1MB`} style={{ width: '70%', height: '20px', marginLeft: 'auto' }}></ProgressBar>
+                                                </div>
+                                                <DataTable
+                                                    value={store.produto.imagens} selection={selectDelImges}
+                                                    onSelectionChange={(e) => setSelectDelImges(e.value)}
+                                                    dataKey="id"
+                                                    scrollable
+                                                    scrollHeight={'20rem'}
+                                                    className="p-datatable-responsive-demo"
+                                                >
+                                                    {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                                                    <Column header="" body={itemTemplate}></Column>
+                                                    {/* <Column body={actionBody}></Column> */}
+                                                </DataTable>
+                                            </div>
+                                        </div>
+                                    
+                                    
                                 </div>
                             </div>
-                        </div>
-                        <div className="p-card p-field p-mt-3 p-p-3">
-                            <label htmlFor="description">Description</label>
-                            <InputTextarea 
-                            id="description" 
-                            style={{ width: '100%', height: '8rem' }} 
-                            value={produto.descricao} 
-                            onChange={(e) => produto.descricao = e.target.value} 
-                            required 
-                            rows={3} 
-                            cols={20} />
-                        </div>
-
-                        <div className="p-card p-p-3">
-                            <label htmlFor="imagens">Imagens</label>
-                            <div className="p-grid p-field p-mt-2 p-pl-4 p-col-12 p-md-6 p-lg-12">
-                                <FileUpload
-                                    mode="basic"
-                                    accept="image/*"
-                                    maxFileSize={1000000}
-                                    chooseOptions={{ 
-                                        label: 'Importe a imagem', 
-                                        icon: 'pi pi-image', 
-                                        className: 'p-col p-button-primary p-button-raised p-mr-4' }}
-                                >
-                                </FileUpload>
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
-                                <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} chooseOptions={{ label: 'Importe a imagem', icon: 'pi pi-image', className: 'p-col p-button-primary p-button-raised p-mr-6' }} />
                             </div>
-                        </div>
-                    </FormControl>
+                        </FormControl>
                     </DialogContent>
-                    <DialogActions >
-                    <div className="but-save">
-                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-3 " onClick={saveProduto} />
+                    <DialogActions style={{ padding: '0px' }} >
+                        <div className="but-save">
+                            <ButtonBase label="SALVAR" icon="" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={saveProduto} />
                         </div>
                     </DialogActions>
                 </Dialog>
 
             </div>
-    <Dialog
-        open={deleteProdutoDialog}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={hideDeleteProdutoDialog}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-        >
-        <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir o ítem?"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-           O ítem {produto.nome}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() =>{setDeleteprodutoDialog(false); window.location.reload()}} color="primary">
-            Não 
-          </Button>
-          <Button onClick={hideDeleteProdutoDialog} color="primary">
-            Sim
-          </Button>
-        </DialogActions>
-    </Dialog>
 
-    <Dialog
-        open={deleteProdutosDialog}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={hideDeleteProdutoDialog}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle id="alert-dialog-slide-title">{"Tem certeza que deseja excluir os  ítens selecionados?"}</DialogTitle>
-        <DialogActions>
-          <Button onClick={() =>{setDeleteprodutosDialog(false); window.location.reload()}} color="primary">
-            Não 
-          </Button>
-          <Button onClick={deleteSelectedprodutos} color="primary">
-            Sim
-          </Button>
-        </DialogActions>
-    </Dialog>
-    <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success">
-            Produto Cadastrado com Sucesso!
-        </Alert>
-    </Snackbar>
+            <DialogConfirme show={deleteProdutoDialog} text={"item: "+store.produto.titulo} titulo='Realmente deseja deletar o item?'
+                            setFunctionButtonSim={hideDeleteProdutoDialog}  
+                            setFunctionButtonNao={() => setDeleteprodutoDialog(false)}/>
 
-</Container>
+            <DialogConfirme show={deleteProdutosDialog} text='' titulo='Realmente deseja deletar os  ítens selecionados?' 
+                            setFunctionButtonSim={deleteSelectedAll}  
+                            setFunctionButtonNao={hideDialogConfirme}/>
+           
+            <Toast ref={toast} />
+            {/* <FooterAdmin /> */}
+        </Container>
     )
 }
 export default observer(Produto);

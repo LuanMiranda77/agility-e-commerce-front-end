@@ -27,6 +27,7 @@ import MoveToInbox from "@material-ui/icons/MoveToInbox";
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import PostAddIcon from '@material-ui/icons/PostAdd';
+import { useHistory } from 'react-router-dom';
 declare module 'csstype' {
   interface Properties {
     '--tree-view-color'?: string;
@@ -87,6 +88,8 @@ export function HeaderAdmin() {
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const history = useHistory();
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -190,7 +193,8 @@ export function HeaderAdmin() {
     );
   }
   const [state, setStatus] = useState(false);
-  const toggleDrawer = (open: boolean) => (
+// Lógica de links do menu
+  const toggleDrawer = (open: boolean,  page: string) => (
     event: React.KeyboardEvent | React.MouseEvent,
   ) => {
     if (
@@ -200,16 +204,28 @@ export function HeaderAdmin() {
     ) {
       return;
     }
+    
     setStatus(open);
+    if(page==='dashbord'){
+      history.push(`/${page}`);
+    }else  if(page==='produto'){
+      history.push(`/${page}`);
+    }else  if(page==='categoria'){
+      history.push(`/${page}`);
+    }else if(page==='pedido'){
+      history.push(`/${page}`)
+    }
+    
   };
+
   const list = () => (
     <div
       role="presentation"
-      //onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
+      //onClick={toggleDrawer(false,'')}
+      onKeyDown={toggleDrawer(false,'')}
     >
       <List>
-          <ListItem button key={"/Login"} onClick={toggleDrawer(false)}>
+          <ListItem button key={"/Login"} onClick={toggleDrawer(false,'')}>
            <Logo className="p-ml-4"/>
           </ListItem>
       </List>
@@ -220,7 +236,8 @@ export function HeaderAdmin() {
       defaultExpandIcon={<ArrowRightIcon />}
       defaultEndIcon={<div style={{ width: 24 }} />}
       >
-      <StyledTreeItem nodeId="1" labelText="DASHBORD" labelIcon={AccountTree} />
+      <StyledTreeItem nodeId="1" labelText="DASHBORD" labelIcon={AccountTree} 
+       onClick={toggleDrawer(false,'dashbord')}/>
       <Divider />
       <StyledTreeItem nodeId="2" labelText="MINHA LOJA" labelIcon={Store}>
         <StyledTreeItem
@@ -230,7 +247,7 @@ export function HeaderAdmin() {
             labelInfo=""
             color="#1a73e8"
             bgColor="#e8f0fe"
-            onClick={toggleDrawer(false)}
+            onClick={toggleDrawer(false,'')}
           />
           <StyledTreeItem
             nodeId="4"
@@ -239,7 +256,7 @@ export function HeaderAdmin() {
             labelInfo=""
             color="#e3742f"
             bgColor="#fcefe3"
-            onClick={toggleDrawer(false)}
+            onClick={toggleDrawer(false,'')}
           />
           <StyledTreeItem
             nodeId="5"
@@ -248,7 +265,7 @@ export function HeaderAdmin() {
             labelInfo=""
             color="#a250f5"
             bgColor="#f3e8fd"
-            onClick={toggleDrawer(false)}
+            onClick={toggleDrawer(false,'')}
           />
           <StyledTreeItem
             nodeId="6"
@@ -257,7 +274,7 @@ export function HeaderAdmin() {
             labelInfo="733"
             color="#3c8039"
             bgColor="#e6f4ea"
-            onClick={toggleDrawer(false)}
+            onClick={toggleDrawer(false,'pedido')}
           />
       </StyledTreeItem>
       <Divider />
@@ -269,7 +286,7 @@ export function HeaderAdmin() {
           labelInfo="90"
           color="#1a73e8"
           bgColor="#e8f0fe"
-          onClick={toggleDrawer(false)}
+          onClick={toggleDrawer(false,'produto')}
         />
         <StyledTreeItem
           nodeId="9"
@@ -278,7 +295,7 @@ export function HeaderAdmin() {
           labelInfo="10"
           color="#e3742f"
           bgColor="#fcefe3"
-          onClick={toggleDrawer(false)}
+          onClick={toggleDrawer(false,'categoria')}
         />
       </StyledTreeItem>
       <Divider />
@@ -347,13 +364,13 @@ export function HeaderAdmin() {
   return (
 
     <div className={classes.grow} >
-      <AppBar position="fixed" style={{background: 'var(--white)'}}>
+      <AppBar position="fixed" style={{background: 'var(--white)', zIndex: 999}}>
         <Toolbar>
           <IconButton
             edge="start"
             className={classes.menuButton}
             aria-label="open drawer"
-            onClick={toggleDrawer(true)}
+            onClick={toggleDrawer(true,'')}
           >
             <MenuIcon />
           </IconButton>
@@ -399,7 +416,7 @@ export function HeaderAdmin() {
       {renderMobileMenu}
       {renderMenu}
       <div>
-          <Drawer anchor={'left'} open={state} onClose={toggleDrawer(false)}>
+          <Drawer anchor={'left'} open={state} onClose={toggleDrawer(false,'')}>
             {list()}
           </Drawer>
       </div>

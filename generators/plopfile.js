@@ -22,7 +22,7 @@ module.exports = (plop)=>{
         {
           type:'add',
           path:'../src/pages/{{pascalCase (getName name)}}/index.tsx',
-          templateFile:'templates/component.tsx.hbs',
+          templateFile:'templates/tela.tsx.hbs',
           force:true,
           
         },
@@ -58,6 +58,36 @@ module.exports = (plop)=>{
         '--------------------------------------------------',
       ],
   });
+  plop.setGenerator('component',{
+    description:'Cria os arquivos básicos para de um compent',
+    prompts:[
+      {
+        type:'input',
+        name:'name',
+        message:'Digite o nome do Component? Ex.: nomeModulo/NomeModulo',
+      },
+    ],
+    actions:[
+      '------------------------------',
+      '.Generando o novo component...',
+      '------------------------------',
+      {
+        type:'add',
+        path:'../src/components/{{pascalCase (getName name)}}/index.tsx',
+        templateFile:'templates/component.tsx.hbs',
+        force:true,
+        
+      },
+      {
+        type:'add',
+        path:'../src/components/{{pascalCase (getName name)}}/styles.ts',
+        templateFile:'templates/style-component.ts.hbs',
+      },
+      '--------------------------------------------------',
+      '🤲 Componente gerando com sucesso! Luan é foda 🤲',
+      '--------------------------------------------------',
+    ],
+});
   
   plop.setHelper('getPath', namePath => {
     let path = '/';

@@ -1,9 +1,30 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
+
 const api = axios.create({
     baseURL: "http://localhost:8080/",
  
+});
+
+const integrador = axios.create({
+    baseURL: "http://localhost:5000/",
+    headers: {
+      Authorization:'Client-ID 51ea2b9cfb2560e',
+      Accept: "application/json",
+      'Access-Control-Allow-Origin': 'http://localhost:3000/',
+    }
+  });
+
+
+
+const imgur = axios.create({
+  baseURL: "",
+  headers: {
+    Authorization:'Client-ID 51ea2b9cfb2560e',
+    Accept: "application/json",
+  }
+
 });
 
 api.interceptors.request.use(async config => {
@@ -16,3 +37,5 @@ api.interceptors.request.use(async config => {
 
 
 export {api};
+export {imgur};
+export {integrador};
