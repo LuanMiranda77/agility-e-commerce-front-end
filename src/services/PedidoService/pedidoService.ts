@@ -1,4 +1,4 @@
-import { api, inte } from "../api";
+import { api, integrador } from "../api";
 import { IPedido } from "../../domain/types/IPedido";
 import { IEndereco } from "../../domain/types/IEndereco";
 
@@ -46,9 +46,9 @@ export class PedidoService {
       return response;
     }
 
-    async getRastreio() {
-      const response = await api.get(this.url).then(response =>{
-        return response.data;
+    async getRastreio(codigo: string) {
+      const response = await integrador.post('/api/correio/rastreio', [codigo]).then(response =>{
+        return response.data[0];
       }).catch(error=>{
         return Promise.reject(error.response.data[0]);
       });

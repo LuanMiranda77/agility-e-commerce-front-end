@@ -3,7 +3,7 @@ import { DialogProps } from '@material-ui/core/Dialog';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import icon from "../../assets/icon-voltar.png";
 import { ButtonBase } from '../../components/ButtonBase';
 import { CategoriaService } from "../../services/CategoriaService/categoriaService";
@@ -13,10 +13,11 @@ import { IPedido } from "../../domain/types/IPedido"
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { TripOriginRounded } from '@material-ui/icons';
+import { InsertEmoticon, TripOriginRounded } from '@material-ui/icons';
 import { Divider } from 'primereact/divider';
 import { Timeline } from 'primereact/timeline';
 import { Card } from 'primereact/card';
+import { PedidoService } from '../../services/PedidoService/pedidoService';
 
 interface DetalhesProps {
     store: any;
@@ -30,7 +31,48 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
     { objectURL: 'https://images-americanas.b2w.io/produtos/1336330097/imagens/relogio-digital-led-luxo-touch-screen-silicone-strap-relogio-de-pulso-azul-escuro/1336330097_1_large.jpg', titulo: 'Relógio Digital De Luxo Com Tela De Toque De Silicone Com Pulseira De Silicone', quantidadeVendida: 15, valor: 500 }];
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [submitted, setSubmitted] = useState(false);
+    const [events, setEvents] = useState([]);
     const msg = useRef<Toast>(null);
+    const pedidoService = new PedidoService();
+    
+    const codigo = 'LB230826957HK';
+    
+    const iconInicio = 'pi pi-check', iconProgresso = 'pi pi-shopping-cart';
+    const corInicio = '#607D8B', corProgresso = '#FF9800';
+
+
+    
+    useEffect(() => {
+        console.log("up")
+        pedidoService.getRastreio(codigo).then(data =>{
+            let cont = 0;
+            data.forEach(function(item: { icon: string; color: string; }) {
+                
+                if( cont === 0 ){
+                    item.icon = iconInicio;
+                    item.color = corInicio;  
+                    
+                }
+                else if( data.length === cont+1 ){
+                    item.icon = iconInicio;
+                    item.color = '#008000'; 
+                }else{
+                item.icon = iconProgresso;
+                item.color = corProgresso; 
+                }
+                cont++;
+            })
+            setEvents(data);
+ 
+            
+            
+          }
+          ).catch(error => {
+            Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+          });
+
+    }, []);
+
 
     const hideDialog = () => {
         props.closeFuncion();
@@ -86,24 +128,12 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
 
     }
 
-    const iconInicio = 'pi pi-check', iconProgresso = 'pi pi-shopping-cart';
-    const corInicio = '#607D8B', corProgresso = '#FF9800';
 
-    
-    let rastreio =   { status: '', date: '', icon: 'pi pi-shopping-cart', color: '#9C27B0' };
-
-    const events1 = [
-        { status: 'Moneito', date: '15/10/2020 10:30', icon: 'pi pi-shopping-cart', color: '#9C27B0' },
-        { status: 'São paulo', date: '15/10/2020 14:00', icon: 'pi pi-cog', color: '#673AB7' },
-        { status: 'Minas', date: '15/10/2020 16:15', icon: 'pi pi-shopping-cart', color: '#FF9800' },
-        { status: 'Terra', date: '16/10/2020 10:00', icon: 'pi pi-check', color: '#607D8B' }
-        
-    ];
 
     const customizedContent = (item: any) => {
         return (
-            <Card title={item.status} subTitle={item.date}>
-                <p>Voi enviado para a proxima cidade aguarde...</p>
+            <Card title={item.status} subTitle={item.data+' '+ item.hora}>
+                <p>{item.local}</p>
                 {/* <Button label="Read more" className="p-button-text"></Button> */}
             </Card>
         );
@@ -226,7 +256,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                                 </div>
                                 <div className='timeline-demo p-col-12 p-lg-8 p-xl-8'>
                                     <div className="card">
-                                        <Timeline value={events1} align="alternate" className="customized-timeline" marker={customizedMarker} content={customizedContent} />
+                                        <Timeline value={events} align="alternate" className="customized-timeline" marker={customizedMarker} content={customizedContent} />
                                     </div>
 
                                 </div>
