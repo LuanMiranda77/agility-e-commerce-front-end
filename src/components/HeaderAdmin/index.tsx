@@ -206,7 +206,7 @@ export function HeaderAdmin() {
     }
     
     setStatus(open);
-    if(page==='dashbord'){
+    if(page==='dashboard'){
       history.push(`/${page}`);
     }else  if(page==='produto'){
       history.push(`/${page}`);
@@ -237,7 +237,7 @@ export function HeaderAdmin() {
       defaultEndIcon={<div style={{ width: 24 }} />}
       >
       <StyledTreeItem nodeId="1" labelText="DASHBORD" labelIcon={AccountTree} 
-       onClick={toggleDrawer(false,'dashbord')}/>
+       onClick={toggleDrawer(false,'dashboard')}/>
       <Divider />
       <StyledTreeItem nodeId="2" labelText="MINHA LOJA" labelIcon={Store}>
         <StyledTreeItem
