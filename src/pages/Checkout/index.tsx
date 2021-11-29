@@ -12,19 +12,30 @@ import { InputText } from 'primereact/inputtext';
 import { ButtonBase } from '../../components/ButtonBase';
 import { ListItem } from '../../components/ListItem';
 import { Toast } from 'primereact/toast';
+import { CheckoutService } from '../../services/CheckoutService/checkoutService';
+import config from '../../config/index.json'
+import { Route, useHistory } from 'react-router-dom';
+import PagePix from './pagepix';
 
 const Checkout: React.FC = () => {
   const store = useContext(CheckoutStore);
-  store.checkout.payment_method_id='credit_card'
   const frentePAc = 35.00;
   const frenteSedex = 80.00;
-    const msg = useRef<Toast>(null);
+  const [qr_code_base64, setQRCode64] = useState('');
+  const [qr_code, setQRCode] = useState('');
+  const [dt_expired, setDataExpiried] = useState('');
+
+
+  const msg = useRef<Toast>(null);
   const [tipoFrete, setTipoFrete] = useState('PAC');
+  const [tipoPagamento, setTipoPagamento] = useState('credit_card');
   const [valorFrete, setValorFrete] = useState(frentePAc);
   const [valorCompra, setValorCompra] = useState(100);
   const [totalCompra, setTotalCompra] = useState(valorCompra);
   const PUBLIC_KEY = '';
+  const [modalDialog, setModalDialog] = useState(false);
   const [selectedParcela, setSelectedParcela] = useState<any>(null);
+  const chekoutService = new  CheckoutService();
   const parcelas = [
     { name: '1x parcelas', code: '1' },
     { name: '2x parcelas', code: 'RM' },
@@ -43,6 +54,51 @@ const Checkout: React.FC = () => {
     setTotalCompra(res);
     store.checkout.transaction_amount = res;
   };
+
+  const finalizarPagamento = () =>{
+    if(tipoPagamento === config.BANCO_MERC_PAGO || tipoPagamento === 'pix'){
+      store.checkout.type = 'BOLETO';
+    }
+    store.checkout.description = "Blue shirt"
+    store.checkout.installments =1
+    store.checkout.transaction_amount = valorCompra;
+    store.checkout.issuer_id = "310"
+    store.checkout.payer = {
+      email: "test@test.com",
+      first_name: 'Teste', 
+      last_name: 'Miranda',
+      identification: {
+        type: 'CPF',
+        number: '40601032845'
+      }
+    }
+    // store.checkout.address = {
+    //   zip_code: "06233200",
+    //   street_name: "Av. das Nações Unidas",
+    //   street_number: "3003",
+    //   neighborhood: "Bonfim",
+    //   city: "Osasco",
+    //   federal_unit: "SP"
+    // }
+    store.checkout.payment_method_id = tipoPagamento;
+    chekoutService.enviarPagemento(store.checkout).then(data =>{
+      Utils.messagemShow(msg,'success','Sucesso', 'pagamento gerado',5000);
+      console.log(data.response);
+      if(tipoPagamento === 'pix'){
+        console.log(data.response.point_of_interaction.transaction_data);
+        setDataExpiried(data.response.date_of_expiration);
+        setQRCode(data.response.point_of_interaction.transaction_data.qr_code);
+        setQRCode64(data.response.point_of_interaction.transaction_data.qr_code_base64);
+        setModalDialog(true);
+        
+      }else{
+        window.location.replace(data.response.transaction_details.external_resource_url);
+      }
+    }).catch(error => {
+      Utils.messagemShow(msg,'error','Erro enviar pagaemnto', error,5000);
+      console.log(error);
+    });
+  }
 
   const testFrete = (tipo: string) => {
 
@@ -63,6 +119,10 @@ const Checkout: React.FC = () => {
           <div className='p-grid p-col-3'>{Utils.formatCurrency(item.valor)}</div>
     </div>
   );
+
+  const hideDialog = () => {
+    setModalDialog(false);
+}
 
   return (
     <Container id='form-checkout'>
@@ -123,15 +183,15 @@ const Checkout: React.FC = () => {
             <br />
             <div className='p-grid p-md-6 p-lg-12 p-xl-12 '>
               <div className="p-field-radiobutton p-col-4">
-                <RadioButton inputId="tipo-cartao" name="tipo-cartao" value="credit_card" onChange={(e) => store.checkout.payment_method_id = e.value} checked={store.checkout.payment_method_id === 'credit_card'} />
+                <RadioButton inputId="tipo-cartao" name="tipo-cartao" value="credit_card" onChange={(e) => setTipoPagamento(e.value)} checked={tipoPagamento === 'credit_card'} />
                 <label htmlFor="cartao" className='p-text-bold' >Cartão</label>
               </div>
               <div className="p-field-radiobutton p-col-4">
-                <RadioButton inputId="tipo-boleto" name="tipo-boleto" value="bolbradesco" onChange={(e) => store.checkout.payment_method_id = e.value} checked={store.checkout.payment_method_id === 'bolbradesco'} />
+                <RadioButton inputId="tipo-boleto" name="tipo-boleto" value={config.BANCO_MERC_PAGO} onChange={(e) => setTipoPagamento(e.value)} checked={tipoPagamento === config.BANCO_MERC_PAGO} />
                 <label htmlFor="boleto" className='p-text-bold'>Boleto</label>
               </div>
               <div className="p-field-radiobutton p-col-4">
-                <RadioButton inputId="tipo-pix" name="tipo-pix" value="pix" onChange={(e) => store.checkout.payment_method_id = e.value} checked={store.checkout.payment_method_id === 'pix'} />
+                <RadioButton inputId="tipo-pix" name="tipo-pix" value="pix" onChange={(e) => setTipoPagamento(e.value)} checked={tipoPagamento === 'pix'} />
                 <label htmlFor="pix" className='p-text-bold'>Pix</label>
               </div>
             </div>
@@ -205,11 +265,14 @@ const Checkout: React.FC = () => {
           </div>
           <Divider />
           <div className='center p-col-12 p-mb-5'>
-            <ButtonBase icon='pi pi-check-circle' label='Finalizar pagamento' className='p-button-warning p-p-4' style={{ width: '100%', fontSize: '25px' }} />
+            <ButtonBase icon='pi pi-check-circle' label='Finalizar pagamento' onClick={finalizarPagamento} className='p-button-warning p-p-4' style={{ width: '100%', fontSize: '25px' }} />
+            <ButtonBase icon='pi pi-check-circle' label='Pix' onClick={() =>{setModalDialog(true)}} className='p-button-warning p-p-4' style={{ width: '100%', fontSize: '25px' }} />
           </div>
           <div>
             <img src="https://cdn.shopify.com/s/files/1/0519/6546/0651/files/8_-_SELO_MERCADO_PAGO.png?v=1608404016" alt="" style={{ width: '100%' }} />
+            <img src={`data:image/jpeg;base64,${qr_code_base64}`} style={{ width: '100%' }}/>
           </div>
+          
         </div>
 
       </div>
@@ -226,6 +289,14 @@ const Checkout: React.FC = () => {
       <button type="submit" id="form-checkout__submit">Pagar</button>
       <progress value="0" className="progress-bar">Carregando...</progress>
       <Toast ref={msg} />
+      <PagePix 
+          valor={totalCompra} 
+          data_expired={dt_expired}
+          qr_code={qr_code} 
+          qr_code_base64={qr_code_base64} 
+          closeFuncion={hideDialog} 
+          modalDialog={modalDialog} 
+      />
     </Container>
   );
 }

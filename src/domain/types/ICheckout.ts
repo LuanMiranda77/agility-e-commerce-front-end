@@ -7,10 +7,21 @@ export  interface ICheckout{
     issuer_id: string,
     payer: {
       email: string,
+      first_name: string,//nome 
+      last_name: string,// sobre nome
       identification: {
         type: string,
         number: string
       }
     }
+    // address:  {
+    //   zip_code: string, //cep
+    //   street_name: string, //endereço
+    //   street_number: string,// numero
+    //   neighborhood: string,// bairro
+    //   city: string, // cidade
+    //   federal_unit: string // estado
+    // }
+    
     type:string;
 }
