@@ -30,11 +30,11 @@ function Login() {
         
         loginService.login(store.user).then(response => {
                 if(response.role === 'MASTER'){
-                    history.push("/dashbord");
+                    history.push("/dashboard");
                 }else if(response.role === 'ADMIN'){
-                    history.push("/dashbord");
+                    history.push("/dashboard");
                 }else if(response.role === 'SEPARADOR'){
-                    history.push("/dashbord");
+                    history.push("/dashboard");
                 }else{
                     history.push("/home");
                 }
