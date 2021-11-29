@@ -10,11 +10,12 @@ export class CheckoutService {
 
     
 
-    public async enviarPagemento(checkout:ICheckout) : Promise<ICheckout> {
-        const response = await integrador.post(this.url, checkout).then(response =>{
+    public async enviarPagemento(checkout:ICheckout) : Promise<any> {
+        const response = await integrador.post(this.url+'/pagamento', checkout).then(response =>{
             return response.data;
           }).catch(error=>{
-            return Promise.reject(error.response.data[0]);
+            console.error("Erro desenvolvedor:",error.response.data.mensagemDesenvolvedor[0]);
+            return Promise.reject(error.response.data.mensagemUsuario);
           });
         // ticketMedio: {total:500, quantidade:15},
         // totalPedidoRealizado: {total:3000, quantidade:150},

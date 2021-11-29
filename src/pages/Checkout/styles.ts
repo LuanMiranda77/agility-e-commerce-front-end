@@ -48,4 +48,11 @@ export const Container = styled.div`
         border-radius: 0.25rem;
         border-color: var(--secondary);
     }
+
+    .label-codigo{
+        color: var(--primary);
+        background: #D3D3D3;
+        border: 0;
+        font-size: 1rem;
+    }
 `;
