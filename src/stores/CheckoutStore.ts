@@ -15,11 +15,21 @@ class CheckoutStore{
     issuer_id: '',
     payer: {
         email: '', //obrigatorio
+        first_name: '',//nome 
+        last_name: '',//sobrenome
         identification: {
             type: '', // CPF ou CNPJ
             number: ''
         }
     },
+    // address:  {
+    //   zip_code: '', //cep
+    //   street_name: '', //endereço
+    //   street_number: '',// numero
+    //   neighborhood: '',// bairro
+    //   city: '', // cidade
+    //   federal_unit: '' // UF
+    // },
     type:'CARTAO'
   };
 
