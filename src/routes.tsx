@@ -28,7 +28,6 @@ const Routes: React.FC = () => {
         </Switch>
       </Suspense>
     </Router>
-
   );
 }
 export default Routes;
