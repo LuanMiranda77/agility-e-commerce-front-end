@@ -1,4 +1,4 @@
-import React, {useState}from 'react';
+import React, {useState, useRef, useEffect}from 'react';
 import { Container } from './styles';
 import { Logo } from '../../components/logo'
 import logo_zap from '../../assets/logo_zap.svg';
@@ -8,6 +8,9 @@ import logo_sacola from '../../assets/logo-sacola.svg';
 import { InputSearch } from '../InputSearch';
 import { ButtonBase } from '../ButtonBase';
 import { Dropdown } from 'primereact/dropdown';
+import { CategoriaService } from '../../services/CategoriaService/categoriaService';
+import { Utils } from '../../utils/utils';
+import { Toast } from 'primereact/toast';
 
 interface HeaderClienteProps {
   //adicionar os props
@@ -15,18 +18,29 @@ interface HeaderClienteProps {
 
 export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
   const [selectedCateg, setSelectedCateg] = useState<any>(null);
+  const categoriaService = new CategoriaService();
+  const [categorias, setCategorias] = useState<any>([]);
+  const msg = useRef<Toast>(null);
 
-  const onCityChange = (e: { value: any}) => {
+  const onCategChange = (e: { value: any}) => {
     setSelectedCateg(e.value);
-}
+  }
 
-  const cities = [
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
-];
+  useEffect(() => {
+    categoriaService.getCategorias().then(
+      data => {
+        data.map((item: {id: number, nome: string}) => {
+          let categ = {code: 0, name: ''};
+          categ.code = item.id;
+          categ.name = item.nome;
+          categorias.push(categ);
+        });
+        }
+    ).catch(error => {
+      Utils.messagemShow(msg, 'error', 'Erro de listagem', error.mensagemUsuario, 5000);
+    });
+  }, []);
+
 
   return <Container>
     <div className='p-col-12 p-grid'>
@@ -78,8 +92,8 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
       <i className='button-categ pi pi-bars p-ml-6 p-mt-2' style={{'fontSize': '1.5em'}}></i>
       <Dropdown className='button-categ p-mr-4' 
           value={selectedCateg} 
-          options={cities} 
-          onChange={onCityChange} 
+          options={categorias} 
+          onChange={onCategChange} 
           optionLabel="name" 
           placeholder="Todas as categorias"
           style={{color:'white'}} 
@@ -91,5 +105,6 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
       <button className='button-categ p-mr-4 p-mt-1'>Pulseiras</button>
       <button className='button-categ p-mt-1'>Gargantilhas</button>
     </div>
+    <Toast ref={msg} />
   </Container>;
 }
