@@ -4,6 +4,10 @@ export const Container  = styled.div`
 
     //adicionar stylos
     background: var(--white);
+    top:0;
+    position:fixed;
+    width:100%;
+    z-index: 99999;
     
     .text-top{
         color: var(--text-title);
@@ -16,12 +20,11 @@ export const Container  = styled.div`
     }
     .icon-sacola{
         width: 3.2rem;
-       
     }
     .quant-sacola{
         color: var(--white);
-        /* margin-top: -10rem;
-        margin-left: -2rem; */
+        padding-top: 2.3rem;
+        margin-left: -2.4rem;
     }
     .label-div-enter{
         display: block;

@@ -3,59 +3,19 @@ import styled from "styled-components";
 export const Container  = styled.div`
 
     //adicionar stylos
-    .banner-top{
+    .top{
         margin-top: 10rem;
     }
-
-    .galleria-demo {
-    .custom-indicator-galleria {
-        .indicator-text {
-            color: #e9ecef;
-            cursor: pointer;
-        }
-
-        .p-highlight {
-            .indicator-text {
-                color: var(--primary-color);
-            }
-        }
-    }
-    
-    }
     .card{
-        background: var(--white);
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .text-title{
-        color: var(--green);
-        font-weight: bold;
-    }
-    /* CarouselDemo.css */
-    .product-item .product-item-content {
-        border: 1px solid var(--surface-d);
-        border-radius: 3px;
-        margin: .3rem;
-        /* text-align: center; */
-        /* padding: 2rem 0; */
-    }
-
-    .product-item .product-image {
-        width: 80%;
-        height: 200px;
-        /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); */
-    }
-    .preco{
-        color: var(--secondary);
-        font-size: 20px;
+        background: white;
     }
 
     .p-rating .p-rating-icon.pi-star{
         color: #ffcb0c;
     }
-    //lista de produtos
-    .dataview-demo .p-dropdown {
+
+     //lista de produtos
+     .dataview-demo .p-dropdown {
     width: 14rem;
     font-weight: normal;
     }
@@ -163,6 +123,7 @@ export const Container  = styled.div`
         font-weight: bold;
         padding: 0.2rem;
         opacity : 0.5;
+        font-size: 12px;
     }
 
 @media screen and (max-width: 40em) {

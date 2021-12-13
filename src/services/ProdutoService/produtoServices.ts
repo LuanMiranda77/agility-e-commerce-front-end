@@ -88,6 +88,15 @@ export class ProdutoService {
     return response;
     }
 
+    public async pesquisaProdutosByTitle(params: string) : Promise<IProduto[]> {
+      const response = await api.get(this.url+`/busca/${params}`).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        return Promise.reject(error.response.data[0]);
+      });
+    return response;
+  }
+
   
 
   

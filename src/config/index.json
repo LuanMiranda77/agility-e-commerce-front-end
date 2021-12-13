@@ -1,4 +1,19 @@
 {
-    "BANCO_MERC_PAGO":"bolbradesco",
-    "ACESS_TOKEN_MERC_PAGO":"" 
+    "BANCO_MERC_PAGO": "bolbradesco",
+    "ACESS_TOKEN_MERC_PAGO": "https://images.tcdn.com.br/img/img_prod/789097/1623690126_banner_site_-_full_banner_-_2110_x_810_px_-_6.jpg",
+    "BANNER_MEIO": "https://images.tcdn.com.br/img/img_prod/789097/1623690126_banner_site_-_full_banner_-_2110_x_810_px_-_6.jpg",
+    "BANNER_TOP": [
+        {
+            "itemImageSrc": "https://images.tcdn.com.br/img/img_prod/789097/1623690285_banner_site_-_full_banner_-_2110_px_3.jpg",
+            "alt": "banner-1"
+        },
+        {
+            "itemImageSrc": "https://www.camadijoias.com.br/imagens/banner1.jpg",
+            "alt": "banner-1"
+        },
+        {
+            "itemImageSrc": "https://www.pratafina.com.br/blog/wp-content/uploads/2019/06/Blog_Banner-Joias_Personalizadas.jpg",
+            "alt": "banner-1"
+        }
+    ]
 }

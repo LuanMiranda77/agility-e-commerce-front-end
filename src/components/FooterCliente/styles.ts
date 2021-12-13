@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Container  = styled.div`
     //adicionar stylos
-    position:absolute;
+    /* position:absolute; */
     bottom:0;
     width:100%;
     
