@@ -12,7 +12,11 @@ export const Container  = styled.div`
 
     .p-rating .p-rating-icon.pi-star{
         color: #ffcb0c;
+        &:hover{
+            color: #ffcb0c;
+        }
     }
+    
 
      //lista de produtos
      .dataview-demo .p-dropdown {
@@ -100,6 +104,11 @@ export const Container  = styled.div`
         height: 200px;
     }
 
+    .p-inputnumber-input {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
     .dataview-demo .product-grid-item .product-grid-item-content {
         text-align: center;
     }
@@ -124,6 +133,10 @@ export const Container  = styled.div`
         padding: 0.2rem;
         opacity : 0.5;
         font-size: 12px;
+    }
+
+    .estrela{
+        cursor: pointer;
     }
 
 @media screen and (max-width: 40em) {

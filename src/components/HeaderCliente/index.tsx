@@ -31,11 +31,11 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
   }
 
   const pesquisaProduto = (event: any, params: string) => {
-    if (event.key === 'Enter') {
+  if(event === null){
+    history.push(`/pesquisa/${'c!'+params}`);
+  }else if (event.key === 'Enter') {
       history.push(`/pesquisa/${params}`);
-    }else if(event === null){
-      history.push(`/pesquisa/${params}`);
-    }
+  }
   }
 
   useEffect(() => {
@@ -109,7 +109,7 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
         placeholder="Todas as categorias"
         style={{ color: 'white' }}
       />
-      <button className='button-categ p-mr-4 p-mt-1'>Ofertas do dia</button>
+      <button className='button-categ p-mr-4 p-mt-1' onClick={(e) => pesquisaProduto(null, 'categoria-test0')}>Ofertas do dia</button>
       <button className='button-categ p-mr-4 p-mt-1'>Novidades</button>
       <button className='button-categ p-mr-4 p-mt-1'>Relógios</button>
       <button className='button-categ p-mr-4 p-mt-1'>Brincos</button>

@@ -95,7 +95,17 @@ export class ProdutoService {
         return Promise.reject(error.response.data[0]);
       });
     return response;
-  }
+    }
+
+    public async filterProdutos(tipo: string, dados: string) : Promise<IProduto[]> {
+      const response = await api.get(this.url+`/filter/${tipo}&${dados}`).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error.response);
+        return Promise.reject(error.response.data[0]);
+      });
+    return response;
+    }
 
   
 

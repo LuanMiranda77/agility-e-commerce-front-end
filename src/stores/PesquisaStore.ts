@@ -8,6 +8,8 @@ class PesquisaStore{
   @observable
   objPage = {
    //adicionar atributos aqui
+   precoMin: '0',
+   precoMax: '100',
   };
   
 
