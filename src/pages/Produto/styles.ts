@@ -7,6 +7,8 @@ export const Container = styled.div`
         max-height: 5rem;
     }
 
+    
+
     label{
         display: flex;
         color: var(--text-title);
@@ -30,6 +32,8 @@ export const Container = styled.div`
         background: var(--white);
         margin-top: -9.4rem;
         z-index: 12;
+
+       
        
     }
     .table{
@@ -147,6 +151,7 @@ export const Container = styled.div`
     }
     .buttonAdd{
         margin-left: 1.5rem;
+        margin-top: -2rem;
     }
     .buttonAction{
         display: flex;
