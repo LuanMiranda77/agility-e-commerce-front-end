@@ -139,6 +139,10 @@ export const Container  = styled.div`
         cursor: pointer;
     }
 
+    .cursor-pointer{
+        cursor: pointer;
+    }
+
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo
 }
