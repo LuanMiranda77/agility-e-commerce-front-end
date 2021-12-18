@@ -1,0 +1,21 @@
+import { action, computed, makeObservable, observable } from "mobx";
+import {createContext}from "react";
+
+class {{pascalCase (getName name)}}Store{
+  
+
+
+  @observable
+  objPage = {
+   {{!-- Adicionar atributos da pagina --}}
+   //adicionar atributos aqui
+  };
+  
+
+  constructor(){
+    makeObservable(this);
+  }
+  
+
+}
+export default createContext(new {{pascalCase (getName name)}}Store());

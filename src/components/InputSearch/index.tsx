@@ -6,9 +6,11 @@ import { Container } from "./styles";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
+  //buttonFuncion: Function;
 }
 
 export const InputSearch: React.FC<InputProps> = (props) => {
+  //onClick={props.buttonFuncion()}
   return (
     <Container>
       <div className="p-inputgroup">

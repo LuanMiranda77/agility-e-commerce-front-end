@@ -11,6 +11,16 @@ const api = axios.create({
  
 });
 
+const integrador = axios.create({
+    baseURL: "http://localhost:5000/",
+    headers: {
+      Authorization:'Client-ID 51ea2b9cfb2560e',
+      Accept: "application/json",
+      'Access-Control-Allow-Origin': 'http://localhost:3000/',
+    }
+  });
+
+
 
 const imgur = axios.create({
   baseURL: "",
@@ -32,3 +42,4 @@ api.interceptors.request.use(async config => {
 
 export {api};
 export {imgur};
+export {integrador};

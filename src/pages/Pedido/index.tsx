@@ -275,6 +275,11 @@ const Pedido: React.FC = () => {
                         <ButtonBase label="Filtrar" icon="pi pi-filter" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={filterByDate} />
                     </div>
 
+                    <div className="p-field p-sm-12 p-md-12 p-lg-1 p-xl-1 button-calendario">
+                        <label></label>
+                        <ButtonBase label="Filtrar" icon="pi pi-filter" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={filterByDate} />
+                    </div>
+
                 </div>
 
             </div>
