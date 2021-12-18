@@ -18,6 +18,7 @@ import { DataView, DataViewLayoutOptions, DataViewSortOrderType } from 'primerea
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { ButtonBase } from "../../components/ButtonBase";
+import { useHistory } from 'react-router-dom';
 
 /**
 *@Author Luan Mirnada
@@ -27,6 +28,7 @@ import { ButtonBase } from "../../components/ButtonBase";
 const Home: React.FC = () => {
   const store = useContext(HomeStore);
   const msg = useRef<Toast>(null);
+  const history = useHistory();
   const [produtos, setProduto] = useState<IProduto[]>([]);
   const produtoService = new ProdutoService();
 
@@ -55,7 +57,7 @@ const Home: React.FC = () => {
 
     return (
       <div className="product-item">
-        <div className="product-item-content p-shadow-2">
+        <div id='produto-3'className="cursor-pointer product-item-content p-shadow-2" onClick={() =>onEventDetalhesProduto(product.id)}>
           <div className="p-mb-3 p-mt-3 p-text-center">
             <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} 
                 alt={product.titulo} 
@@ -121,7 +123,7 @@ const Home: React.FC = () => {
     }
     return (
       <div className="p-col-12">
-        <div className="product-list-item">
+        <div id='produto-2' className="cursor-pointer product-list-item" onClick={() =>onEventDetalhesProduto(product.id)}>
           <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="product-image" />
           <div className="product-list-detail">
             <div className="product-name">{product.titulo}</div>
@@ -147,7 +149,7 @@ const Home: React.FC = () => {
     }
     return (
       <div className="p-col-12 p-md-3">
-        <div className="product-grid-item p-shadow-2">
+        <div id='produto-1' className="cursor-pointer product-grid-item p-shadow-2" onClick={() =>onEventDetalhesProduto(product.id)}>
           <div className="product-grid-item-top">
             <div>
               <i className="pi pi-tag product-category-icon"></i>
@@ -200,6 +202,10 @@ const Home: React.FC = () => {
   }
 
   const header = renderHeader();
+
+  const onEventDetalhesProduto = (idProduto: number) => {
+        history.push(`detalheproduto/${idProduto}`)
+  }
 
   return <Container>
     <HeaderCliente />

@@ -1,6 +1,7 @@
 import { api, integrador } from "../api";
 import { IPedido } from "../../domain/types/IPedido";
 import { IEndereco } from "../../domain/types/IEndereco";
+import { IFrete } from "../../domain/types/IFrente";
 
 export class PedidoService {
 
@@ -49,6 +50,15 @@ export class PedidoService {
     async getRastreio(codigo: string) {
       const response = await integrador.post('/api/correio/rastreio', [codigo]).then(response =>{
         return response.data[0];
+      }).catch(error=>{
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
+    async calculaFrete(frete: any) {
+      const response = await integrador.post('/api/correio/calcular', frete).then(response =>{
+        return response.data.response;
       }).catch(error=>{
         return Promise.reject(error.response.data[0]);
       });
