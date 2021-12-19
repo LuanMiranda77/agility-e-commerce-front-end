@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 //nossos imports
+import Carrinho from './pages/Carrinho';
 import Pesquisa from './pages/Pesquisa';
 import Home from './pages/Home';
 import Pedido from './pages/Pedido';
@@ -20,6 +21,7 @@ const Routes: React.FC = () => {
       <Suspense fallback={<div className='p-flex p-text-center p-mt-5 p-t-5'><CircularProgress /></div>}>
         <Switch>
           <Route path="/" exact component={Login} />
+          <PrivateRoute path="/carrinho" component={Carrinho} />
           <PrivateRoute path="/pesquisa/:filter" component={Pesquisa} />
           <PrivateRoute path="/home" component={Home} />
           <Route path="/login" component={Login} />
