@@ -18,6 +18,7 @@ import { Divider } from "primereact/divider";
 import { Image } from 'primereact/image';
 import { PedidoService } from "../../services/PedidoService/pedidoService";
 import { useHistory } from 'react-router-dom';
+import { IProduto } from "../../domain/types/IProduto";
 /**
 *@Author Luan Miranda 
 *@Issue AE-24
@@ -84,7 +85,6 @@ const DetalheProduto: React.FC = (props: any) => {
   }
 
   const listaImgens = () => {
-    console.log(store.produto.imagens);
     store.produto.imagens.map(item =>
       <div className="">
         <img className="img-pequena" src={'https://cf.shopee.com.br/file/ded58046f39cf91196ac3154f36ecdea'} alt="" />
@@ -122,6 +122,10 @@ const DetalheProduto: React.FC = (props: any) => {
         </div>
       </div>
     );
+  }
+
+  const addCarrinho = (produto: IProduto) => {
+      
   }
 
   return <Container>
