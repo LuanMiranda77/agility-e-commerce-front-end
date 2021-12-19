@@ -39,6 +39,10 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
   }
 
   useEffect(() => {
+    let array = JSON.parse(localStorage.getItem("carrinho") || "[]");
+
+    setQuantCarrinho(array.length);
+
     categoriaService.getCategorias().then(
       data => {
         data.map((item: { id: number, nome: string }) => {

@@ -15,6 +15,7 @@ import { IProduto } from "../../domain/types/IProduto";
 import { Rating } from "primereact/rating";
 import { ProdutoService } from "../../services/ProdutoService/produtoServices";
 import { Toast } from "primereact/toast";
+import { InputNumber } from "primereact/inputnumber";
 
 /**
 *@Author Carlos Avelino
@@ -26,18 +27,63 @@ const Carrinho: React.FC = () => {
   const msg = useRef<Toast>(null);
   const [produtos, setProduto] = useState<IProduto[]>([]);
   const produtoService = new ProdutoService();
-  const listaCarrinho = () => {
+  const [carrinho, setCarrinho] = useState<Array<IProduto>>([]);
+  let [total, setTotal] = useState(0);
 
+
+  const listaCarrinho = () => {
+    let _carrinho = getDadosLocalStorage();
+    produtos.map((item: any) => {
+      return <div className='p-col-12'>
+        <div className='p-grid'>
+          <div>
+            <img src={item.imagens[0].objectURL ? item.imagens[0].objectURL : 'https://e7.pngegg.com/pngimages/400/322/png-clipart-for-liturgical-year-open-graphics-illustration-box-black-and-white-angle-furniture.png'} alt="" />
+          </div>
+          <div>
+            <h2>{item.titulo}</h2>
+          </div>
+          <div>
+            <label className='p-mr-5'>Quantidade</label>
+            <InputNumber style={{ width: '5rem' }}
+              inputId="horizontal" value={item.quantidade}
+              onValueChange={(e) => item.quantidade === 0 ? item.quantidade = 1 : item.quantidade = e.value}
+              showButtons
+              buttonLayout="horizontal" step={1}
+              decrementButtonClassName="p-button-danger"
+              incrementButtonClassName="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+          <div>
+            <label htmlFor="">|Total:<span className='p-text-bold p-ml-1' style={{ color: 'var(--secondary)' }}>{item.precoVarejo}</span></label>
+          </div>
+          <div>
+            <ButtonBase icon='pi pi-trash' label='REMOVER'></ButtonBase>
+          </div>
+        </div>
+      </div>
+    });
+  }
+
+  const setDadosLocalStorage = (carrinho: any) => {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  }
+
+  const getDadosLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("carrinho") || "[]");
   }
 
   useEffect(() => {
     produtoService.getProdutos().then(
-      
-      data =>{setProduto(data)}
+      data => {
+        setProduto(data);
+        setDadosLocalStorage(data);
+      }
     ).catch(error => {
       Utils.messagemShow(msg, 'error', 'Erro de listagem', error.mensagemUsuario, 5000);
     });
-  }, []);// eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const responsiveOptionsProduts = [
     { breakpoint: '1024px', numVisible: 3, numScroll: 3 },
@@ -74,10 +120,49 @@ const Carrinho: React.FC = () => {
     );
   }
 
+  const removerProdutoCarrinho = (idProduto: number) =>{
+    let produtos = getDadosLocalStorage();
+    produtos = produtos.filter((item: IProduto) => item.id !=idProduto);
+    setDadosLocalStorage(produtos);
+    window.location.reload();
+  }
+
   return <Container>
     <HeaderCliente />
     <div className='p-col-12 top'>
-      <div>{listaCarrinho}</div>
+      <div className='title-top card' style={{color: 'var(--text-title)'}}><h2>Carrinho de compras</h2> </div>
+      {getDadosLocalStorage().map((item: any) => {
+      total+=item.precoVarejo;  
+      return <div className='p-col-12'>
+        <div className='p-grid card p-shadow-2'>
+          <div className='p-col-1 p-text-center'>
+            <img className='img-lista'  src={item.imagens[0].objectURL ? item.imagens[0].objectURL : 'https://e7.pngegg.com/pngimages/400/322/png-clipart-for-liturgical-year-open-graphics-illustration-box-black-and-white-angle-furniture.png'} alt="" />
+          </div>
+          <div className='p-col-4 p-mt-2'>
+            <h2>{item.titulo}</h2>
+          </div>
+          <div className='p-col-3 p-mt-2'>
+            <label className='p-mr-5'>Quantidade</label>
+            <InputNumber style={{ width: '0.3rem', size: '0.25rem' }}
+              inputId="horizontal" value={item.quantidade}
+              onValueChange={(e) => item.quantidade === 0 ? item.quantidade = 1 : item.quantidade = e.value}
+              showButtons
+              buttonLayout="horizontal" step={1}
+              decrementButtonClassName="p-button-danger"
+              incrementButtonClassName="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+          <div className='p-col-2 p-text-center p-mt-2'>
+            <label htmlFor="">Total:<span className='p-text-bold p-ml-1' style={{ color: 'var(--secondary)' }}>{Utils.formatCurrency(item.quantidade * item.precoVarejo)}</span></label>
+          </div>
+          <div className='p-col-2 p-text-right p-mt-2'>
+            <ButtonBase className='p-button-warning'  icon='pi pi-trash' label='REMOVER'onClick={() => removerProdutoCarrinho(item.id)} ></ButtonBase>
+          </div>
+        </div>
+      </div>
+      })};
       <div className='p-col-12 card  p-p-3'>
         <div className='p-grid p-p-2'>
           <div className='p-col-6 p-grid'>
@@ -96,19 +181,19 @@ const Carrinho: React.FC = () => {
               <div className='p-grid p-text-right'>
                 <label className='label-frete p-text-bold p-mr-2 p-mt-2' htmlFor="frete">Insira o Cupom de desconto </label>
                 <InputText className='p-mr-2' type="text" />
-                <ButtonBase label='Aplicar' icon='' className='p-button-warning' />
+                <ButtonBase label='Aplicar' icon='' className='p-button-warning'/>
               </div>
             </div>
           </div>
         </div>
         <div className='p-field p-grid label-valor p-text-bold'>
-          <label className='p-col-12 ' htmlFor="">Valor do Frete: <span className='p-ml-3 label-frete'>R$ 65</span></label>
-          <label className='p-col-12' htmlFor="">Cupom de desconto: <span className='p-ml-3 label-frete'>R$ 65</span></label>
-          <label className='p-col-12' htmlFor="">Valor Produtos: <span className='p-ml-3 label-frete'>R$ 65</span></label>
+          <label className='p-col-12 ' htmlFor="">Valor do Frete: <span className='p-ml-3 label-frete'>{Utils.formatCurrency(store.objPage.valorFrete)}</span></label>
+          <label className='p-col-12' htmlFor="">Cupom de desconto: <span className='p-ml-3 label-frete'>{Utils.formatCurrency(store.objPage.valorDesconto)}</span></label>
+          <label className='p-col-12' htmlFor="">Valor Produtos: <span className='p-ml-3 label-frete'>{Utils.formatCurrency(total)}</span></label>
         </div>
         <div className='p-grid'>
           <div className='p-col-6'>
-            <h1 className='label-frete'>TOTAL A PAGAR:  <span className='p-ml-3' style={{ color: 'var(--primary)' }}>R$ 65</span></h1>
+            <h1 className='label-frete'>TOTAL A PAGAR:  <span className='p-ml-3' style={{ color: 'var(--primary)' }}>{Utils.formatCurrency(total + store.objPage.valorFrete - store.objPage.valorDesconto )}</span></h1>
           </div>
           <div className='p-col-6'>
             <ButtonBase icon='pi pi-check-circle' label='Finalizar pedido' className='p-button-success p-text-uppercase p-pl-6 p-pr-6 p-pt-4 p-pb-4' />
