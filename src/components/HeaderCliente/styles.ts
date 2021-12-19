@@ -23,8 +23,8 @@ export const Container  = styled.div`
     }
     .quant-sacola{
         color: var(--white);
-        padding-top: 2.3rem;
-        margin-left: -2.4rem;
+        margin-left: -1.9rem;
+        background: var(--secondary);
     }
     .label-div-enter{
         display: block;
@@ -50,6 +50,10 @@ export const Container  = styled.div`
         margin:0 auto;
         justify-content: center;
         padding: 0;
+    }
+
+    .cursor-pointer{
+        cursor: pointer;
     }
 
 @media screen and (max-width: 40em) {

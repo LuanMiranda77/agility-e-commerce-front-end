@@ -124,8 +124,19 @@ const DetalheProduto: React.FC = (props: any) => {
     );
   }
 
+  const setDadosLocalStorage = (carrinho: any) => {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  }
+
+  const getDadosLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("carrinho") || "[]");
+  }
+
   const addCarrinho = (produto: IProduto) => {
-      
+      let array = getDadosLocalStorage();
+      array.push(produto);
+      setDadosLocalStorage(array);
+      window.location.reload();
   }
 
   return <Container>
@@ -172,9 +183,10 @@ const DetalheProduto: React.FC = (props: any) => {
           </div>
           <div className="p-field p-mt-6">
             <label className='p-mr-5'>Quantidade</label>
-            <InputNumber style={{ width: '5rem' }}
-              inputId="horizontal" value={store.objPage.quantidade}
-              onValueChange={(e) => store.objPage.quantidade === 0 ? store.objPage.quantidade = 1 : store.objPage.quantidade = e.value}
+            <InputNumber
+              className="p-ml-1"
+              inputId="horizontal" value={store.produto.quantidade}
+              onValueChange={(e) => store.produto.quantidade === 0 ? store.produto.quantidade = 1 : store.produto.quantidade = e.value}
               showButtons
               buttonLayout="horizontal" step={1}
               decrementButtonClassName="p-button-danger"
@@ -183,15 +195,15 @@ const DetalheProduto: React.FC = (props: any) => {
               decrementButtonIcon="pi pi-minus"
             />
           </div>
-          <div className="p-grid p-field p-ml-1 p-mt-6">
-            <label className='p-mr-3'>Consultar frete</label>
-            <InputMask id='cep' name='cep' mask='99999-999' value={store.objPage.cep} placeholder="99999-999" onChange={(e) => store.objPage.cep = e.value} />
-            <ButtonBase icon='' label='OK' onClick={calculaFrete} />
+          <div className="p-grid p-field  p-mt-6">
+            <label className='p-mr-3 pl-ml-2'>Consultar frete</label>
+            <InputMask className="cep" id='cep' name='cep' mask='99999-999' value={store.objPage.cep} placeholder="99999-999" onChange={(e) => store.objPage.cep = e.value} />
+            <ButtonBase className="but-cep p-p-2" icon='' label='OK' onClick={calculaFrete} />
             {store.resultFrete.Codigo !== '' && store.objPage.cep !== '' ? <small className="p-text-bold p-ml-3 p-mt-2" style={{ color: 'var(--green)' }}>{`${store.resultFrete.PrazoEntrega} dias úteis, R$ ${store.resultFrete.Valor}`}</small> : ''}
           </div>
           <div className="p-grid p-mt-5">
             <div className="p-col-6 p-field">
-              <ButtonBase icon='pi pi-shopping-cart' label="ADICIONAR SACOLA" className="p-button-outlined p-button-warning p-p-3" />
+              <ButtonBase icon='pi pi-shopping-cart' label="ADICIONAR SACOLA" className="p-button-outlined p-button-warning p-p-3" onClick={() => addCarrinho(store.produto)} />
             </div>
             <div className="p-col-6 p-field">
               <ButtonBase icon='pi pi-check-circle' label="COMPRAR AGORA" className="p-button-success p-p-3" onClick={() =>history.push('/checkout')}  />

@@ -67,6 +67,8 @@ export const Container  = styled.div`
     .p-inputnumber-input {
         flex: 1 1 auto;
         width: 3rem;
+        text-align: center;
+        font-weight: bold;
     }
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo

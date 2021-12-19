@@ -134,7 +134,7 @@ const Home: React.FC = () => {
           </div>
           <div className="product-list-action">
             <span className="product-price">{Utils.formatCurrency(product.precoVarejo)}</span>
-            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>
+            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)} ></ButtonBase>
             {/* <span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
           </div>
         </div>
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
             <small>{'266 vendidos'}</small>
             {product.quantidade === 0 ? 
             <div className="text-esgotado p-text-bold p-p-2"><label htmlFor="">ESGOTADO</label></div>
-            :<ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>}
+            :<ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)}></ButtonBase>}
           </div>
         </div>
       </div>
@@ -205,6 +205,21 @@ const Home: React.FC = () => {
 
   const onEventDetalhesProduto = (idProduto: number) => {
         history.push(`detalheproduto/${idProduto}`)
+  }
+
+  const setDadosLocalStorage = (carrinho: any) => {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  }
+
+  const getDadosLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("carrinho") || "[]");
+  }
+
+  const addCarrinho = (produto: IProduto) => {
+      let array = getDadosLocalStorage();
+      array.push(produto);
+      setDadosLocalStorage(array);
+      window.location.reload();
   }
 
   return <Container>
