@@ -49,7 +49,7 @@ export class PedidoService {
 
     async getRastreio(codigo: string) {
       const response = await integrador.post('/api/correio/rastreio', [codigo]).then(response =>{
-        return response.data[0];
+        return response.data.response[0];
       }).catch(error=>{
         return Promise.reject(error.response.data[0]);
       });
