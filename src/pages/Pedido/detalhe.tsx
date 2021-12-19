@@ -34,42 +34,41 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
     const [events, setEvents] = useState([]);
     const msg = useRef<Toast>(null);
     const pedidoService = new PedidoService();
-    
+
     const codigo = 'LB230826957HK';
-    
+
     const iconInicio = 'pi pi-check', iconProgresso = 'pi pi-shopping-cart';
     const corInicio = '#607D8B', corProgresso = '#FF9800';
 
 
-    
+
     useEffect(() => {
-        console.log("up")
-        pedidoService.getRastreio(codigo).then(data =>{
+        pedidoService.getRastreio(codigo).then(data => {
+            console.log(data);
             let cont = 0;
-            data.forEach(function(item: { icon: string; color: string; }) {
-                
-                if( cont === 0 ){
+            data.forEach(function (item: { icon: string; color: string; }) {
+
+                if (cont === 0) {
                     item.icon = iconInicio;
-                    item.color = corInicio;  
-                    
+                    item.color = corInicio;
                 }
-                else if( data.length === cont+1 ){
+                else if (data.length === cont + 1) {
                     item.icon = iconInicio;
-                    item.color = '#008000'; 
-                }else{
-                item.icon = iconProgresso;
-                item.color = corProgresso; 
+                    item.color = '#008000';
+                } else {
+                    item.icon = iconProgresso;
+                    item.color = corProgresso;
                 }
                 cont++;
             })
             setEvents(data);
- 
-            
-            
-          }
-          ).catch(error => {
+
+
+
+        }
+        ).catch(error => {
             Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
-          });
+        });
 
     }, []);
 
@@ -132,8 +131,14 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
 
     const customizedContent = (item: any) => {
         return (
-            <Card title={item.status} subTitle={item.data+' '+ item.hora}>
-                <p>{item.local}</p>
+            <Card title={item.status} subTitle={item.data + ' ' + item.hora}>
+                {item.origem ?
+                    <>
+                    <p><span className='p-text-bold p-mr-1'>Saida:</span> {item.origem}</p> 
+                    <p><span className='p-text-bold p-mr-1'>Para:</span>{item.destino}</p>
+                    </>:
+                    <p>{item.local}</p>
+                }
                 {/* <Button label="Read more" className="p-button-text"></Button> */}
             </Card>
         );
@@ -243,7 +248,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                                 </div>
                                 <div className='p-col-12 p-lg-2 p-xl-2 p-text-right'>
                                     <h4 style={{ color: 'var(--text-title)' }}>Código dos correios</h4>
-                                    <h5>ds54sd5s899sd</h5>
+                                    <h5>{codigo}</h5>
                                 </div>
 
                             </div>
@@ -287,7 +292,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                             <Divider />
                             <div className="p-col-12 p-text-right">
                                 <h2 style={{ color: 'var(--text-title)' }}>
-                                    Método de pagamento <span style={{ color: 'var(--primary)' }}>{' Boleto avista x 1 '+Utils.formatCurrency(store.pedido.valorTotal + store.pedido.valorFrete - store.pedido.valorDesconto)}</span>
+                                    Método de pagamento <span style={{ color: 'var(--primary)' }}>{' Boleto avista x 1 ' + Utils.formatCurrency(store.pedido.valorTotal + store.pedido.valorFrete - store.pedido.valorDesconto)}</span>
                                 </h2>
                             </div>
                         </div>
