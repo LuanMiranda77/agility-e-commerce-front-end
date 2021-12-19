@@ -8,6 +8,10 @@ export const Container  = styled.div`
         margin-top: 11rem;
     }
 
+    .title-top{
+        margin-bottom: -30px;
+    }
+
     .card{
         background: var(--white);
     }
@@ -46,6 +50,23 @@ export const Container  = styled.div`
 
     .p-rating .p-rating-icon.pi-star{
         color: #ffcb0c;
+    }
+
+    .img-lista {
+        width: 69px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        margin-right: 2rem;
+        height: 69px;
+        
+    }
+    .card{
+        background: var(--white);
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .p-inputnumber-input {
+        flex: 1 1 auto;
+        width: 3rem;
     }
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo
