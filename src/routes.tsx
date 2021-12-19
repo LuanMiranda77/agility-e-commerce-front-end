@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 //nossos imports
-import Carrinho from './pages/Carrinho';
 import DetalheProduto from './pages/DetalheProduto';
+import Carrinho from './pages/Carrinho';
 import Pesquisa from './pages/Pesquisa';
 import Home from './pages/Home';
 import Pedido from './pages/Pedido';

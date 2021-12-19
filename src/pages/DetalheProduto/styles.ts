@@ -31,6 +31,26 @@ export const Container  = styled.div`
         cursor: pointer;
     }
 
+    .p-inputnumber-input {
+        flex: 1 1 auto;
+        width: 6rem;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .cep{
+        width: 9rem;
+        text-align: center;
+        font-weight: bold;
+    }
+    .but-cep{
+        margin-left: -0.5rem;
+        height: 100%;
+        background: #d3d3d3;
+        border-color: #d3d3d3;
+        
+    }
+
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo
 }

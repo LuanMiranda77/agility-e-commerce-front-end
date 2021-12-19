@@ -78,7 +78,6 @@ const Carrinho: React.FC = () => {
     produtoService.getProdutos().then(
       data => {
         setProduto(data);
-        setDadosLocalStorage(data);
       }
     ).catch(error => {
       Utils.messagemShow(msg, 'error', 'Erro de listagem', error.mensagemUsuario, 5000);
@@ -122,7 +121,7 @@ const Carrinho: React.FC = () => {
 
   const removerProdutoCarrinho = (idProduto: number) =>{
     let produtos = getDadosLocalStorage();
-    produtos = produtos.filter((item: IProduto) => item.id !=idProduto);
+    produtos = produtos.filter((item: IProduto) => item.id !== idProduto);
     setDadosLocalStorage(produtos);
     window.location.reload();
   }
@@ -132,7 +131,7 @@ const Carrinho: React.FC = () => {
     <div className='p-col-12 top'>
       <div className='title-top card' style={{color: 'var(--text-title)'}}><h2>Carrinho de compras</h2> </div>
       {getDadosLocalStorage().map((item: any) => {
-      total+=item.precoVarejo;  
+      total+=item.quantidade * item.precoVarejo;  
       return <div className='p-col-12'>
         <div className='p-grid card p-shadow-2'>
           <div className='p-col-1 p-text-center'>

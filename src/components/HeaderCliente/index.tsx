@@ -13,6 +13,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { CategoriaService } from '../../services/CategoriaService/categoriaService';
 import { Utils } from '../../utils/utils';
 import { Toast } from 'primereact/toast';
+import { Badge } from 'primereact/badge';
 
 interface HeaderClienteProps {
   //adicionar os props
@@ -60,8 +61,8 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
 
   return <Container className='p-shadow-2'>
     <div className='p-col-12 p-grid'>
-      <div className='p-col-2 p-text-center p-mt-3'>
-        <Logo className='' />
+      <div className='p-col-2 p-text-center p-mt-3' onClick={() =>history.push('/home')}>
+        <Logo className='cursor-pointer'/>
       </div>
       <div className='p-col-10'>
         <div className='p-grid p-p-1'>
@@ -95,11 +96,11 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
             <label htmlFor="entra"><a href="/login" className='label-div-enter  text-top p-mb-2'>Entra</a></label>
             <label htmlFor="cad"><a href="/cadastro" className='label-div-enter text-top'>Cadastre-se</a></label>
           </div>
-          <div className='p-text-right p-col-1'>
+          <div className='cursor-pointer p-text-right p-col-1' onClick={() => history.push(`/carrinho`)}>
             <img src={logo_sacola} alt="sacola" className='icon-sacola'>
             </img>
           </div>
-          <label htmlFor="" className='quant-sacola p-text-bold'>{quantCarrinho}</label>
+          {quantCarrinho >0 ? <Badge className='quant-sacola p-text-bold' value={quantCarrinho} severity="danger" ></Badge> : ''}
         </div>
       </div>
     </div>
