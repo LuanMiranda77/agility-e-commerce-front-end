@@ -8,6 +8,9 @@ class CarrinhoStore{
   @observable
   objPage = {
    //adicionar atributos aqui
+   valorFrete: 0,
+   valorDesconto: 0,
+   total: 0
   };
   
 
