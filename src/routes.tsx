@@ -6,10 +6,12 @@ import DetalheProduto from './pages/DetalheProduto';
 import Pesquisa from './pages/Pesquisa';
 import Home from './pages/Home';
 import Pedido from './pages/Pedido';
+
 import Login from './pages/Login';
 import Produto from './pages/Produto';
 import { Notfound } from './pages/Notfound';
 import PrivateRoute from './privateRoutes';
+
 import Categoria from './pages/Categoria';
 import Dashbord from './pages/Dashbord';
 import Checkout from './pages/Checkout';
@@ -27,11 +29,11 @@ const Routes: React.FC = () => {
           <PrivateRoute path="/pesquisa/:filter" component={Pesquisa} />
           <PrivateRoute path="/home" component={Home} />
           <Route path="/login" component={Login} />
-          <PrivateRoute path="/produto" component={Produto} />
-          <PrivateRoute path="/dashboard" component={Dashbord} />
-          <PrivateRoute path="/categoria" component={Categoria} />
-          <PrivateRoute path="/pedido" component={Pedido} />
-          <PrivateRoute path="/checkout" component={Checkout} />
+          <Route path="/produto" component={Produto} />
+          <Route path="/dashboard" component={Dashbord} />
+          <Route path="/categoria" component={Categoria} />
+          <Route path="/pedido" component={Pedido} />
+          <Route path="/checkout" component={Checkout} />
           <Route component={Notfound} />
         </Switch>
       </Suspense>

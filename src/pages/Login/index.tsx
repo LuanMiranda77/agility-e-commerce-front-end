@@ -39,7 +39,7 @@ function Login() {
                     history.push("/home");
                 }
         }).catch(err =>{
-              Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
+              Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 999999900);
         });
     }
 

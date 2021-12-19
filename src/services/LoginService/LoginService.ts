@@ -11,10 +11,10 @@ export class LoginService {
 
     public async login(pEntity : IUser) {
         
-        api.post(this.auth, {email:'admin',password:'Ads%$#@!Ads'}).then(response =>{
-            login(response.data);
+        // api.post(this.auth, {email:'admin',password:'Ads%$#@!Ads'}).then(response =>{
+        //     login(response.data);
 
-        });
+        // });
         const response = await api.post(this.url+'/login', pEntity)
         .then( resp =>{
             return resp.data;

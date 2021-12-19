@@ -410,6 +410,8 @@ const Dashbord: React.FC = () => {
     {
       label: 'Últimos 5 dias',
       icon: 'pi pi-calendar',
+      id:'5 dias',
+      name: '5dias',
       command: () => {
         let dtIni = UtilsDate.subtrairDiasByData(5);
         dtIni = UtilsDate.formatByYYYYMMDD(dtIni);
@@ -421,6 +423,8 @@ const Dashbord: React.FC = () => {
     {
       label: 'Últimos 15 dias',
       icon: 'pi pi-calendar-minus',
+      id:'15 dias',
+      name: '15dias',
       command: () => {
         let dtIni = UtilsDate.subtrairDiasByData(15);
         dtIni = UtilsDate.formatByYYYYMMDD(dtIni);
@@ -432,6 +436,8 @@ const Dashbord: React.FC = () => {
     {
       label: 'Últimos 30 dias',
       icon: 'pi pi-calendar-plus',
+      id:'30 dias',
+      name: '30dias',
       command: () => {
         let dtIni = UtilsDate.subtrairDiasByData(30);
         dtIni = UtilsDate.formatByYYYYMMDD(dtIni);
