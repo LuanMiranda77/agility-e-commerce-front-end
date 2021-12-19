@@ -5,17 +5,12 @@ import DetalheProduto from './pages/DetalheProduto';
 import Pesquisa from './pages/Pesquisa';
 import Home from './pages/Home';
 import Pedido from './pages/Pedido';
-<<<<<<< HEAD
-import Login  from './pages/Login';
-import Produto  from './pages/Produto';
-import {Notfound} from './pages/Notfound';
-// import Route from './privateRoutes';
-=======
+
 import Login from './pages/Login';
 import Produto from './pages/Produto';
 import { Notfound } from './pages/Notfound';
 import PrivateRoute from './privateRoutes';
->>>>>>> test
+
 import Categoria from './pages/Categoria';
 import Dashbord from './pages/Dashbord';
 import Checkout from './pages/Checkout';
