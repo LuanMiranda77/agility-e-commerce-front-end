@@ -1,5 +1,5 @@
 export interface IFrete{
-    sCepOrigem: string;
+    sCepOrigem: '58500000';
     sCepDestino: string;
     nVlPeso: string;
     nCdFormato: string;

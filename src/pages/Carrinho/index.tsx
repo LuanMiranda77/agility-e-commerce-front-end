@@ -16,6 +16,7 @@ import { Rating } from "primereact/rating";
 import { ProdutoService } from "../../services/ProdutoService/produtoServices";
 import { Toast } from "primereact/toast";
 import { InputNumber } from "primereact/inputnumber";
+import { useHistory } from 'react-router-dom';
 
 /**
 *@Author Carlos Avelino
@@ -29,6 +30,7 @@ const Carrinho: React.FC = () => {
   const produtoService = new ProdutoService();
   const [carrinho, setCarrinho] = useState<Array<IProduto>>([]);
   let [total, setTotal] = useState(0);
+  const history = useHistory();
 
 
   const listaCarrinho = () => {
@@ -78,7 +80,6 @@ const Carrinho: React.FC = () => {
     produtoService.getProdutos().then(
       data => {
         setProduto(data);
-        setDadosLocalStorage(data);
       }
     ).catch(error => {
       Utils.messagemShow(msg, 'error', 'Erro de listagem', error.mensagemUsuario, 5000);
@@ -122,9 +123,22 @@ const Carrinho: React.FC = () => {
 
   const removerProdutoCarrinho = (idProduto: number) =>{
     let produtos = getDadosLocalStorage();
-    produtos = produtos.filter((item: IProduto) => item.id !=idProduto);
+    produtos = produtos.filter((item: IProduto) => item.id !== idProduto);
     setDadosLocalStorage(produtos);
     window.location.reload();
+  }
+
+  const calculoCarrinho = (quantidade: number, idProduto: number) => {
+    let produtos = getDadosLocalStorage();
+    produtos.forEach((item: IProduto) => {
+        if(item.id === idProduto ){
+          item.quantidade = quantidade;
+        }
+    });
+    console.log(produtos)
+    setDadosLocalStorage(produtos);
+    window.location.reload();
+
   }
 
   return <Container>
@@ -132,7 +146,7 @@ const Carrinho: React.FC = () => {
     <div className='p-col-12 top'>
       <div className='title-top card' style={{color: 'var(--text-title)'}}><h2>Carrinho de compras</h2> </div>
       {getDadosLocalStorage().map((item: any) => {
-      total+=item.precoVarejo;  
+      total+=item.quantidade * item.precoVarejo;  
       return <div className='p-col-12'>
         <div className='p-grid card p-shadow-2'>
           <div className='p-col-1 p-text-center'>
@@ -145,7 +159,7 @@ const Carrinho: React.FC = () => {
             <label className='p-mr-5'>Quantidade</label>
             <InputNumber style={{ width: '0.3rem', size: '0.25rem' }}
               inputId="horizontal" value={item.quantidade}
-              onValueChange={(e) => item.quantidade === 0 ? item.quantidade = 1 : item.quantidade = e.value}
+              onValueChange={(e) => {calculoCarrinho(e.value, item.id)}}
               showButtons
               buttonLayout="horizontal" step={1}
               decrementButtonClassName="p-button-danger"
@@ -176,9 +190,9 @@ const Carrinho: React.FC = () => {
               <ButtonBase label='Calcular' icon='' className='p-button-warning' />
             </div>
           </div>
-          <div className='p-col-6 p-text-right'>
-            <div className='p-mr-2 p-text-right p-col-12'>
-              <div className='p-grid p-text-right'>
+          <div className='p-col-6'>
+            <div className='p-mr-2 p-col-12'>
+              <div className='p-grid'>
                 <label className='label-frete p-text-bold p-mr-2 p-mt-2' htmlFor="frete">Insira o Cupom de desconto </label>
                 <InputText className='p-mr-2' type="text" />
                 <ButtonBase label='Aplicar' icon='' className='p-button-warning'/>
@@ -195,8 +209,8 @@ const Carrinho: React.FC = () => {
           <div className='p-col-6'>
             <h1 className='label-frete'>TOTAL A PAGAR:  <span className='p-ml-3' style={{ color: 'var(--primary)' }}>{Utils.formatCurrency(total + store.objPage.valorFrete - store.objPage.valorDesconto )}</span></h1>
           </div>
-          <div className='p-col-6'>
-            <ButtonBase icon='pi pi-check-circle' label='Finalizar pedido' className='p-button-success p-text-uppercase p-pl-6 p-pr-6 p-pt-4 p-pb-4' />
+          <div className='p-col-6 p-text-right'>
+            <ButtonBase icon='pi pi-check-circle' label='Finalizar pedido' className='p-button-success p-text-uppercase p-pl-6 p-pr-6 p-pt-4 p-pb-4' onClick={() => history.push('/checkout')} />
           </div>
         </div>
       </div>

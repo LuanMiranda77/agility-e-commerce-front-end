@@ -18,6 +18,7 @@ import { DataView, DataViewLayoutOptions, DataViewSortOrderType } from 'primerea
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import { ButtonBase } from "../../components/ButtonBase";
+import { useHistory } from 'react-router-dom';
 
 /**
 *@Author Luan Mirnada
@@ -27,6 +28,7 @@ import { ButtonBase } from "../../components/ButtonBase";
 const Home: React.FC = () => {
   const store = useContext(HomeStore);
   const msg = useRef<Toast>(null);
+  const history = useHistory();
   const [produtos, setProduto] = useState<IProduto[]>([]);
   const produtoService = new ProdutoService();
 
@@ -55,7 +57,7 @@ const Home: React.FC = () => {
 
     return (
       <div className="product-item">
-        <div className="product-item-content p-shadow-2">
+        <div id='produto-3'className="cursor-pointer product-item-content p-shadow-2" onClick={() =>onEventDetalhesProduto(product.id)}>
           <div className="p-mb-3 p-mt-3 p-text-center">
             <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} 
                 alt={product.titulo} 
@@ -121,8 +123,9 @@ const Home: React.FC = () => {
     }
     return (
       <div className="p-col-12">
-        <div className="product-list-item">
-          <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="product-image" />
+        <div id='produto-2' className="product-list-item" >
+          <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} 
+               alt={product.titulo} className="cursor-pointer product-image" onClick={() =>onEventDetalhesProduto(product.id)}/>
           <div className="product-list-detail">
             <div className="product-name">{product.titulo}</div>
             {/* <div className="product-description">{data.description}</div> */}
@@ -132,7 +135,7 @@ const Home: React.FC = () => {
           </div>
           <div className="product-list-action">
             <span className="product-price">{Utils.formatCurrency(product.precoVarejo)}</span>
-            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>
+            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)} ></ButtonBase>
             {/* <span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
           </div>
         </div>
@@ -147,7 +150,7 @@ const Home: React.FC = () => {
     }
     return (
       <div className="p-col-12 p-md-3">
-        <div className="product-grid-item p-shadow-2">
+        <div id='produto-1' className="product-grid-item p-shadow-2" >
           <div className="product-grid-item-top">
             <div>
               <i className="pi pi-tag product-category-icon"></i>
@@ -158,7 +161,7 @@ const Home: React.FC = () => {
             </div>
           </div>
           <div className="product-grid-item-content">
-            <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="product-image" />
+            <img onClick={() =>onEventDetalhesProduto(product.id)} src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="cursor-pointer product-image" />
             <div className="product-name">{product.titulo}</div>
             {/* <div className="product-description">{data.description}</div> */}
             <Rating value={product.estrelas} readOnly cancel={false}></Rating>
@@ -168,7 +171,7 @@ const Home: React.FC = () => {
             <small>{'266 vendidos'}</small>
             {product.quantidade === 0 ? 
             <div className="text-esgotado p-text-bold p-p-2"><label htmlFor="">ESGOTADO</label></div>
-            :<ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>}
+            :<ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)}></ButtonBase>}
           </div>
         </div>
       </div>
@@ -200,6 +203,37 @@ const Home: React.FC = () => {
   }
 
   const header = renderHeader();
+
+  const onEventDetalhesProduto = (idProduto: number) => {
+        history.push(`detalheproduto/${idProduto}`)
+  }
+
+  const setDadosLocalStorage = (carrinho: any) => {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  }
+
+  const getDadosLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("carrinho") || "[]");
+  }
+
+  const addCarrinho = (produto: IProduto) => {
+      let array = getDadosLocalStorage();
+      let band = 0;
+     array.forEach((item: IProduto) => {
+        if(item.id === produto.id){
+          produto.quantidade+=1;
+        }
+      });
+      
+      if(band === 1){
+        setDadosLocalStorage(array);
+      }else{
+        produto.quantidade = 1;
+        array.push(produto);
+        setDadosLocalStorage(array);
+      }
+      window.location.reload();
+  }
 
   return <Container>
     <HeaderCliente />
