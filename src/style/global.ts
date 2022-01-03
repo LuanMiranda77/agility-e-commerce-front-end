@@ -79,6 +79,7 @@ button {
   @media (max-width: 720px){
     right: 3rem;
   }
+  
 
 }
 
