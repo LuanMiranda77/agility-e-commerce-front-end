@@ -4,6 +4,7 @@ import { createContext } from "react";
 import { ICliente } from "../domain/types/ICliente";
 import { IEndereco } from "../domain/types/IEndereco";
 import { IUser } from "../domain/types/IUser";
+import { UtilsDate } from '../utils/utilsDate';
 
 class UsuarioStore {
 
@@ -23,15 +24,15 @@ class UsuarioStore {
   cliente: ICliente;
 
   @observable
-  user: IUser;
+  usuario: IUser;
 
 
   constructor() {
     makeObservable(this);
-    this.user = {
+    this.usuario = {
       id: 0,
       nome: '',
-      login: '',
+      login: 'test',
       email: '',
       dataCriacao: null,
       dataAtualizacao: null,
@@ -42,7 +43,7 @@ class UsuarioStore {
 
     this.cliente = {
       id: 0,
-      usuario: this.user,
+      usuario: this.usuario,
       cpfCnpj: '',
       tipo: 'VAREJO',
       enderecos: new Array<IEndereco>(),
@@ -61,17 +62,17 @@ class UsuarioStore {
   @action
   public isValid = () => {
     
-    if (!Utils.isValidEmail(this.user.email)) {
+    if (!Utils.isValidEmail(this.usuario.email)) {
       this.objPag.isFormValidEmail = true;
       return 'Endereço de e-mail inválido!'
     }
-    else if (this.objPag.senha !== this.user.password || this.objPag.senha.length > this.user.password.length || this.objPag.senha.length < this.user.password.length) {
+    else if (this.objPag.senha !== this.usuario.password || this.objPag.senha.length > this.usuario.password.length || this.objPag.senha.length < this.usuario.password.length) {
       this.objPag.isFormValidSenha = true;
       return 'Senha diferentes!';
     }
     else {
       // this.resetForm();
-      return ''
+      return '';
 
     }
   }
@@ -92,10 +93,10 @@ class UsuarioStore {
       isFormValidSenha: true,
       submit: false,
     }
-    this.user = {
+    this.usuario = {
       id: 0,
       nome: '',
-      login: '',
+      login: 'test',
       email: '',
       dataCriacao: null,
       dataAtualizacao: null,
@@ -106,7 +107,7 @@ class UsuarioStore {
 
     this.cliente = {
       id: 0,
-      usuario: this.user,
+      usuario: this.usuario,
       cpfCnpj: '',
       tipo: 'VAREJO',
       enderecos: new Array<IEndereco>(),
@@ -123,7 +124,7 @@ class UsuarioStore {
       this.objPag.isFormValidCPF = false;
       return false;
     }
-    else if (this.user.nome.length === 0) {
+    else if (this.usuario.nome.length === 0) {
       this.objPag.isFormValidNome = false;
       return false;
     }
@@ -134,10 +135,10 @@ class UsuarioStore {
     else if (this.objPag.senha.length === 0) {
       this.objPag.isFormValidSenha = false;
       return false;
-    } else if (this.user.password.length === 0) {
+    } else if (this.usuario.password.length === 0) {
       this.objPag.isFormValidSenha = false;
       return false;
-    } else if (this.user.email.length === 0) {
+    } else if (this.usuario.email.length === 0) {
       this.objPag.isFormValidEmail = false;
       return false;
     }

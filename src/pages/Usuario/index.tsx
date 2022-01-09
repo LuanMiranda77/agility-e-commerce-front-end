@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState, useRef } from "react"
 import { Container } from './styles';
 import { observer } from 'mobx-react-lite';
 import UsuarioStore from "../../stores/UsuarioStore"
-import icon_user from "../../assets/icon-user.svg"
+import icon_usuario from "../../assets/icon-user.svg"
 import { Divider } from "@material-ui/core";
 import { InputBase } from "../../components/InputBase";
 import { ModalLoad } from "../../components/ModalLoad";
@@ -21,6 +21,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Tooltip } from 'primereact/tooltip';
 import { UsuarioService } from "../../services/UsuarioService/usuarioService";
 import { Toast } from "primereact/toast";
+import { UtilsDate } from "../../utils/utilsDate";
 
 /**
 *@Author Luan Miranda
@@ -30,13 +31,13 @@ import { Toast } from "primereact/toast";
 const Usuario: React.FC = () => {
   const store = useContext(UsuarioStore);
   const msg = useRef<Toast>(null);
+  const [modalLoad, setModalLoad] = useState(false);
   const [erroForm, setErroForm] = useState('');
   const [maskCPF, setMaskCPF] = useState('block');
   const [maskCNPJ, setMaskCNPJ] = useState('none');
-  const [modalLoad, setModalLoad] = useState(false);
   const [checked, setChecked] = useState<boolean>(false);
   const [checkedCNPJ, setCheckedCNPJ] = useState<boolean>(false);
-  const userService = new UsuarioService();
+  const usuarioService = new UsuarioService();
   const passwordHeader = <h6>Escolha uma senha</h6>;
   const passwordFooter = (
     <React.Fragment>
@@ -55,13 +56,13 @@ const Usuario: React.FC = () => {
     return erroForm != '' ? <small className="p-error">{'Campo ' + tipo + ' é obrigatório'}</small> : '';
   };
 
-  const setMask = (e: any) =>{
+  const setMask = (e: any) => {
     setCheckedCNPJ(e);
-    
-    if(e){
+
+    if (e) {
       setMaskCNPJ('block');
       setMaskCPF('none');
-    }else{
+    } else {
       setMaskCNPJ('none');
       setMaskCPF('block');
     }
@@ -69,38 +70,51 @@ const Usuario: React.FC = () => {
 
   const onValidaCpfCnpj = (e: string) => {
     let t = e.replace(/[^\d]+/g, '');
-    if(t.length === 14 && checkedCNPJ){
+    if (t.length === 14 && checkedCNPJ) {
       store.cliente.cpfCnpj = e;
-      if(Utils.isValidCNPJ(e) === false){
+      if (Utils.isValidCNPJ(e) === false) {
         store.objPag.isFormValidCPF = false;
+      } else {
+        store.objPag.isFormValidCPF = true;
       }
     }
     else if (t.length === 11) {
       store.cliente.cpfCnpj = e;
       if (Utils.validCPF(e) === false) {
-          console.log('invalido');
-          store.objPag.isFormValidCPF = false;
+        console.log('invalido');
+        store.objPag.isFormValidCPF = false;
+      } else {
+        store.objPag.isFormValidCPF = true;
       }
     }
-    else if(t.length===0){
+    else if (t.length === 0) {
       store.resetForm();
+      store.objPag.isFormValidCPF = true;
     }
   }
 
   const onSave = () => {
-    setModalLoad(true);
+
     console.log(store.cliente.cpfCnpj);
     if (store.isValidaFormBranco()) {
       setErroForm(store.isValid());
-      if(erroForm === '' && store.objPag.isFormValidCPF){
-        userService.post(store.cliente).then((result) => {
+      if (erroForm === '' && store.objPag.isFormValidCPF) {
+        setModalLoad(true);
+        // store.cliente.dataNascimento = UtilsDate.formatByYYYYMMDDSemHora(store.cliente.dataNascimento);
+        usuarioService.post(store.cliente).then((result) => {
           setModalLoad(false);
-          Utils.messagemShow(msg, 'success', 'Cadastrado com sucesso!','Cadastrado com sucesso!' , 5000);
+          Utils.messagemShow(msg, 'success', '😃 Cadastrado com sucesso!', 'Cadastrado com sucesso!', 5000);
         })
-        .catch((error) =>{
-          setModalLoad(false);
-          Utils.messagemShow(msg, 'error', 'Erro no salvar', error.mensagemUsuario, 5000);
-        });
+          .catch((error) => {
+            setModalLoad(false);
+            setErroForm('');
+            store.objPag.isFormValidCPF = true;
+            Utils.messagemShow(msg, 'error', 'Erro no salvar', error.mensagemUsuario, 5000);
+          });
+      } else {
+        setErroForm('');
+        store.objPag.isFormValidCPF = true;
+        Utils.messagemShow(msg, 'error', 'Erro ao salvar registro', '😋 Ops algo deu errado', 5000);
       }
     }
   };
@@ -113,7 +127,7 @@ const Usuario: React.FC = () => {
       <div className="card p-col-12 p-shadow-2">
         <div className="p-grid p-p-2">
           <div>
-            <img src={icon_user} alt="logo-icon" />
+            <img src={icon_usuario} alt="logo-icon" />
           </div>
           <div className="p-mt-3 p-col-12 p-lg-8 p-xl-8" style={{ fontSize: '22px' }}>
             <label className="title-label p-text-bold" htmlFor="titulo">Cadastro de  Usuário</label>
@@ -137,7 +151,7 @@ const Usuario: React.FC = () => {
           </div>
 
           <div className="p-grid p-p-3">
-            <div className='p-field p-col-12 p-lg-3 p-xl-2 p-mt-1' style={{display:`${maskCNPJ}`}}>
+            <div className='p-field p-col-12 p-lg-3 p-xl-2 p-mt-1' style={{ display: `${maskCNPJ}` }}>
               <label htmlFor="">CNPJ<span className="p-ml-1" style={{ color: 'red' }}>*</span></label>
               <InputMask mask='99.999.999/9999-99' placeholder='Digite o seu CNPJ' type='text'
                 className={classNames({ 'p-invalid': !store.objPag.isFormValidCPF && store.cliente.cpfCnpj === '' })}
@@ -146,7 +160,7 @@ const Usuario: React.FC = () => {
               {!store.objPag.isFormValidCPF && store.cliente.cpfCnpj === '' && checkedCNPJ ? <small className="p-error">{'Campo CNPJ é obrigatório'}</small> : ''}
               {!store.objPag.isFormValidCPF && store.cliente.cpfCnpj !== '' && checkedCNPJ ? <small className="p-error">{'CNPJ inválido'}</small> : ''}
             </div>
-            <div className='p-field p-col-12 p-lg-3 p-xl-2 p-mt-1' style={{display:`${maskCPF}`}}>
+            <div className='p-field p-col-12 p-lg-3 p-xl-2 p-mt-1' style={{ display: `${maskCPF}` }}>
               <label htmlFor="">CPF<span className="p-ml-1" style={{ color: 'red' }}>*</span></label>
               <InputMask mask='999.999.999-99' placeholder='Digite o seu CPF' type='text'
                 className={classNames({ 'p-invalid': !store.objPag.isFormValidCPF && store.cliente.cpfCnpj === '' })}
@@ -156,8 +170,8 @@ const Usuario: React.FC = () => {
               {!store.objPag.isFormValidCPF && store.cliente.cpfCnpj !== '' ? <small className="p-error">{'CPF inválido'}</small> : ''}
             </div>
             <div className='p-col-12 p-lg-8 p-xl-8'>
-              <InputBase className={classNames({ 'p-invalid': !store.objPag.isFormValidNome && store.user.nome === '' })} type='text' label='Nome completo' placeholder="Digite seu nome" onChange={(e) => { store.user.nome = e.currentTarget.value }} required />
-              {!store.objPag.isFormValidNome && store.user.nome === '' ? <small className="p-error">{'Campo nome é obrigatório'}</small> : ''}
+              <InputBase className={classNames({ 'p-invalid': !store.objPag.isFormValidNome && store.usuario.nome === '' })} type='text' label='Nome completo' placeholder="Digite seu nome" onChange={(e) => { store.usuario.nome = e.currentTarget.value }} required />
+              {!store.objPag.isFormValidNome && store.usuario.nome === '' ? <small className="p-error">{'Campo nome é obrigatório'}</small> : ''}
             </div>
             <div className='p-sm-12 p-md-12 p-lg-2 p-xl-2 p-mt-1'>
               <InputDateBase label="Data de nascimento" value={store.cliente.dataNascimento} setFunction={store.setDataNascimento} />
@@ -198,17 +212,17 @@ const Usuario: React.FC = () => {
           <label className="title-label p-text-bold" htmlFor="dados">Dados do acesso</label>
           <div className="p-p-3 p-col-12 p-lg-5 p-xl-5">
             <div className="p-field">
-              <InputBase className={classNames({ 'p-invalid': !store.objPag.isFormValidEmail })} required label="E-mail" type="text" placeholder="Digite seu e-mail" value={store.user.email} onChange={(e) => (store.user.email = e.currentTarget.value)} />
+              <InputBase className={classNames({ 'p-invalid': !store.objPag.isFormValidEmail })} required label="E-mail" type="text" placeholder="Digite seu e-mail" value={store.usuario.email} onChange={(e) => (store.usuario.email = e.currentTarget.value)} />
               {!store.objPag.isFormValidEmail && !erroForm ? <small className="p-error">{'Campo e-mail é obrigatório'}</small> : ''}
               {!store.objPag.isFormValidEmail && erroForm ? <small className="p-error">{store.isValid()}</small> : ''}
             </div>
             <div className="p-field">
               <label htmlFor="">Senha<span className="p-ml-1" style={{ color: 'red' }}>*</span></label>
               <span className="p-float-label">
-                <Password id="password" name="password" placeholder="Digite sua senha" value={store.user.password} onChange={(e) => (store.user.password = e.currentTarget.value)} toggleMask
+                <Password id="password" name="password" placeholder="Digite sua senha" value={store.usuario.password} onChange={(e) => (store.usuario.password = e.currentTarget.value)} toggleMask
                   className={classNames({ 'p-invalid': !store.objPag.isFormValidSenha })} header={passwordHeader} footer={passwordFooter} />
               </span>
-              {!store.objPag.isFormValidSenha && store.user.password === '' ? <small className="p-error">{'Campo senha é obrigatório'}</small> : ''}
+              {!store.objPag.isFormValidSenha && store.usuario.password === '' ? <small className="p-error">{'Campo senha é obrigatório'}</small> : ''}
               {!store.objPag.isFormValidSenha && erroForm ? <small className="p-error">{erroForm}</small> : ''}
             </div>
             <div className="p-field">
@@ -227,7 +241,7 @@ const Usuario: React.FC = () => {
         <ButtonBase icon='pi pi-check' label='SALVAR' className="p-button-success p-pr-3 p-pl-3" onClick={onSave} />
       </div>
     </div>
-    <ModalLoad visible={modalLoad} closeFuncion={() => setModalLoad(false)} />
+    <ModalLoad visible={modalLoad} />
     <Toast ref={msg} />
   </Container>;
 }

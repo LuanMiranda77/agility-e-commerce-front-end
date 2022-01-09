@@ -1,23 +1,17 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
 import { DialogProps } from '@material-ui/core/Dialog';
-import { InputText } from 'primereact/inputtext';
-import { Toast } from 'primereact/toast';
-import { classNames } from 'primereact/utils';
-import React, { useRef, useState, useEffect } from 'react';
-import icon from "../../assets/icon-voltar.png";
-import { ButtonBase } from '../../components/ButtonBase';
-import { CategoriaService } from "../../services/CategoriaService/categoriaService";
-import { Utils } from "../../utils/utils";
-import { Container, FormControl } from "./styles";
-import { IPedido } from "../../domain/types/IPedido"
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InsertEmoticon, TripOriginRounded } from '@material-ui/icons';
+import { Card } from 'primereact/card';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 import { Divider } from 'primereact/divider';
 import { Timeline } from 'primereact/timeline';
-import { Card } from 'primereact/card';
+import { Toast } from 'primereact/toast';
+import React, { useEffect, useRef, useState } from 'react';
+import icon from "../../assets/icon-voltar.png";
 import { PedidoService } from '../../services/PedidoService/pedidoService';
+import { Utils } from "../../utils/utils";
+import { Container, FormControl } from "./styles";
 
 interface DetalhesProps {
     store: any;
@@ -134,9 +128,9 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
             <Card title={item.status} subTitle={item.data + ' ' + item.hora}>
                 {item.origem ?
                     <>
-                    <p><span className='p-text-bold p-mr-1'>Saida:</span> {item.origem}</p> 
-                    <p><span className='p-text-bold p-mr-1'>Para:</span>{item.destino}</p>
-                    </>:
+                        <p><span className='p-text-bold p-mr-1'>Saida:</span> {item.origem}</p>
+                        <p><span className='p-text-bold p-mr-1'>Para:</span>{item.destino}</p>
+                    </> :
                     <p>{item.local}</p>
                 }
                 {/* <Button label="Read more" className="p-button-text"></Button> */}

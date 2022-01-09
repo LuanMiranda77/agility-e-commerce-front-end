@@ -8,6 +8,14 @@ export class UtilsDate{
         return data;
     } 
 
+    public static formatByYYYYMMDDSemHora = (data: any) =>{
+        const moment = require('moment');
+  
+        data = moment(data).format('YYYY-MM-DD');
+         
+        return data;
+    } 
+
     public static formatByDDMMYYYY = (data: Date) =>{
         const moment = require('moment');
   

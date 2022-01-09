@@ -1,21 +1,16 @@
-import { ICliente } from "../../domain/types/ICliente";
-import { UtilsDate } from "../../utils/utilsDate";
 import { api } from "../api";
 
 /**
 *@Author
 *@Issue
 */
-export class UsuarioService {
+export class TrocaSenhaService {
 
     //end-point da api
-    url='api/usuario';
+    url='api/trocaSenha';
 
     //modelo de request post
-    async post(pEntity: ICliente){
-      pEntity.dataNascimento = UtilsDate.formatByYYYYMMDDSemHora(pEntity.dataNascimento);
-      console.log(pEntity);
-      let user = {...pEntity.usuario};
+    async post(pEntity: String){
       const response = await api.post(this.url, pEntity).then( resp =>{
             return resp.data;
         })

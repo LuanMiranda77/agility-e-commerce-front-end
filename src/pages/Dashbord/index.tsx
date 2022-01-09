@@ -464,7 +464,7 @@ const Dashbord: React.FC = () => {
   }
 
   return <Container>
-    <HeaderAdmin />
+    <HeaderAdmin tipoUser='CLIENTE'/>
     <div className="p-grid  p-mb-2 p-col-12">
       <div className="p-col-4" style={{ color: 'var(--text-title)' }}>
         <label>
