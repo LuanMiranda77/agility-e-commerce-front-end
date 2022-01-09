@@ -1,6 +1,9 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 //nossos imports
+import Endereco from './pages/Endereco';
+import TrocaSenha from './pages/TrocaSenha';
+import Usuario from './pages/Usuario';
 import DetalheProduto from './pages/DetalheProduto';
 import Carrinho from './pages/Carrinho';
 import Pesquisa from './pages/Pesquisa';
@@ -22,10 +25,13 @@ const Routes: React.FC = () => {
       <Suspense fallback={<div className='p-flex p-text-center p-mt-5 p-t-5'><CircularProgress /></div>}>
         <Switch>
           <Route path="/" exact component={Login} />
-      <PrivateRoute path="/detalheProduto/:id"component={ DetalheProduto } />
+      <PrivateRoute path="/endereco"component={ Endereco } />
+      <PrivateRoute path="/trocaSenha"component={ TrocaSenha } />
+          <Route path="/usuario" component={Usuario} />
+          <PrivateRoute path="/detalheProduto/:id" component={DetalheProduto} />
           <PrivateRoute path="/carrinho" component={Carrinho} />
           <PrivateRoute path="/pesquisa/:filter" component={Pesquisa} />
-          <PrivateRoute path="/home" component={Home} />
+          <Route path="/home" component={Home} />
           <Route path="/login" component={Login} />
           <PrivateRoute path="/produto" component={Produto} />
           <PrivateRoute path="/dashboard" component={Dashbord} />

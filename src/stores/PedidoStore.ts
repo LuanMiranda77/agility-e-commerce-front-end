@@ -21,7 +21,9 @@ class PedidoStore{
               tipo: 'VAREJO',
               enderecos: new Array<IEndereco>(),
               telefone: '',
-              celular: ''
+              celular: '',
+              dataNascimento: new Date(),
+              sexo:'',
   };
 
   pagamento: IPagamento = {

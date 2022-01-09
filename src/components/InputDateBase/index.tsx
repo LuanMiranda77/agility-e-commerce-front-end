@@ -1,16 +1,22 @@
+import { Calendar } from 'primereact/calendar';
 import React from 'react';
 import { Container } from './styles';
 
-interface DateProps{
-   date: string
+interface DateProps {
+   label: string;
+   setFunction: Function;
+   value: Date;
 }
 
 const InputDateBase: React.FC<DateProps> = (props) => {
-  return <Container>
+   return <Container>
 
-          <input value={props.date} className=" p-col-12 p-p-2 p-sm-5 p-md-6 p-lg-12 p-xl-6 calendario" type="date" />
+      <div className="p-field">
+         <label>{props.label}</label>
+         <Calendar id={props.label} name={props.label}  placeholder='01/12/1990' value={props.value} dateFormat="dd/mm/yy" onChange={(e) => props.setFunction(e.value)} showIcon style={{width: '100%'}} />
+      </div>
 
-         </Container>;
+   </Container>;
 }
 
 export default InputDateBase;
