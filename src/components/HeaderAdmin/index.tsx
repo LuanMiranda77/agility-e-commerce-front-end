@@ -221,6 +221,12 @@ export function HeaderAdmin(props: any) {
       history.push(`/${page}`);
     } else if (page === 'pedido') {
       history.push(`/${page}`)
+    }else if (page === 'endereco') {
+      history.push(`/${page}`)
+    }else if (page === 'trocasenha') {
+      history.push(`/${page}`)
+    }else if (page === 'usuario') {
+      history.push(`/${page}`)
     }
 
   };
@@ -256,7 +262,7 @@ export function HeaderAdmin(props: any) {
             labelInfo=""
             color="#1a73e8"
             bgColor="#e8f0fe"
-            onClick={toggleDrawer(false, '')}
+            onClick={toggleDrawer(false, '/usuario')}
           />
           <StyledTreeItem
             nodeId="5"
@@ -265,7 +271,7 @@ export function HeaderAdmin(props: any) {
             labelInfo=""
             color="#a250f5"
             bgColor="#f3e8fd"
-            onClick={toggleDrawer(false, '')}
+            onClick={toggleDrawer(false, '/endereco')}
           />
           <StyledTreeItem
             nodeId="4"
@@ -274,7 +280,7 @@ export function HeaderAdmin(props: any) {
             labelInfo=""
             color="#e3742f"
             bgColor="#fcefe3"
-            onClick={toggleDrawer(false, '')}
+            onClick={toggleDrawer(false, 'trocasenha')}
           />
 
         </StyledTreeItem>

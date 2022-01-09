@@ -25,8 +25,8 @@ const Routes: React.FC = () => {
       <Suspense fallback={<div className='p-flex p-text-center p-mt-5 p-t-5'><CircularProgress /></div>}>
         <Switch>
           <Route path="/" exact component={Login} />
-      <PrivateRoute path="/endereco"component={ Endereco } />
-      <PrivateRoute path="/trocaSenha"component={ TrocaSenha } />
+          <PrivateRoute path="/endereco" component={Endereco} />
+          <PrivateRoute path="/trocaSenha" component={TrocaSenha} />
           <Route path="/usuario" component={Usuario} />
           <PrivateRoute path="/detalheProduto/:id" component={DetalheProduto} />
           <PrivateRoute path="/carrinho" component={Carrinho} />

@@ -14,6 +14,11 @@ import { CategoriaService } from '../../services/CategoriaService/categoriaServi
 import { Utils } from '../../utils/utils';
 import { Toast } from 'primereact/toast';
 import { Badge } from 'primereact/badge';
+import { Avatar } from 'primereact/avatar';
+import default_avatar from '../../assets/default_avatar.png';
+import { Button } from 'primereact/button';
+import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
+import { Menu } from 'primereact/menu';
 
 interface HeaderClienteProps {
   //adicionar os props
@@ -21,22 +26,24 @@ interface HeaderClienteProps {
 
 export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
   const [selectedCateg, setSelectedCateg] = useState<any>(null);
+  const menu = useRef<any>(null);
   const categoriaService = new CategoriaService();
   const [categorias, setCategorias] = useState<any>([]);
   const msg = useRef<Toast>(null);
   const [quantCarrinho, setQuantCarrinho] = useState(0);
   const history = useHistory();
 
+
   const onCategChange = (e: { value: any }) => {
     setSelectedCateg(e.value);
   }
 
   const pesquisaProduto = (event: any, params: string) => {
-  if(event === null){
-    history.push(`/pesquisa/${'c!'+params}`);
-  }else if (event.key === 'Enter') {
+    if (event === null) {
+      history.push(`/pesquisa/${'c!' + params}`);
+    } else if (event.key === 'Enter') {
       history.push(`/pesquisa/${params}`);
-  }
+    }
   }
 
   useEffect(() => {
@@ -58,11 +65,61 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
     });
   }, []);
 
+  const getUser = () => {
+    let user = Utils.getTokenLogin();
+
+    if (user) {
+      return user.split('&');
+    } else {
+      return [];
+    }
+  }
+
+
+
+  const confirm1 = (event: any) => {
+    confirmPopup({
+      target: event.currentTarget,
+      message: 'Are you sure you want to proceed?',
+      icon: 'pi pi-exclamation-triangle',
+    });
+  };
+
+  const items = [
+    {
+      label: 'Dados pessoais', icon: 'pi pi-fw pi-video',
+      items: [
+        {
+          label: 'Minha Conta',
+          icon: 'pi pi-android',
+          command: () => {
+
+          }
+        },
+        {
+          label: 'Compras',
+          icon: 'pi pi-dollar',
+          command: () => {
+            history.push(`/pedido`);
+          }
+        },
+        {
+          label: 'Sair',
+          icon: 'pi pi-sign-out',
+          command: () => {
+            Utils.logout();
+            history.push(`/login`);
+          }
+        }
+      ]
+    },
+  ];
+
 
   return <Container className='p-shadow-2'>
     <div className='p-col-12 p-grid'>
-      <div className='p-col-2 p-text-center p-mt-3' onClick={() =>history.push('/home')}>
-        <Logo className='cursor-pointer'/>
+      <div className='p-col-2 p-text-center p-mt-3' onClick={() => history.push('/home')}>
+        <Logo className='cursor-pointer' />
       </div>
       <div className='p-col-10'>
         <div className='p-grid p-p-1'>
@@ -89,18 +146,30 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
           </div>
         </div>
         <div className='p-grid'>
-          <div className='p-col-10'>
-            <InputSearch placeholder='Pesquisar produto...' onKeyDown={(e) => pesquisaProduto(e, e.currentTarget.value)}/>
+          <div className='p-col-9'>
+            <InputSearch placeholder='Pesquisar produto...' onKeyDown={(e) => pesquisaProduto(e, e.currentTarget.value)} />
           </div>
-          <div className='p-col-1 p-text-right'>
-            <label htmlFor="entra"><a href="/login" className='label-div-enter  text-top p-mb-2'>Entra</a></label>
-            <label htmlFor="cad"><a href="/cadastro" className='label-div-enter text-top'>Cadastre-se</a></label>
-          </div>
+          {
+            !localStorage.getItem('p-text-left') ?
+              <div className='p-col-2 p-text-right'>
+                <label htmlFor="entra"><a href="/login" className='label-div-enter  text-top p-mb-2'>Entra</a></label>
+                <label htmlFor="cad"><a href="/usuario" className='label-div-enter text-top'>Cadastre-se</a></label>
+              </div>
+              :
+              <div className='p-col-2 p-text-center' onMouseEnter={(event) => menu?.current.toggle(event)} onMouseLeave={(event) => menu?.current.toggle(event)}>
+                <div className='text-top'>
+                  <Avatar image={default_avatar} className="p-mt-2" shape="circle" style={{ width: '15%', height: '15%' }} >
+                    <small className='p-ml-2'>{getUser()[1].split(' ')[0]}</small>
+                    <Menu model={items} popup ref={menu} id="popup_menu" />
+                  </Avatar>
+                </div>
+              </div>
+          }
           <div className='cursor-pointer p-text-right p-col-1' onClick={() => history.push(`/carrinho`)}>
             <img src={logo_sacola} alt="sacola" className='icon-sacola'>
             </img>
           </div>
-          {quantCarrinho >0 ? <Badge className='quant-sacola p-text-bold' value={quantCarrinho} severity="danger" ></Badge> : ''}
+          {quantCarrinho > 0 ? <Badge className='quant-sacola p-text-bold' value={quantCarrinho} severity="danger" ></Badge> : ''}
         </div>
       </div>
     </div>
