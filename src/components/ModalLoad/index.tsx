@@ -15,7 +15,7 @@ export const ModalLoad: React.FC<ModalLoadProps> = (props) => {
       open={props.visible}
     // onClose={hideDialog}
     >
-      <DialogContent style={{ background: 'var(--background)' }}>
+      <DialogContent style={{ background: 'var(--background)'}}>
         <div className='p-pl-6 p-pr-6'>
           <div className='p-text-center'>
             <ProgressSpinner />

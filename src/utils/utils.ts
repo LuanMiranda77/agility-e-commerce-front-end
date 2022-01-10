@@ -1,3 +1,4 @@
+import { ICliente } from './../domain/types/ICliente';
 import { RefObject } from "hoist-non-react-statics/node_modules/@types/react";
 import { userInfo } from "os";
 import { Toast } from "primereact/toast";
@@ -227,8 +228,33 @@ export class Utils {
     public static getTokenLogin(){
         let key = localStorage.getItem("p-text-left");
         if(key != null){
-            return this.decrypt(key);
+            const array = this.decrypt(key).split('&');
+            const userLogado: IUser={
+                id: Number(array[5]),
+                nome: array[1], 
+                login:'', 
+                email:'', 
+                dataCriacao: null, 
+                dataAtualizacao: null, 
+                status: 'ATIVO', 
+                password: '', 
+                role: array[3]
+            } 
+            return userLogado;
         }
+        
+    }
+
+
+
+    public static setClienteLocal(user: ICliente){
+        let key = this.encrypt(JSON.stringify(user));
+        localStorage.setItem("p-text-cli", key);
+    }
+
+    public static getClienteLocal(){
+        let key = localStorage.getItem("p-text-cli");
+        return key!= null ?  {...JSON.parse(this.decrypt(key))} :  {};
         
     }
 

@@ -69,21 +69,11 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
     let user = Utils.getTokenLogin();
 
     if (user) {
-      return user.split('&');
+      return user;
     } else {
-      return [];
+      return null;
     }
   }
-
-
-
-  const confirm1 = (event: any) => {
-    confirmPopup({
-      target: event.currentTarget,
-      message: 'Are you sure you want to proceed?',
-      icon: 'pi pi-exclamation-triangle',
-    });
-  };
 
   const items = [
     {
@@ -93,7 +83,7 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
           label: 'Minha Conta',
           icon: 'pi pi-android',
           command: () => {
-
+            history.push(`/cliente`);
           }
         },
         {
@@ -159,7 +149,7 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
               <div className='p-col-2 p-text-center' onMouseEnter={(event) => menu?.current.toggle(event)} onMouseLeave={(event) => menu?.current.toggle(event)}>
                 <div className='text-top'>
                   <Avatar image={default_avatar} className="p-mt-2" shape="circle" style={{ width: '15%', height: '15%' }} >
-                    <small className='p-ml-2'>{getUser()[1].split(' ')[0]}</small>
+                    <small className='p-ml-2'>{getUser()?.nome}</small>
                     <Menu model={items} popup ref={menu} id="popup_menu" />
                   </Avatar>
                 </div>

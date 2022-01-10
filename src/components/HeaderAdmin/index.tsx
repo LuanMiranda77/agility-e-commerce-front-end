@@ -28,6 +28,8 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import { useHistory } from 'react-router-dom';
+import { Utils } from '../../utils/utils';
+import icon from "../../assets/icon-voltar.png";
 import {
   Keyboard, ThreeDRotation, FilterVintage,
   FeaturedPlayList, BrightnessHigh, Dashboard,
@@ -49,7 +51,8 @@ type StyledTreeItemProps = TreeItemProps & {
 };
 
 export function HeaderAdmin(props: any) {
-  const isCliente = (props.tipoUser === "CLIENTE" ? true : false);
+  let userLogado = Utils.getTokenLogin();
+  const isCliente = (userLogado?.role === "CLIENTE" ? true : false);
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       list: {
@@ -221,15 +224,20 @@ export function HeaderAdmin(props: any) {
       history.push(`/${page}`);
     } else if (page === 'pedido') {
       history.push(`/${page}`)
-    }else if (page === 'endereco') {
+    } else if (page === 'endereco') {
       history.push(`/${page}`)
-    }else if (page === 'trocasenha') {
+    } else if (page === 'trocasenha') {
       history.push(`/${page}`)
-    }else if (page === 'usuario') {
+    } else if (page === 'cliente') {
       history.push(`/${page}`)
     }
 
   };
+
+  const userLogout = () => {
+    Utils.logout();
+    history.push('/login');
+  }
 
   const list = () => (
     <div
@@ -262,7 +270,7 @@ export function HeaderAdmin(props: any) {
             labelInfo=""
             color="#1a73e8"
             bgColor="#e8f0fe"
-            onClick={toggleDrawer(false, '/usuario')}
+            onClick={toggleDrawer(false, 'cliente')}
           />
           <StyledTreeItem
             nodeId="5"
@@ -271,7 +279,7 @@ export function HeaderAdmin(props: any) {
             labelInfo=""
             color="#a250f5"
             bgColor="#f3e8fd"
-            onClick={toggleDrawer(false, '/endereco')}
+            onClick={toggleDrawer(false, 'endereco')}
           />
           <StyledTreeItem
             nodeId="4"
@@ -310,7 +318,7 @@ export function HeaderAdmin(props: any) {
         <Divider />
         <StyledTreeItem
           nodeId="6"
-          labelText="Pedidos"
+          labelText={!isCliente ? "PEDIDOS" : "COMPRAS"}
           labelIcon={PostAddIcon}
           labelInfo="733"
           color="#3c8039"
@@ -320,6 +328,10 @@ export function HeaderAdmin(props: any) {
         <Divider />
         {!isCliente ?
           <StyledTreeItem nodeId="10" labelText="PROMOÇÕES" labelIcon={MonetizationOnIcon} />
+          : ''}
+        <Divider />
+        {!isCliente ?
+          <StyledTreeItem nodeId="10" labelText="CONFIGURAÇÃO" labelIcon={BrightnessHigh} />
           : ''}
       </TreeView>
     </div>
@@ -338,8 +350,20 @@ export function HeaderAdmin(props: any) {
     >
       <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
       <MenuItem onClick={handleMenuClose}>Minha conta</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Sair</MenuItem>
+      <MenuItem onClick={userLogout}>Sair</MenuItem>
     </Menu>
+  );
+
+  const buttonVoltar = (
+    <div className="">
+      <div className="p-col-12 p-text-ringht">
+        <button type="button" onClick={() => history.push('/home')} className="p-grid "
+          style={{ background: 'white', border: '0', cursor:'pointer' }}    >
+          <img src={icon} alt="img" />
+          <label htmlFor="" className="p-mt-2 p-text-bold" style={{ color: 'var(--text-title)', fontSize: '18px',  cursor:'pointer' }}>VOLTAR</label>
+        </button>
+      </div>
+    </div>
   );
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
@@ -399,7 +423,8 @@ export function HeaderAdmin(props: any) {
             <Logo className='p-mt-2' />
           </Typography>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
+          {!isCliente ?
+           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" >
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />
@@ -420,7 +445,7 @@ export function HeaderAdmin(props: any) {
             >
               <AccountCircle />
             </IconButton>
-          </div>
+          </div> : buttonVoltar}
           <div className={classes.sectionMobile}>
             <IconButton
               aria-label="show more"

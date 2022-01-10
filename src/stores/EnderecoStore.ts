@@ -8,11 +8,17 @@ class EnderecoStore{
   @observable
   objPage = {
    //adicionar atributos aqui
+   
   };
   
 
   constructor(){
     makeObservable(this);
+  }
+
+  @action
+  public load(){
+
   }
   
 

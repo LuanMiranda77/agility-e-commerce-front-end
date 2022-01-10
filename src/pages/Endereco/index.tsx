@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from "react"
 
 import { Container } from './styles';
 import { observer } from 'mobx-react-lite';
-import EnderecoStore from "../../stores/EnderecoStore"
+import UsuarioStore from "../../stores/UsuarioStore"
 import { InputBase } from "../../components/InputBase";
 import { HeaderAdmin } from "../../components/HeaderAdmin";
 import { ButtonBase } from "../../components/ButtonBase";
@@ -11,6 +11,7 @@ import { Toast } from "primereact/toast";
 import { Divider } from "@material-ui/core";
 import { Badge } from 'primereact/badge';
 import { FormEndereco } from "./form"
+import { Utils } from "../../utils/utils";
 
 /**
 *@Author
@@ -18,7 +19,7 @@ import { FormEndereco } from "./form"
 */
 
 const Endereco: React.FC = () => {
-  const store = useContext(EnderecoStore);
+  const store = useContext(UsuarioStore);
   const msg = useRef<Toast>(null);
   const [modalLoad, setModalLoad] = useState(false);
   const [modalDialog, setModalDialog] = useState(false);
@@ -27,33 +28,40 @@ const Endereco: React.FC = () => {
     setModalDialog(false);
   }
 
-  const lista = [
-    { id: 1, nome: 'Kaka', celular: '(83) 9.9638-6694', endereco: 'RUA LEOPOLDINO JOSE DA SILVA, 14, TERREO - NA ALEIXO FERRAGENS Monteiro-Paraíba 58500000', padrao: true },
-    { id: 1, nome: 'Kaka', celular: '(83) 9.9638-6694', endereco: 'RUA LEOPOLDINO JOSE DA SILVA, 14, TERREO - NA ALEIXO FERRAGENS Monteiro-Paraíba 58500000', padrao: false }
-  ];
+  // const lista = [
+  //   { id: 1, nome: 'Kaka', celular: '(83) 9.9638-6694', endereco: 'RUA LEOPOLDINO JOSE DA SILVA, 14, TERREO - NA ALEIXO FERRAGENS Monteiro-Paraíba 58500000', padrao: true },
+  //   { id: 1, nome: 'Kaka', celular: '(83) 9.9638-6694', endereco: 'RUA LEOPOLDINO JOSE DA SILVA, 14, TERREO - NA ALEIXO FERRAGENS Monteiro-Paraíba 58500000', padrao: false }
+  // ];
+  useEffect(() => {
+    store.load(Utils.getClienteLocal());
+  }, []);
+ 
+  const lista = store.cliente.enderecos;
 
   const enderecos =
-    lista.map((e) =>
+    lista.map((e: any) =>
       <div key={e.id} className="p-mt-4">
         <div className="p-grid">
           <div className="p-col-12 p-lg-9 p-xl-9">
             <div className="p-p-2">
               <label htmlFor="" className="p-mr-2 p-text-bold">
                 <span className="lable-lista p-mr-2 p-text-bold">Nome completo:</span>
-                {e.nome}
+                {store.cliente.usuario.nome}
               </label>
               {e.padrao ? <Badge value="Padrão" severity="success"></Badge> : ''}
             </div>
             <div className="p-p-2">
               <label htmlFor="" className="p-mr-2 p-text-bold">
                 <span className="lable-lista p-mr-2 p-text-bold">Telefone:</span>
-                {e.celular}
+                {store.cliente.celular}
               </label>
             </div>
             <div className="p-p-2">
               <label htmlFor="" className="p-mr-2 p-text-bold">
                 <span className="lable-lista p-mr-2 p-text-bold">Endereço:</span>
-                {e.endereco}
+                {e.logradouro+", "+e.numero+" - "+e.bairro}
+                <br /><br />
+                {e.cidade+"-"+e.uf+" - "+e.cep}
               </label>
             </div>
           </div>
