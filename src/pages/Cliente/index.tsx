@@ -50,9 +50,6 @@ const Cliente: React.FC = () => {
       setModalLoad(false);
       Utils.messagemShow(msg, 'error', 'Erro no salvar', error.mensagemUsuario, 5000);
     });
-
-    
-
   }
 
 
