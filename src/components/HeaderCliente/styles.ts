@@ -7,7 +7,7 @@ export const Container  = styled.div`
     top:0;
     position:fixed;
     width:100%;
-    z-index: 99999;
+    z-index: 15;
     
     .text-top{
         color: var(--text-title);

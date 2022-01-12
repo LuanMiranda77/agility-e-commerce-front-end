@@ -30,13 +30,18 @@ function Login() {
 
         loginService.login(store.user).then(response => {
             if (response.role === 'MASTER') {
+                Utils.geraTokenLogin(response);
                 history.push("/dashboard");
             } else if (response.role === 'ADMIN') {
+                Utils.geraTokenLogin(response);
                 history.push("/dashboard");
             } else if (response.role === 'SEPARADOR') {
+                Utils.geraTokenLogin(response);
                 history.push("/dashboard");
             } else {
+                Utils.geraTokenLogin(response);
                 history.push("/home");
+                console.log(Utils.getTokenLogin());
             }
         }).catch(err => {
             Utils.messagemShow(msg, 'info', `AVISO`, err.mensagemUsuario, 3000);

@@ -14,6 +14,7 @@ import iconCarrinho from '../../assets/iconCarrinho.svg'
 import { ButtonBase } from '../../components/ButtonBase'
 import { HeaderAdmin } from "../../components/HeaderAdmin"
 import { InputSearch } from "../../components/InputSearch"
+import { ModalLoad } from '../../components/ModalLoad'
 import { IPedido } from "../../domain/types/IPedido"
 import { PedidoService } from "../../services/PedidoService/pedidoService"
 import PedidoStore from "../../stores/PedidoStore"
@@ -35,17 +36,32 @@ const Pedido: React.FC = () => {
     const msg = useRef<Toast>(null);
     // Data calendário
     const [data, setData] = useState(new Date());
+    const [modalLoad, setModalLoad] = useState(false);
 
-    const [dateInicail, setDateInicail] = useState<Date | Date[] | undefined>(new Date());
+    const [dateInicail, setDateInicail] = useState<Date | Date[] | undefined>(new Date(UtilsDate.subtrairDiasByData(30)));
     const [dateFinal, setDateFinal] = useState<Date | Date[] | undefined>(new Date());
 
     useEffect(() => {
-        pedidoService.getPedidos().then(data =>{
-            setPedidos(data);
-          }
-          ).catch(error => {
-            Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
-          });
+        let userLogado = Utils.getTokenLogin();
+        if(userLogado?.role === 'MASTER'){
+            pedidoService.getPedidos().then(data =>{
+                setPedidos(data);
+              }
+              ).catch(error => {
+                Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+              });
+        }else{
+            store.pedido.cliente = Utils.getClienteLocal();
+            store.pedido.dataDeCriacao = UtilsDate.formatByYYYYMMDD(dateInicail);
+            store.pedido.dataFechamento = UtilsDate.formatByYYYYMMDD(dateFinal);
+            store.pedido.estatus="FINALIZADO"
+            pedidoService.getPedidosByCliente(store.pedido).then(data =>{
+                setPedidos(data);
+              }
+              ).catch(error => {
+                Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+              });
+        }
 
     }, []);
 
@@ -84,7 +100,7 @@ const Pedido: React.FC = () => {
     const bodyTemplateColumnC = (rowData: IPedido) => {
         return (
             <div>
-                <span className="p-column-title">Data da compra:</span>
+                <span className="p-column-title">Data:</span>
                 {UtilsDate.formatByDDMMYYYY(rowData.dataDeCriacao)}
             </div>
         );
@@ -138,47 +154,55 @@ const Pedido: React.FC = () => {
         );
     }
     const filterPedidoStatus = (index: Number) => {
+        setModalLoad(true);
         store.pedido.dataDeCriacao = UtilsDate.formatByYYYYMMDD(dateInicail);
         store.pedido.dataFechamento = UtilsDate.formatByYYYYMMDD(dateFinal);
-
-        if(index == 0){
+        if(index === 0){
             store.pedido.estatus = 'FINALIZADO';
             pedidoService.findPedidoByData(store.pedido).then(data => {
                 setPedidos(data);
+                setModalLoad(false);
             }).catch(error => {
+                setModalLoad(false);
                 Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
             });
-        }else if(index == 1){
+        }else if(index === 1){
             store.pedido.estatus = 'PENDENTE';
             pedidoService.findPedidoByEstatus(store.pedido).then(data => {
                 setPedidos(data);
+                setModalLoad(false);
             }).catch(error => {
+                setModalLoad(false);
                 Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
             });
-        }else if(index == 2){
-            store.pedido.estatus = 'NÃO_ENVIADO';
+        }else if(index === 2){
+            store.pedido.estatus = 'NAO_ENVIADO';
             pedidoService.findPedidoByEstatus(store.pedido).then(data => {
                 setPedidos(data);
+                setModalLoad(false);
             }).catch(error => {
+                setModalLoad(false);
                 Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
             });
-        }else if(index == 3){
+        }else if(index === 3){
             store.pedido.estatus = 'FINALIZADO';
             pedidoService.findPedidoByEstatus(store.pedido).then(data => {
                 setPedidos(data);
+                setModalLoad(false);
             }).catch(error => {
+                setModalLoad(false);
                 Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
             });
         }else{
             store.pedido.estatus = 'DEVOLUCAO';
             pedidoService.findPedidoByEstatus(store.pedido).then(data => {
                 setPedidos(data);
+                setModalLoad(false);
             }).catch(error => {
+                setModalLoad(false);
                 Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
             });
         }
-
-
     }
 
     /**
@@ -294,7 +318,7 @@ const Pedido: React.FC = () => {
                         <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
                         <Column field="id" header="Código" body={bodyTemplateColumnA} sortable></Column>
                         <Column field="cliente.ususario.nome" header="Cliente" body={bodyTemplateColumnB} headerStyle={{ width: '25%' }} sortable></Column>
-                        <Column field="dataCriacao" header="Data da compra" body={bodyTemplateColumnC} headerStyle={{ width: '13%' }} sortable></Column>
+                        <Column field="dataCriacao" header="Data" body={bodyTemplateColumnC} headerStyle={{ width: '13%' }} sortable></Column>
                         <Column field="valorDesconto" header="V. Desconto" body={bodyTemplateColumnD} headerStyle={{ width: '12%' }} sortable></Column>
                         <Column field="valorFrete" header="V. Frete" body={bodyTemplateColumnE} sortable></Column>
                         <Column field="valorTotal" header="V. Total" body={bodyTemplateColumnF} sortable></Column>
@@ -305,6 +329,7 @@ const Pedido: React.FC = () => {
             </div>
             {/* =============================================inicio do modal==========================================================================*/}
             <DetalhePedido modalDialog={modalDialog} closeFuncion={hideDialog} store={store} />
+            <ModalLoad visible={modalLoad} />
             <Toast ref={msg} />
         </Container>
     );

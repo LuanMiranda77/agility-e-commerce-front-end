@@ -1,4 +1,4 @@
-export interface IEndereco{
+export interface IEnderecoEntrega{
     id: number | null;
     logradouro: string;
     numero: string;
@@ -7,5 +7,4 @@ export interface IEndereco{
     cidade: string;
     cep: string;
     uf : string;
-    padrao: string | null;
 }

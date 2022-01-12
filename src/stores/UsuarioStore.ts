@@ -55,6 +55,11 @@ class UsuarioStore {
   }
 
   @action
+  public load(cliente: ICliente){
+    this.cliente = {...cliente};
+  }
+
+  @action
   public setDataNascimento = (data: Date) => {
     this.cliente.dataNascimento = data;
   }

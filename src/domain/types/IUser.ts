@@ -1,12 +1,12 @@
 
 export interface IUser{
   id: Number,
-  nome: String,
-  login: String,
+  nome: string,
+  login: string,
   email: string;
   dataCriacao: null,
   dataAtualizacao: null,
-  status: String,
+  status: string,
   password: string;
-  role: String,
+  role: string,
 }

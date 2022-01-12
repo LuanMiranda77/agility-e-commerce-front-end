@@ -2,6 +2,7 @@ import { api, integrador } from "../api";
 import { IPedido } from "../../domain/types/IPedido";
 import { IEndereco } from "../../domain/types/IEndereco";
 import { IFrete } from "../../domain/types/IFrente";
+import { ICliente } from "../../domain/types/ICliente";
 
 export class PedidoService {
 
@@ -20,10 +21,31 @@ export class PedidoService {
     deleteAll(array: IPedido[]){
       api.post(this.url+`/deleteall`, array);
     }
+    async getPedidosById(id:number) {
+      const response = await api.get(this.url+`/${id}`).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
+    async getPedidosByCliente(pEntity: IPedido) {
+      const response = await api.post(this.url+`/find-pedidos-by-cliente`, pEntity).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
     async getPedidos() {
       const response = await api.get(this.url).then(response =>{
         return response.data;
       }).catch(error=>{
+        console.log(error);
         return Promise.reject(error.response.data[0]);
       });
       return response;
@@ -33,6 +55,7 @@ export class PedidoService {
       const response = await api.post(this.url+'/find-data', pEntity).then(response =>{
         return response.data;
       }).catch(error=>{
+        console.log(error);
         return Promise.reject(error.response.data[0]);
       });
       return response;
@@ -42,6 +65,7 @@ export class PedidoService {
       const response = await api.post(this.url+'/find-data-all', pEntity).then(response =>{
         return response.data;
       }).catch(error=>{
+        console.log(error);
         return Promise.reject(error.response.data[0]);
       });
       return response;
@@ -51,6 +75,7 @@ export class PedidoService {
       const response = await integrador.post('/api/correio/rastreio', [codigo]).then(response =>{
         return response.data.response[0];
       }).catch(error=>{
+        console.log(error);
         return Promise.reject(error.response.data[0]);
       });
       return response;
@@ -60,6 +85,7 @@ export class PedidoService {
       const response = await integrador.post('/api/correio/calcular', frete).then(response =>{
         return response.data.response;
       }).catch(error=>{
+        console.log(error);
         return Promise.reject(error.response.data[0]);
       });
       return response;

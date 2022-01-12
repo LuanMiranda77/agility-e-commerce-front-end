@@ -182,6 +182,9 @@ export const FormControl = styled.form`
     label{
         color: var(--primary);
     }
+    .label-text{
+        color: var(--text-title);
+    }
 
     .button-status{
         background: #fff;
@@ -220,6 +223,13 @@ export const FormControl = styled.form`
     }
 
     /* TimelineDemo.css */
+    .timeline-demo{
+        margin: 0;
+        padding: 0;
+        width: 70%;
+        margin-top: -1rem;
+        /* align-items: left; */
+    }
 
     .timeline-demo .custom-marker {
         display: flex;
@@ -235,6 +245,10 @@ export const FormControl = styled.form`
     .timeline-demo .p-timeline-event-content,
     .timeline-demo .p-timeline-event-opposite {
         line-height: 1;
+    }
+    .test{
+        margin-top:'-5rem';
+        width:'100%'
     }
 
 
@@ -286,8 +300,16 @@ export const FormControl = styled.form`
         flex: 0;
     }
     .timeline-demo .customized-timeline .p-card {
-        margin-top: 1rem;
+        margin-top: 0rem;
     }
+    .timeline-demo{
+        margin: 0;
+        padding: 0;
+        width: 70%;
+        margin-top: 1rem;
+        /* align-items: left; */
+    }
+    
   
   }
    

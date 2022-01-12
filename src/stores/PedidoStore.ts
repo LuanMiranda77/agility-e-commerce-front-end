@@ -1,6 +1,7 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import { IPedido } from "../domain/types/IPedido";
 import {createContext}from "react";
+import { IEnderecoEntrega } from "../domain/types/IEnderecoEntrega";
 import { IEndereco } from "../domain/types/IEndereco";
 import {ICliente} from "../domain/types/ICliente";
 import { IPagamento } from "../domain/types/IPagamento";
@@ -13,7 +14,7 @@ class PedidoStore{
   
   byId = observable.map();
 
-  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: 'MASTER'};
+  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: ''};
 
   cliente: ICliente = { id: 0,
               usuario: this.usuario,
@@ -30,13 +31,13 @@ class PedidoStore{
     id: 0,
     numeroDeParcelas: 0,
     // dataEmissao: new Date,
-    dataVencimento: UtilsDate.formatByYYYYMMDD(new Date),
-    dataPagamento: UtilsDate.formatByYYYYMMDD(new Date) ,
+    dataVencimento: UtilsDate.formatByYYYYMMDD(new Date()),
+    dataPagamento: UtilsDate.formatByYYYYMMDD(new Date()) ,
     tipo: 'BOLETO',
     estatus: 'APROVADO',
   };
 
-  endereco: IEndereco = {
+  endereco: IEnderecoEntrega = {
     id: 0,
     logradouro: '',
     numero: '',
@@ -45,7 +46,6 @@ class PedidoStore{
     cidade: '',
     cep: '',
     uf : 'PB',
-
   };
 
   objNew = {
@@ -55,11 +55,12 @@ class PedidoStore{
    dataFechamento: new Date(),
    pagamento: this.pagamento,
    cliente: this.cliente,
-   enderecoDeEntrega: this.endereco,
+   enderecoEntrega: this.endereco,
    valorTotal: 0,
    valorFrete: 0,
    valorDesconto: 0,
    estatus: '',
+   codigoRastreio:'',
   };
 
   @observable

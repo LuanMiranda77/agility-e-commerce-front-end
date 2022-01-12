@@ -1,3 +1,4 @@
+import { IEnderecoEntrega } from './IEnderecoEntrega';
 import { PaginatorJumpToPageInputOptions } from "primereact/paginator";
 import { ICliente } from "./ICliente";
 import { IEndereco } from "./IEndereco";
@@ -11,9 +12,10 @@ export interface IPedido{
   dataFechamento: Date;
   pagamento: IPagamento;
   cliente: ICliente;
-  enderecoDeEntrega: IEndereco;
+  enderecoEntrega: IEnderecoEntrega;
   valorTotal: number;
   valorFrete: number;
   valorDesconto: number;
   estatus: string;
+  codigoRastreio: string | null;
 }
