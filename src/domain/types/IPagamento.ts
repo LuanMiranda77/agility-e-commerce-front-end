@@ -1,9 +1,9 @@
 export interface IPagamento{
-    id: Number;
+    id: Number | null;
     numeroDeParcelas: Number;
     // dataEmissao: Date;
-    dataVencimento: Date;
-    dataPagamento: Date;
+    dataVencimento: Date | null;
+    dataPagamento: Date | null;
     tipo: String;
     estatus: String;
 }

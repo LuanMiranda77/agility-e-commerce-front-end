@@ -9,17 +9,38 @@ export class PedidoService {
     url='api/pedido';
 
     async save(pEntity: IPedido){
-      const response = await api.post(this.url, pEntity);
-      return response.data;
+      const response = await api.post(this.url, pEntity).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
     }
-    update(pEntity: IPedido) : void{
-      api.put(this.url+`/${pEntity.id}`,pEntity);
+    async update(pEntity: IPedido) {
+      const response = api.put(this.url+`/${pEntity.id}`,pEntity).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;;
     }
-    delete(id:number){
-      api.delete(this.url+`/${id}`);
+    async delete(id:number){
+      api.delete(this.url+`/${id}`).then(response =>{
+        
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });;
     }
-    deleteAll(array: IPedido[]){
-      api.post(this.url+`/deleteall`, array);
+    async deleteAll(array: IPedido[]){
+      api.post(this.url+`/deleteall`, array).then(response =>{
+        
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });;
     }
     async getPedidosById(id:number) {
       const response = await api.get(this.url+`/${id}`).then(response =>{

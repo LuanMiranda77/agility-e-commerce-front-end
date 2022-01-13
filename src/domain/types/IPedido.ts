@@ -1,3 +1,4 @@
+import { IProduto } from './IProduto';
 import { IEnderecoEntrega } from './IEnderecoEntrega';
 import { PaginatorJumpToPageInputOptions } from "primereact/paginator";
 import { ICliente } from "./ICliente";
@@ -7,9 +8,9 @@ import { IPagamento } from "./IPagamento";
 export interface IPedido{
   //adicionar os atributos
   //Autor Carlos Avelino - AE-30
-  id: number;
+  id: number | null;
   dataDeCriacao: Date;
-  dataFechamento: Date;
+  dataFechamento: Date | null;
   pagamento: IPagamento;
   cliente: ICliente;
   enderecoEntrega: IEnderecoEntrega;
@@ -18,4 +19,5 @@ export interface IPedido{
   valorDesconto: number;
   estatus: string;
   codigoRastreio: string | null;
+  produtos: Array<any>;
 }

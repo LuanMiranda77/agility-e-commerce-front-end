@@ -43,6 +43,11 @@ export class UtilsDate{
         
     }
 
+    public static adicionarDiasByData(dias: number){
+        const moment = require('moment');
+        return moment().add(dias, 'days');
+     }
+
     public static subtrairDiasByData(dias: number){
         const moment = require('moment');
         return moment().subtract(dias, 'days');

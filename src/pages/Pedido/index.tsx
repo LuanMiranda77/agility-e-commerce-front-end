@@ -22,6 +22,7 @@ import { Utils } from "../../utils/utils"
 import { UtilsDate } from "../../utils/utilsDate"
 import { DetalhePedido } from "./detalhe"
 import { Container } from "./styles"
+import {statusPedido} from './enumStatus';
 
 
 const Pedido: React.FC = () => {
@@ -30,10 +31,10 @@ const Pedido: React.FC = () => {
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [selectedPedidos, setSelectedPedidos] = useState<IPedido[]>([]);
     const [globalFilter, setGlobalFilter] = useState("");
-    const pedidoService = new PedidoService();
     const [activeIndex, setActiveIndex] = useState(0); // usado pelo  filtro de pedido
     const [pedidos, setPedidos] = useState<IPedido[]>(new Array<IPedido>());
     const msg = useRef<Toast>(null);
+    const pedidoService = new PedidoService();
     // Data calendário
     const [data, setData] = useState(new Date());
     const [modalLoad, setModalLoad] = useState(false);
@@ -139,12 +140,18 @@ const Pedido: React.FC = () => {
 
     const bodyTemplateColumnG = (rowData: IPedido) => {
         let status = rowData.estatus;
-        if (status === 'PENDENTE') {
+        if (status === statusPedido.PENDENTE) {
             status = "warning";
-        } else if (status === 'FINALIZADO') {
-            status = "success";
-        } else {
+        } else if (status === statusPedido.FINALIZADO) {
+            status = "primary";
+        }else if (status === statusPedido.NAO_ENVIADO) {
+            status = "help";
+        }else if (status === statusPedido.CANCELADO) {
             status = "danger";
+        }if (status === statusPedido.RECEBIDO) {
+            status = "success";
+        }else {
+            status = "secondary";
         }
         return (
             <div>
@@ -215,8 +222,8 @@ const Pedido: React.FC = () => {
             { label: 'Todos', icon: 'pi pi-fw pi-check-square' },
             { label: 'Não Pagos', icon: 'pi pi-fw pi-ban' },
             { label: 'A Enviar', icon: 'pi pi-fw pi-send' },
-            { label: 'Concluíndo', icon: 'pi pi-fw pi-dollar' },
-            { label: 'Devolução/Reembolso', icon: 'pi pi-fw pi-exclamation-circle' }
+            { label: 'Pagos', icon: 'pi pi-fw pi-dollar' },
+            { label: 'Devoluções', icon: 'pi pi-fw pi-exclamation-circle' }
         ];
         const filterPedido = (e: TabMenuTabChangeParams) => {
             setActiveIndex(e.index);
@@ -279,7 +286,7 @@ const Pedido: React.FC = () => {
 
 
                 <div className="p-fluid p-grid p-formgrid p-col-12">
-                    <div className="p-p-2  p-sm-12 p-md-12 p-lg-5 p-xl-6 p-ml-2 p-mr-6 pesquisar">
+                    <div className="p-p-2  p-sm-12 p-md-12 p-lg-5 p-xl-5 p-ml-2 p-mr-6 pesquisar">
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
                     </div>
                     <div className="p-mr-2 p-field p-sm-12 p-md-12 p-lg-2 p-xl-2 button-calendario">
@@ -292,9 +299,9 @@ const Pedido: React.FC = () => {
                         <Calendar id="icon" value={dateFinal} dateFormat="dd/mm/yy" onChange={(e) => setDateFinal(e.value)} showIcon />
                     </div>
 
-                    <div className="p-field p-sm-12 p-md-12 p-lg-1 p-xl-1 button-calendario">
+                    <div className="p-field p-sm-12 p-md-12 p-lg-2 p-xl-2 button-calendario" >
                         <label></label>
-                        <ButtonBase label="Filtrar" icon="pi pi-filter" className="p-button-success p-mt-2 p-mb-2 p-mr-5" onClick={filterByDate} />
+                        <ButtonBase style={{width: '100%'}} label="Filtrar" icon="pi pi-filter" className="p-button-success p-mt-2 p-mb-2 p-pr-3 p-ml-1" onClick={filterByDate} />
                     </div>
 
                 </div>

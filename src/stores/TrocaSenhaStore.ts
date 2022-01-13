@@ -8,11 +8,19 @@ class TrocaSenhaStore{
   @observable
   objPage = {
    //adicionar atributos aqui
+   nova: '',
+   confirmar: '',
   };
   
 
   constructor(){
     makeObservable(this);
+    this.objPage = { nova:'', confirmar: '',};
+  }
+
+  @action
+  public new(){
+    this.objPage = { nova:'', confirmar: '',};
   }
   
 

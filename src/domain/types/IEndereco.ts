@@ -7,5 +7,5 @@ export interface IEndereco{
     cidade: string;
     cep: string;
     uf : string;
-    padrao: string | null;
+    padrao?: string | null;
 }

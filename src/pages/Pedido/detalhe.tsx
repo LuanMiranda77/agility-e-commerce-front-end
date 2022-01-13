@@ -13,6 +13,7 @@ import { ModalLoad } from '../../components/ModalLoad';
 import { PedidoService } from '../../services/PedidoService/pedidoService';
 import { Utils } from "../../utils/utils";
 import { Container, FormControl } from "./styles";
+import {statusPedido} from './enumStatus';
 
 interface DetalhesProps {
     store: any;
@@ -30,6 +31,12 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
     const pedidoService = new PedidoService();
     const [modalLoad, setModalLoad] = useState(false);
     const codigo = store.pedido.codigoRastreio;
+    const [colorIcon1,setColor1]=useState('');
+    const [colorIcon2,setColor2]=useState('');
+    const [colorIcon3,setColor3]=useState('');
+    const [colorIcon4,setColor4]=useState('');
+    const [colorIcon5,setColor5]=useState('');
+   
 
     const iconInicio = 'pi pi-inbox', iconProgresso = 'pi pi-send', iconFim='pi pi-user', iconSaio='pi pi-sign-out';
     const corInicio = '#607D8B', corProgresso = '#FF9800';
@@ -38,6 +45,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
         
         if (props.modalDialog && props.store.pedido.estatus !== 'CANCELADO' && props.store.pedido.estatus !== 'NAO_ENVIADO' && props.store.pedido.estatus !== 'PENDENTE') {
            setModalLoad(true);
+           testeStatusPedido();
             pedidoService.getRastreio(codigo).then(data => {
                 console.log(data);
                 let cont = 0;
@@ -75,9 +83,38 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
             // });
         }else{
             setEvents([]); 
+            setColor1('');
+            setColor2('');
+            setColor3('');
+            setColor4('');
+            setColor5('');
         }
 
     }, [props]);
+
+    const testeStatusPedido = () =>{
+        if(store.pedido.estatus === statusPedido.PENDENTE){
+            setColor1('var(--primary)');
+        }else if(store.pedido.estatus === statusPedido.FINALIZADO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+        }else if(store.pedido.estatus === statusPedido.ENVIADO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+            setColor3('var(--primary)');
+        }else if(store.pedido.estatus === statusPedido.RECEBIDO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+            setColor3('var(--primary)');
+            setColor4('var(--secondary)');
+        }else if(store.pedido.estatus === statusPedido.RECEBIDO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+            setColor3('var(--primary)');
+            setColor4('var(--secondary)');
+            setColor5('#ffff00');
+        }
+    }
 
 
     const hideDialog = () => {
@@ -208,35 +245,35 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                             <div className="p-grid p-col-12 p-text-center">
                                 <div className="p-col-12 p-lg-2 p-xl-2 p-ml-1">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-file p-pb-3'></i>
+                                        <i style={{color: colorIcon1}} className='pi pi-file p-pb-3'></i>
                                         <br />
                                         <h4>Pedidos Realizados</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-3">
-                                    <div className='p-field  p-p-2 button-status'>
-                                        <i className='pi pi-money-bill p-pb-3'></i>
+                                    <div className='p-field  p-p-2 button-status' >
+                                        <i style={{color: colorIcon2}} className='pi pi-money-bill p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Pago</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-2 p-mr-3">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-send p-pb-3'></i>
+                                        <i style={{color: colorIcon3}} className='pi pi-send p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Enviado</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-2 p-mr-3">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-map-marker p-pb-3'></i>
+                                        <i style={{color: colorIcon4}} className='pi pi-map-marker p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Recebido</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-2">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-star-o p-pb-3'></i>
+                                        <i style={{color: colorIcon5}} className='pi pi-star-o p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Avaliado</h4>
                                     </div>

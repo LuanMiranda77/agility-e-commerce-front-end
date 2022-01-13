@@ -252,7 +252,7 @@ export class Utils {
         localStorage.setItem("p-text-cli", key);
     }
 
-    public static getClienteLocal(){
+    public static getClienteLocal(): ICliente{
         let key = localStorage.getItem("p-text-cli");
         return key!= null ?  {...JSON.parse(this.decrypt(key))} :  {};
         

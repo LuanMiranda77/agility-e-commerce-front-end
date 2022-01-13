@@ -2,7 +2,8 @@ import React, { useRef, useContext, useEffect, useState } from "react"
 
 import { Container } from './styles';
 import { observer } from 'mobx-react-lite';
-import CarrinhoStore from "../../stores/CarrinhoStore"
+import CarrinhoStore from "../../stores/CarrinhoStore";
+import PedidoStore from "../../stores/PedidoStore";
 import { HeaderCliente } from "../../components/HeaderCliente";
 import { FooterCliente } from "../../components/FooterCliente";
 import { ButtonBase } from "../../components/ButtonBase";
@@ -17,6 +18,8 @@ import { ProdutoService } from "../../services/ProdutoService/produtoServices";
 import { Toast } from "primereact/toast";
 import { InputNumber } from "primereact/inputnumber";
 import { useHistory } from 'react-router-dom';
+import { ModalLoad } from "../../components/ModalLoad";
+import { PedidoService } from "../../services/PedidoService/pedidoService";
 
 /**
 *@Author Carlos Avelino
@@ -25,12 +28,16 @@ import { useHistory } from 'react-router-dom';
 
 const Carrinho: React.FC = () => {
   const store = useContext(CarrinhoStore);
+  const storePedido = useContext(PedidoStore);
+  let itemPedido = {  pedido: {}, produto: {}, quantidadeVendida: 0, dataVenda: new Date()};
   const msg = useRef<Toast>(null);
   const [produtos, setProduto] = useState<IProduto[]>([]);
   const produtoService = new ProdutoService();
+  const [modalLoad, setModalLoad] = useState(false);
   const [carrinho, setCarrinho] = useState<Array<IProduto>>([]);
   let [total, setTotal] = useState(0);
   const history = useHistory();
+  const pedidoService = new PedidoService();
 
 
   const listaCarrinho = () => {
@@ -135,10 +142,46 @@ const Carrinho: React.FC = () => {
           item.quantidade = quantidade;
         }
     });
-    console.log(produtos)
     setDadosLocalStorage(produtos);
     window.location.reload();
 
+  }
+
+  const calcularPedido = (lista: []) =>{
+     let total
+     lista.forEach((e) => e)
+  }
+
+  const createPedido = () =>{
+    setModalLoad(true);
+    let cliente = Utils.getClienteLocal();
+    storePedido.pedido.cliente = cliente;
+    let endereco = cliente.enderecos?.find((e) => e.padrao === 'S');
+    if(endereco){
+      endereco.id = null;
+      delete endereco.padrao;
+    }
+    storePedido.loadEndereEntrega(endereco ? endereco : storePedido.endereco);
+    storePedido.pedido.valorFrete = store.objPage.valorFrete;
+    storePedido.pedido.valorDesconto = store.objPage.valorDesconto;
+    storePedido.pedido.valorTotal = (total + store.objPage.valorFrete) - store.objPage.valorDesconto;
+    storePedido.pedido.produtos = getDadosLocalStorage().map((e: any) => {
+      itemPedido.produto=e;
+      itemPedido.pedido=storePedido.pedido;
+      itemPedido.quantidadeVendida = e.quantidade;
+      return itemPedido; 
+    });
+    console.log(storePedido.pedido);
+    return false;
+    pedidoService.save(storePedido.pedido).then(data =>{
+      setModalLoad(false);
+      storePedido.pedido = data;
+      history.push('/checkout');
+    }
+    ).catch(error => {
+      setModalLoad(false);
+      Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+    });
   }
 
   return <Container>
@@ -207,10 +250,10 @@ const Carrinho: React.FC = () => {
         </div>
         <div className='p-grid'>
           <div className='p-col-6'>
-            <h1 className='label-frete'>TOTAL A PAGAR:  <span className='p-ml-3' style={{ color: 'var(--primary)' }}>{Utils.formatCurrency(total + store.objPage.valorFrete - store.objPage.valorDesconto )}</span></h1>
+            <h1 className='label-frete'>TOTAL A PAGAR:  <span className='p-ml-3' style={{ color: 'var(--primary)' }}>{Utils.formatCurrency(total + store.objPage.valorFrete - store.objPage.valorDesconto)}</span></h1>
           </div>
           <div className='p-col-6 p-text-right'>
-            <ButtonBase icon='pi pi-check-circle' label='Finalizar pedido' className='p-button-success p-text-uppercase p-pl-6 p-pr-6 p-pt-4 p-pb-4' onClick={() => history.push('/checkout')} />
+            <ButtonBase icon='pi pi-check-circle' label='Finalizar pedido' className='p-button-success p-text-uppercase p-pl-6 p-pr-6 p-pt-4 p-pb-4' onClick={createPedido} />
           </div>
         </div>
       </div>
@@ -231,6 +274,7 @@ const Carrinho: React.FC = () => {
       </div>
     </div>
     <FooterCliente />
+    <ModalLoad visible={modalLoad} />
     <Toast ref={msg} />
   </Container>;
 }
