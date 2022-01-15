@@ -1,6 +1,10 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 //nossos imports
+import Loja from './pages/Loja';
+import PagoConfig from './pages/PagoConfig';
+import LivreConfig from './pages/LivreConfig';
+import LojaConfig from './pages/LojaConfig';
 import Cliente from './pages/Cliente';
 import Endereco from './pages/Endereco';
 import TrocaSenha from './pages/TrocaSenha';
@@ -26,6 +30,10 @@ const Routes: React.FC = () => {
       <Suspense fallback={<div className='p-flex p-text-center p-mt-5 p-t-5'><CircularProgress /></div>}>
         <Switch>
           <Route path="/" exact component={Login} />
+      <PrivateRoute path="/loja"component={ Loja } />
+      <PrivateRoute path="/pagoconfig"component={ PagoConfig } />
+      <PrivateRoute path="/livreconfig"component={ LivreConfig } />
+      <PrivateRoute path="/lojaconfig"component={ LojaConfig } />
           <PrivateRoute path="/cliente" component={Cliente} />
           <PrivateRoute path="/endereco" component={Endereco} />
           <PrivateRoute path="/trocaSenha" component={TrocaSenha} />

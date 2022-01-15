@@ -33,7 +33,7 @@ import icon from "../../assets/icon-voltar.png";
 import {
   Keyboard, ThreeDRotation, FilterVintage,
   FeaturedPlayList, BrightnessHigh, Dashboard,
-  CompareArrows, HowToReg
+  CompareArrows, HowToReg,
 } from '@material-ui/icons';
 
 declare module 'csstype' {
@@ -230,6 +230,14 @@ export function HeaderAdmin(props: any) {
       history.push(`/${page}`)
     } else if (page === 'cliente') {
       history.push(`/${page}`)
+    }else if (page === 'lojaconfig') {
+      history.push(`/${page}`)
+    }else if (page === 'livreconfig') {
+      history.push(`/${page}`)
+    }else if (page === 'pagoconfig') {
+      history.push(`/${page}`)
+    }else if (page === 'loja') {
+      history.push(`/${page}`)
     }
 
   };
@@ -265,12 +273,12 @@ export function HeaderAdmin(props: any) {
         <StyledTreeItem nodeId="2" labelText={!isCliente ? "MINHA LOJA" : "MINHA CONTA"} labelIcon={!isCliente ? Store : AccountBox}>
           <StyledTreeItem
             nodeId="3"
-            labelText="Dados Pessoais"
-            labelIcon={!isCliente ? AccountBox : HowToReg}
+            labelText={!isCliente ? "Informações da Loja": 'Informações da Pessoais'}
+            labelIcon={!isCliente ? Store : HowToReg}
             labelInfo=""
             color="#1a73e8"
             bgColor="#e8f0fe"
-            onClick={toggleDrawer(false, 'cliente')}
+            onClick={toggleDrawer(false, !isCliente ? 'loja':'cliente')}
           />
           <StyledTreeItem
             nodeId="5"
@@ -331,7 +339,35 @@ export function HeaderAdmin(props: any) {
           : ''}
         <Divider />
         {!isCliente ?
-          <StyledTreeItem nodeId="10" labelText="CONFIGURAÇÃO" labelIcon={BrightnessHigh} />
+          <StyledTreeItem nodeId="10" labelText="CONFIGURAÇÃO" labelIcon={BrightnessHigh} >
+            <StyledTreeItem
+              nodeId="3"
+              labelText="Site da loja"
+              labelIcon={Store}
+              labelInfo=""
+              color="#1a73e8"
+              bgColor="#e8f0fe"
+              onClick={toggleDrawer(false, 'lojaconfig')}
+            />
+            <StyledTreeItem
+              nodeId="5"
+              labelText="Mercado Livre"
+              labelIcon={Category}
+              labelInfo=""
+              color="#a250f5"
+              bgColor="#f3e8fd"
+              onClick={toggleDrawer(false, 'livreconfig')}
+            />
+            <StyledTreeItem
+              nodeId="4"
+              labelText="Mercado Pago"
+              labelIcon={MonetizationOnIcon}
+              labelInfo=""
+              color="#e3742f"
+              bgColor="#fcefe3"
+              onClick={toggleDrawer(false, 'pagoconfig')}
+            />
+          </StyledTreeItem>
           : ''}
       </TreeView>
     </div>
@@ -358,9 +394,9 @@ export function HeaderAdmin(props: any) {
     <div className="">
       <div className="p-col-12 p-text-ringht">
         <button type="button" onClick={() => history.push('/home')} className="p-grid "
-          style={{ background: 'white', border: '0', cursor:'pointer' }}    >
+          style={{ background: 'white', border: '0', cursor: 'pointer' }}    >
           <img src={icon} alt="img" />
-          <label htmlFor="" className="p-mt-2 p-text-bold" style={{ color: 'var(--text-title)', fontSize: '18px',  cursor:'pointer' }}>VOLTAR</label>
+          <label htmlFor="" className="p-mt-2 p-text-bold" style={{ color: 'var(--text-title)', fontSize: '18px', cursor: 'pointer' }}>VOLTAR</label>
         </button>
       </div>
     </div>
@@ -424,28 +460,28 @@ export function HeaderAdmin(props: any) {
           </Typography>
           <div className={classes.grow} />
           {!isCliente ?
-           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" >
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications"  >
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+            <div className={classes.sectionDesktop}>
+              <IconButton aria-label="show 4 new mails" >
+                <Badge badgeContent={4} color="secondary">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+              <IconButton aria-label="show 17 new notifications"  >
+                <Badge badgeContent={17} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
 
-            >
-              <AccountCircle />
-            </IconButton>
-          </div> : buttonVoltar}
+              >
+                <AccountCircle />
+              </IconButton>
+            </div> : buttonVoltar}
           <div className={classes.sectionMobile}>
             <IconButton
               aria-label="show more"

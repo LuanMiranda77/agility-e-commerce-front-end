@@ -165,14 +165,14 @@ const Carrinho: React.FC = () => {
     storePedido.pedido.valorFrete = store.objPage.valorFrete;
     storePedido.pedido.valorDesconto = store.objPage.valorDesconto;
     storePedido.pedido.valorTotal = (total + store.objPage.valorFrete) - store.objPage.valorDesconto;
-    storePedido.pedido.produtos = getDadosLocalStorage().map((e: any) => {
-      itemPedido.produto=e;
-      itemPedido.pedido=storePedido.pedido;
-      itemPedido.quantidadeVendida = e.quantidade;
-      return itemPedido; 
-    });
+    // storePedido.pedido.produtos = getDadosLocalStorage().map((e: any) => {
+    //   itemPedido.produto=e;
+    //   itemPedido.pedido=storePedido.pedido;
+    //   itemPedido.quantidadeVendida = e.quantidade;
+    //   return itemPedido; 
+    // });
     console.log(storePedido.pedido);
-    return false;
+    // return false;
     pedidoService.save(storePedido.pedido).then(data =>{
       setModalLoad(false);
       storePedido.pedido = data;
