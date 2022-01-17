@@ -1,22 +1,22 @@
 
-export interface IEmpresa{
-  id: Number | null,
-  CNPJ: string;
+export interface IEmpresa {
+	id: Number | null,
+	cnpj: string;
 	instEstadual: string;
 	instMunicipal: string;
 	razaoSocial: string;
 	nomeFantasia: string;
-  logradouro: string;
+	logradouro: string;
 	numero: string;
-	complemento: string;
+	complemento: string | null;
 	bairro: string;
 	cidade: string;
 	cep: string;
-  uf: string;
+	uf: string;
 
-  // -------contatos----------------
+	// -------contatos----------------
 
-  emailPrincipal: string;
+	emailPrincipal: string;
 	emailSegundario: string;
 	celular1: string;
 	celular2: string;

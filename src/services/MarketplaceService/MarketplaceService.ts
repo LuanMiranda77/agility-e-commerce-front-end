@@ -1,4 +1,4 @@
-import { api } from "../api";
+import { api, integrador } from "../api";
 
 /**
 *@Author
@@ -30,6 +30,26 @@ export class MarketplaceService {
             console.log(error.response.data);
             return Promise.reject(error.response.data[0]);
         });;
+      return response;
+    }
+
+    async getCategoriasMercadoLivre() {
+      const response = await integrador.get('/api/m_livre/categorias').then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
+    async findByCategoriaByIdMercadoLivre(id: string) {
+      const response = await integrador.get(`/api/m_livre/categorias/${id}`).then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
       return response;
     }
     

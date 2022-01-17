@@ -36,8 +36,6 @@ const Endereco: React.FC = () => {
   const [selectedUF, setSelectedUF] = useState<any>(null);
   const clienteService = new ClienteService();
 
-
-
   const hideDialog = () => {
     setModalDialog(false);
   }

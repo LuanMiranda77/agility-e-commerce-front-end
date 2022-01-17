@@ -280,6 +280,7 @@ export function HeaderAdmin(props: any) {
             bgColor="#e8f0fe"
             onClick={toggleDrawer(false, !isCliente ? 'loja':'cliente')}
           />
+          {!isCliente ? "" :
           <StyledTreeItem
             nodeId="5"
             labelText="Endereço"
@@ -288,7 +289,7 @@ export function HeaderAdmin(props: any) {
             color="#a250f5"
             bgColor="#f3e8fd"
             onClick={toggleDrawer(false, 'endereco')}
-          />
+          />}
           <StyledTreeItem
             nodeId="4"
             labelText="Trocar senha"

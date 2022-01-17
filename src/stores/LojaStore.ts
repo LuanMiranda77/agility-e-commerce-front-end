@@ -6,14 +6,16 @@ class LojaStore {
 
   objNew = {
     id: null,
-    CNPJ: '',
+    cnpj: '',
     instEstadual: '',
     instMunicipal: '',
     razaoSocial: '',
     nomeFantasia: '',
+
+    // -----------endereços------------------
     logradouro: '',
     numero: '',
-    complemento: '',
+    complemento: null,
     bairro: '',
     cidade: '',
     cep: '',
@@ -28,6 +30,12 @@ class LojaStore {
     foneFixo: '',
   }
 
+
+
+  @observable
+  isValid = {
+    CNPJ: true,
+  };
 
   @observable
   objPage: IEmpresa;

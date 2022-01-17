@@ -11,7 +11,7 @@ import { RadioButton } from "primereact/radiobutton";
 import InputDateBase from "../../components/InputDateBase";
 import { ButtonBase } from "../../components/ButtonBase";
 import { Utils } from "../../utils/utils";
-import {ClienteService} from '../../services/ClienteService/clienteService';
+import { ClienteService } from '../../services/ClienteService/clienteService';
 import { Toast } from 'primereact/toast';
 import { ModalLoad } from "../../components/ModalLoad";
 
@@ -28,25 +28,25 @@ const Cliente: React.FC = () => {
   const msg = useRef<Toast>(null);
 
   useEffect(() => {
-    clienteService.get(Number(user?.id)).then(data =>{
-        store.load(data);
-        Utils.setClienteLocal(data);
-        console.log(Utils.getClienteLocal());
-      }
-      ).catch(error => {
-        Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
-      });
+    clienteService.get(Number(user?.id)).then(data => {
+      store.load(data);
+      Utils.setClienteLocal(data);
+      console.log(Utils.getClienteLocal());
+    }
+    ).catch(error => {
+      Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+    });
 
   }, []);
 
-  const onSave = () =>{
-    clienteService.post(store.cliente).then(data =>{
+  const onSave = () => {
+    clienteService.post(store.cliente).then(data => {
       setModalLoad(true);
       store.load(data);
       Utils.setClienteLocal(data);
       setModalLoad(false);
       Utils.messagemShow(msg, 'success', 'Salvo', '😃 Alterado com sucesso!', 5000);
-    }).catch(error =>{
+    }).catch(error => {
       setModalLoad(false);
       Utils.messagemShow(msg, 'error', 'Erro no salvar', error.mensagemUsuario, 5000);
     });
@@ -65,18 +65,18 @@ const Cliente: React.FC = () => {
         <div className="p-grid p-p-3 p-mt-1">
           <div className="p-col-8">
             <div className="p-grid">
-            <div className='p-col-12 p-lg-8 p-xl-8'>
-              <InputBase label="Nome" type="text" placeholder="" value={store.cliente.usuario.nome} onChange={(e) => { store.cliente.usuario.nome = e.target.value }}/>
-            </div>
-            <div className='p-sm-12 p-md-12 p-lg-3 p-xl-3 p-mt-1'>
-              <InputDateBase label="Data de nascimento" value={store.cliente.dataNascimento} setFunction={store.setDataNascimento} />
-            </div>
+              <div className='p-col-12 p-lg-8 p-xl-8'>
+                <InputBase label="Nome" type="text" placeholder="" value={store.cliente.usuario.nome} onChange={(e) => { store.cliente.usuario.nome = e.target.value }} />
+              </div>
+              <div className='p-sm-12 p-md-12 p-lg-3 p-xl-3 p-mt-1'>
+                <InputDateBase label="Data de nascimento" value={store.cliente.dataNascimento} setFunction={store.setDataNascimento} />
+              </div>
             </div>
             <div className='p-col-12 p-lg-5 p-xl-5'>
               <InputBase label="E-mail" type="text" placeholder="" value={store.cliente.usuario.email} onChange={(e) => { store.cliente.usuario.email = e.target.value }} />
             </div>
             <div className="p-grid p-pl-2">
-            <div className='p-field p-col-12 p-lg-3 p-xl-3'>
+              <div className='p-field p-col-12 p-lg-3 p-xl-3'>
                 <label htmlFor="">Celular</label>
                 <InputMask mask="(99) 9999-9999" placeholder='(99) 9999-9999' type='text' className='' style={{ width: '100%' }} value={store.cliente.celular} onChange={(e) => { store.cliente.celular = e.value }} />
               </div>
@@ -106,13 +106,13 @@ const Cliente: React.FC = () => {
           <Divider className="divider" layout="vertical" />
           <div className="p-col-3">
             <div>
-                <h3>Tipo do contrato</h3>
-                <h2 className="p-mt-2" style={{color:'var(--secondary)'}}>{store.cliente.tipo}</h2>
-              </div>
+              <h3>Tipo do contrato</h3>
+              <h2 className="p-mt-2" style={{ color: 'var(--secondary)' }}>{store.cliente.tipo}</h2>
+            </div>
           </div>
         </div>
         <div className="p-col-12 p-text-right">
-        <ButtonBase className="p-button-success p-pl-5 p-pr-5" label="SALVAR" icon="pi pi-check" onClick={onSave} />
+          <ButtonBase className="p-button-success p-pl-5 p-pr-5" label="SALVAR" icon="pi pi-check" onClick={onSave} />
         </div>
       </div>
     </div>

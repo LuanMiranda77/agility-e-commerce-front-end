@@ -24,10 +24,10 @@ export const Container  = styled.div`
         color: #27408B;
     }
 
-    /* label{
+    label{
         color: var(--green);
         font-weight: bold;
-    } */
+    }
 
     .title-label{
         color: var(--text-title);
