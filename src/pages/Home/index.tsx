@@ -131,7 +131,7 @@ const Home: React.FC = () => {
             {/* <div className="product-description">{data.description}</div> */}
             <Rating value={product.estrelas} readOnly cancel={false}></Rating>
             <i className="pi pi-tag product-category-icon"></i>
-            <span className="product-category">{product.categorias[0].nome}</span>
+            <span className="product-category">{product.categoria.nome}</span>
           </div>
           <div className="product-list-action">
             <span className="product-price">{Utils.formatCurrency(product.precoVarejo)}</span>
@@ -154,7 +154,7 @@ const Home: React.FC = () => {
           <div className="product-grid-item-top">
             <div>
               <i className="pi pi-tag product-category-icon"></i>
-              <span className="product-category">{product.categorias[0].nome}</span>
+              <span className="product-category">{product.categoria.nome}</span>
             </div>
             <div className="frete-gratis">
               <span className={`product-badge status-success`}>{'Frete Grátis'}</span>

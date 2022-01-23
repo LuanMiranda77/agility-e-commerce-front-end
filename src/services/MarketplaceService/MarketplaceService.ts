@@ -27,8 +27,8 @@ export class MarketplaceService {
             return resp.data;
         })
         .catch(error => {
-            console.log(error.response.data);
-            return Promise.reject(error.response.data[0]);
+            // console.log(error.response.data);
+            return "erro";
         });;
       return response;
     }

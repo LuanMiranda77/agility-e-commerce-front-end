@@ -15,5 +15,5 @@ export interface IProduto{
   altura: number;
   largura: number;
   imagens: Array<any>;
-  categorias: Array<ICategoria>;
+  categoria: ICategoria;
 }

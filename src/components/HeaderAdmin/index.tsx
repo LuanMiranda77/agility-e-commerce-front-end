@@ -385,8 +385,8 @@ export function HeaderAdmin(props: any) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Minha conta</MenuItem>
+      {/* <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Minha conta</MenuItem> */}
       <MenuItem onClick={userLogout}>Sair</MenuItem>
     </Menu>
   );

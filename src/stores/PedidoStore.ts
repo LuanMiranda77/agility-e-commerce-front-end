@@ -18,7 +18,7 @@ class PedidoStore{
   
   byId = observable.map();
 
-  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: ''};
+  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: 'ATIVO', password: '', role: 'CLIENTE'};
 
   cliente: ICliente = { id: 0,
               usuario: this.usuario,
@@ -28,7 +28,7 @@ class PedidoStore{
               telefone: '',
               celular: '',
               dataNascimento: new Date(),
-              sexo:'',
+              sexo:'M',
   };
 
   pagamento: IPagamento = {

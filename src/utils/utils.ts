@@ -90,7 +90,7 @@ export class Utils {
             response = 'Limite máximo do produto é 200cm';
         } else if (produto.comprimento > 105 || produto.altura > 105 || produto.largura > 105) {
             response = 'Limite máximo do produto é comprimento=105cm, altura=105cm, largura=105cm';
-        } else if (produto.categorias.length === 0) {
+        } else if (produto.categoria.nome.length === 0) {
             response = 'Selecione uma categoria';
         }
         return response;

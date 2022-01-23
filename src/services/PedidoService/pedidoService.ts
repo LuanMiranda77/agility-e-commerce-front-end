@@ -26,6 +26,17 @@ export class PedidoService {
       });
       return response;;
     }
+
+    async updateStatus(id: number, code: string, status: string) {
+      const response = api.put(this.url+`/status/${id}/${code}/${status}`).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;;
+    }
+
     async delete(id:number){
       api.delete(this.url+`/${id}`).then(response =>{
         
@@ -54,6 +65,16 @@ export class PedidoService {
 
     async getPedidosByCliente(pEntity: IPedido) {
       const response = await api.post(this.url+`/find-pedidos-by-cliente`, pEntity).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
+    async getPedidosByClienteStatus(pEntity: IPedido) {
+      const response = await api.post(this.url+`/find-pedidos-by-cliente-status`, pEntity).then(response =>{
         return response.data;
       }).catch(error=>{
         console.log(error);

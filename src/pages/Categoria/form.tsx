@@ -14,6 +14,8 @@ import { Utils } from "../../utils/utils";
 import { FormControl } from "./styles";
 import { MarketplaceService } from '../../services/MarketplaceService/MarketplaceService';
 import { TreeSelect } from 'primereact/treeselect';
+import { set } from 'mobx';
+import { ICategoria } from '../../domain/types/ICategoria';
 
 // import { Container } from './styles';
 interface CategoriaProps {
@@ -33,34 +35,73 @@ export const CategoriaForm: React.FC<CategoriaProps> = (props) => {
     const [optionPai, setOptionPai] = useState<any>([]);
     const [optionFilho, setOptionFilho] = useState<any>(null);
     const [modalLoad, setModalLoad] = useState(false);
+    const [isUserLivre, setIsUserLivre] = useState(false);
     const msg = useRef<Toast>(null);
     const marketplaceService = new MarketplaceService();
+    let arrayCateg: any[] = [];
+
+    if(props.modalDialog){
+        if(selectedPai !== null){
+            console.log(store.categoria.idCategoriaPai)
+            marketplaceService.findByCategoriaByIdMercadoLivre(store.categoria.idCategoriaPai).then(data => {
+                // Utils.messagemShow(msg, 'success', 'Salvo', '😃 Dados salvo com sucesso', 5000);
+                // setOptionFilho(data);
+                data.children_categories.forEach((item: any) => {
+                    store.novoCateg();
+                    store.categoriasLivre.key = item.id;
+                    store.categoriasLivre.label = item.name;
+                    arrayCateg.push(store.categoriasLivre);
+                });
+                // store.categoriasLivre.children = itemCateg ;
+                setOptionFilho(arrayCateg);
+            }).catch(error => {
+                Utils.messagemShow(msg, 'error', 'Erro no carregamento', "😱 " + error.mensagemUsuario, 5000);
+            });
+           
+        }
+    }
 
     useEffect(() => {
-        marketplaceService.getCategoriasMercadoLivre().then(data =>{
-            // Utils.messagemShow(msg, 'success', 'Salvo', '😃 Dados salvo com sucesso', 5000);
-            setOptionPai(data);
-        }).catch(error => {
-            Utils.messagemShow(msg, 'error', 'Erro no salvar', "😱 "+error.mensagemUsuario, 5000);
+        marketplaceService.get().then(result => {
+            if(result !== "erro"){
+                setIsUserLivre(true);
+                marketplaceService.getCategoriasMercadoLivre().then(data => {
+                    // Utils.messagemShow(msg, 'success', 'Salvo', '😃 Dados salvo com sucesso', 5000);
+                    setOptionPai(data);
+                    if(store.categoria.id>0){
+                       let op  = optionPai.find((item: ICategoria) => store.categoria.idCategoriaPai = item.idCategoriaPai);
+                       console.log(op);
+                       setSelectedPai(op);
+        
+                    }
+                }).catch(error => {
+                    Utils.messagemShow(msg, 'error', 'Erro no salvar', "😱 " + error.mensagemUsuario, 5000);
+                });
+            }else{
+                setIsUserLivre(false);
+            }
         });
-    }, []);
+    }, [store.categoria]);
 
     const hideDialog = () => {
         store.novo();
         setSubmitted(false);
+        setSelectedPai(null);
+        setSelectedFilho(null);
         props.closeFuncion();
 
     }
 
     const save = () => {
         setSubmitted(true);
-        if (store.categoria.nome.trim()) {
+        if (store.categoria.nome.trim() && store.categoria.idCategoriaPai.trim() && store.categoria.idCategoriaFilha.trim() ) {
             if (store.categoria.id !== 0) {
                 categoriaService.update(store.categoria).then((res) => {
                     const index = store.findIndexById(store.categoria.id);
                     store.categorias[index] = store.categoria;
-                    Utils.messagemShow(msg, 'success', 'Alterado com sucesso!', `Item: ${store.categoria.nome}`, 3000);
                     props.closeFuncion();
+                    setSubmitted(false);
+                    Utils.messagemShow(msg, 'success', 'Alterado com sucesso!', `Item: ${store.categoria.nome}`, 3000);
 
                 })
                     .catch((error) => {
@@ -73,6 +114,7 @@ export const CategoriaForm: React.FC<CategoriaProps> = (props) => {
                     store.add(res);
                     Utils.messagemShow(msg, 'success', 'Cadastro com sucesso!', `Item: ${store.categoria.nome}`, 3000);
                     props.closeFuncion();
+                    setSubmitted(false);
 
                 }).catch(error => {
                     Utils.messagemShow(msg, 'error', 'Error no cadastro', error.mensagemUsuario, 3000);
@@ -86,46 +128,47 @@ export const CategoriaForm: React.FC<CategoriaProps> = (props) => {
     const onChangePai = (e: { value: any }) => {
         setSelectedPai(e.value);
         store.categoria.idCategoriaPai = e.value.id;
-        console.log(e.value.id);
-        marketplaceService.findByCategoriaByIdMercadoLivre(e.value.id).then(data =>{
+        marketplaceService.findByCategoriaByIdMercadoLivre(e.value.id).then(data => {
             // Utils.messagemShow(msg, 'success', 'Salvo', '😃 Dados salvo com sucesso', 5000);
             // setOptionFilho(data);
-            let arrayCateg: any[] = [];
-            let itemCateg: any[] = [];
-            data.children_categories.map((item: any) => {
+            data.children_categories.forEach((item: any) => {
                 store.novoCateg();
                 store.categoriasLivre.key = item.id;
                 store.categoriasLivre.label = item.name;
-                marketplaceService.findByCategoriaByIdMercadoLivre(item.id)
-                .then(data => {
-                    itemCateg = data.children_categories.map((item: any) => {
-                        let categ = {key: "", label: "", children: []};
-                        categ.key = item.id;
-                        categ.label = item.name;
-                        categ.children =  item.children_categories
-                        return categ;
-                    });
-                    store.categoriasLivre.children = [...itemCateg];
-                });
-                console.log(store.categoriasLivre);
                 arrayCateg.push(store.categoriasLivre);
-                itemCateg = [];
             });
             // store.categoriasLivre.children = itemCateg ;
-            
             setOptionFilho(arrayCateg);
-
+            onLoadFilho();
         }).catch(error => {
-            Utils.messagemShow(msg, 'error', 'Erro no carregamento', "😱 "+error.mensagemUsuario, 5000);
+            Utils.messagemShow(msg, 'error', 'Erro no carregamento', "😱 " + error.mensagemUsuario, 5000);
+        });
+    }
+
+    const onLoadFilho = () => {
+        let itemCateg: any[] = [];
+        arrayCateg.forEach((categFilha) => {
+            marketplaceService.findByCategoriaByIdMercadoLivre(categFilha.key)
+                .then(data => {
+                    itemCateg = data.children_categories.map((item: any) => {
+                        let categ = { key: "", label: "", children: [] };
+                        categ.key = item.id;
+                        categ.label = item.name;
+                        categ.children = item.children_categories
+                        return categ;
+                    });
+                    categFilha.children = itemCateg;
+                });
         });
     }
 
     const onChangeFilho = (e: { value: any }) => {
         setSelectedFilho(e.value);
-        console.log(e.value);
-        // store.categoria.idCategoriaFilho = e.value.key;
+        store.categoria.idCategoriaFilha = e.value;
 
     }
+
+    
 
 
     return <Dialog
@@ -162,15 +205,20 @@ export const CategoriaForm: React.FC<CategoriaProps> = (props) => {
                             />
                             {submitted && !store.categoria.nome && <small className="p-error">Nome é obtigatorio.</small>}
                         </div>
+                        { isUserLivre ?
                         <div className='p-field p-col-12 p-lg-6 p-xl-6 p-mt-1'>
                             <label htmlFor="" style={{ width: '100%' }}>Categoria inicial para o mercado livre</label>
-                            <Dropdown className='' value={selectedPai} options={optionPai} onChange={onChangePai} optionLabel="name" placeholder="Escolha o estado" style={{ zIndex: '99', width: '100%'  }} />
-                        </div>
+                            <Dropdown className={classNames({ 'p-invalid': submitted && !store.categoria.idCategoriaPai })} value={selectedPai} options={optionPai} onChange={onChangePai} optionLabel="name" placeholder="Selecione a categoria inicial" style={{ zIndex: '99', width: '100%' }} />
+                            {submitted && !store.categoria.idCategoriaPai && <small className="p-error">Campo é obtigatorio.</small>}
+                        </div> : "" }
+                        { isUserLivre ? 
                         <div className='p-field p-col-12 p-lg-6 p-xl-6 p-mt-1'>
                             <label htmlFor="" style={{ width: '100%' }}>Categoria final para o mercado livre</label>
-                            <Dropdown className='' value={selectedFilho} options={optionFilho} onChange={onChangeFilho} optionLabel="name" placeholder="Escolha o estado" style={{ zIndex: '99', width: '100%'  }} />
-                            <TreeSelect value={selectedFilho} options={optionFilho} onChange={onChangeFilho} placeholder="Select Item" style={{ zIndex: '99', width: '100%'  }}></TreeSelect>
+                            {/* <Dropdown className='' value={selectedFilho} options={optionFilho} onChange={onChangeFilho} optionLabel="name" placeholder="Escolha o estado" style={{ zIndex: '99', width: '100%'  }} /> */}
+                            <TreeSelect className={classNames({ 'p-invalid': submitted && !store.categoria.idCategoriaFilho })} value={selectedFilho} options={optionFilho} onChange={onChangeFilho} placeholder="Selecione a categoria final" style={{ zIndex: '99', width: '100%' }}></TreeSelect>
+                            {submitted && !store.categoria.idCategoriaFilha && <small className="p-error">Campo é obtigatorio.</small>}
                         </div>
+                        : ''}
                     </div>
                 </div>
             </FormControl>

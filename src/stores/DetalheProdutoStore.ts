@@ -9,6 +9,7 @@ class DetalheProdutoStore {
 
 
 
+
   @observable
   objPage = {
     //adicionar atributos aqui
@@ -45,7 +46,7 @@ class DetalheProdutoStore {
     altura: 0,
     largura: 0,
     imagens: new Array<FileImg>(),
-    categorias: new Array<ICategoria>()
+    categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''}
   };
 
   @observable

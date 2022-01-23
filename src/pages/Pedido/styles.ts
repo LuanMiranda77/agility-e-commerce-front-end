@@ -253,6 +253,9 @@ export const FormControl = styled.form`
 
 
     @media screen and (max-width: 40em) {
+    .text-title{
+        color: var(--text-title);
+    }    
 
   .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-thead > tr > th,
     .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tfoot > tr > td {

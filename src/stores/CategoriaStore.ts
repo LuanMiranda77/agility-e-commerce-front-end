@@ -15,6 +15,13 @@ class CategoriaStore {
   };
 
   @observable
+  objPage = {
+    //adicionar atributos aqui
+    idCategoriaPai: null,
+    idCategoriaFilha: null,
+  };
+
+  @observable
   categoriasLivre = {
     key: "",
     label: "",
@@ -45,12 +52,14 @@ class CategoriaStore {
 
   @action
   novo = () => {
-    this.categoria = this.objNew;
+    this.categoria = {...this.objNew};
   }
 
   @action
   update = (categoria: ICategoria) => {
+    // console.log(categoria);
     this.categoria = { ...categoria };
+    console.log(this.categoria);
   }
 
   @action

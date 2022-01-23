@@ -33,6 +33,7 @@ import { Utils } from "../../utils/utils"
 import { Container, FormControl } from "./styles"
 import { Checkbox } from 'primereact/checkbox';
 import iconLivre from '../../assets/icon-livre.jpg'
+import { Dropdown } from 'primereact/dropdown'
 
 
 
@@ -165,8 +166,8 @@ const Produto: React.FC = () => {
         setDeleteprodutosDialog(true);
     }
 
-    const setCategoria = (categoria: ICategoria[]) => {
-        store.produto.categorias = categoria;
+    const setCategoria = (categoria: {value: any}) => {
+        store.produto.categoria = categoria.value;
     }
 
     const deleteSelectedAll = () => {
@@ -483,7 +484,13 @@ const Produto: React.FC = () => {
                                     </div>
 
                                     <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
-                                        <ComboMultSelect options={categorias} label='Categoria' selectOptions={store.produto.categorias} setFunction={setCategoria} />
+                                    <label htmlFor="peso" className="p-col-12" >Categoria</label>
+                                        <Dropdown value={store.produto.categoria} options={categorias} onChange={setCategoria} 
+                                        optionLabel="nome" 
+                                        placeholder="Selecione categoria"
+                                        style={{width: '100%'}}
+                                        />
+                                        {/* filter showClear filterBy="nome"  */}
                                     </div>
                                 </div>
                                 <div className="p-formgrid p-grid">
