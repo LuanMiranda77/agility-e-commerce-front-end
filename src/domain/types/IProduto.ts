@@ -16,4 +16,5 @@ export interface IProduto{
   largura: number;
   imagens: Array<any>;
   categoria: ICategoria;
+  status: string;
 }

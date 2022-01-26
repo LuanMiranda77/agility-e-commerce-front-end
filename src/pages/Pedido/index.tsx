@@ -33,6 +33,7 @@ import { InputBase } from '../../components/InputBase';
 const Pedido: React.FC = () => {
     const store = useContext(PedidoStore);
     const [modalDialog, setModalDialog] = useState(false);
+    const [modalLoad, setModalLoad] = useState(false);
     const [modalStatus, setModalStatus] = useState(false);
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
     const [selectedPedidos, setSelectedPedidos] = useState<IPedido[]>([]);
@@ -44,7 +45,6 @@ const Pedido: React.FC = () => {
     const [checkStatus, setCheckStatus] = useState(false);
     // Data calendário
     const [data, setData] = useState(new Date());
-    const [modalLoad, setModalLoad] = useState(false);
     const [dateInicail, setDateInicail] = useState<Date | Date[] | undefined>(new Date(UtilsDate.subtrairDiasByData(30)));
     const [dateFinal, setDateFinal] = useState<Date | Date[] | undefined>(new Date());
 

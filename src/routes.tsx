@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 //nossos imports
+import Marketplace from './pages/Marketplace';
 import Loja from './pages/Loja';
 import PagoConfig from './pages/PagoConfig';
 import LivreConfig from './pages/LivreConfig';
@@ -30,24 +31,25 @@ const Routes: React.FC = () => {
       <Suspense fallback={<div className='p-flex p-text-center p-mt-5 p-t-5'><CircularProgress /></div>}>
         <Switch>
           <Route path="/" exact component={Login} />
-      <PrivateRoute path="/loja"component={ Loja } />
-      <PrivateRoute path="/pagoconfig"component={ PagoConfig } />
-      <PrivateRoute path="/livreconfig"component={ LivreConfig } />
-      <PrivateRoute path="/lojaconfig"component={ LojaConfig } />
+          <Route path="/home" component={Home} />
+          <Route path="/login" component={Login} />
+          <Route path="/usuario" component={Usuario} />
+          <PrivateRoute path="/loja" component={Loja} />
+          <PrivateRoute path="/pagoconfig" component={PagoConfig} />
+          <PrivateRoute path="/livreconfig" component={LivreConfig} />
+          <PrivateRoute path="/lojaconfig" component={LojaConfig} />
           <PrivateRoute path="/cliente" component={Cliente} />
           <PrivateRoute path="/endereco" component={Endereco} />
           <PrivateRoute path="/trocaSenha" component={TrocaSenha} />
-          <Route path="/usuario" component={Usuario} />
           <PrivateRoute path="/detalheProduto/:id" component={DetalheProduto} />
           <PrivateRoute path="/carrinho" component={Carrinho} />
           <PrivateRoute path="/pesquisa/:filter" component={Pesquisa} />
-          <Route path="/home" component={Home} />
-          <Route path="/login" component={Login} />
           <PrivateRoute path="/produto" component={Produto} />
           <PrivateRoute path="/dashboard" component={Dashbord} />
           <PrivateRoute path="/categoria" component={Categoria} />
           <PrivateRoute path="/pedido" component={Pedido} />
           <PrivateRoute path="/checkout" component={Checkout} />
+          <PrivateRoute path="/marketplace" component={Marketplace} />
           <Route component={Notfound} />
         </Switch>
       </Suspense>

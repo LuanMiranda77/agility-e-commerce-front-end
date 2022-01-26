@@ -52,6 +52,26 @@ export class MarketplaceService {
       });
       return response;
     }
+
+    async findProdutosByMercadoLivre() {
+      const response = await integrador.get('/api/m_livre/items').then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;
+    }
+
+    async putProdutosByMercadoLivre(id: string, produto: any) {
+      const response = await integrador.put('/api/m_livre/item/'+id, produto).then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response);
+      });
+      return response;
+    }
     
   
 }

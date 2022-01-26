@@ -238,6 +238,8 @@ export function HeaderAdmin(props: any) {
       history.push(`/${page}`)
     }else if (page === 'loja') {
       history.push(`/${page}`)
+    }else if (page === 'marketplace') {
+      history.push(`/${page}`)
     }
 
   };
@@ -321,6 +323,15 @@ export function HeaderAdmin(props: any) {
               color="#e3742f"
               bgColor="#fcefe3"
               onClick={toggleDrawer(false, 'categoria')}
+            />
+            <StyledTreeItem
+              nodeId="9"
+              labelText="Marketplaces"
+              labelIcon={Store}
+              labelInfo=""
+              color="#e3742f"
+              bgColor="#fcefe3"
+              onClick={toggleDrawer(false, 'marketplace')}
             />
           </StyledTreeItem>) :
           ''}

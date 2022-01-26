@@ -25,11 +25,11 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
 
     const store = props.store;
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
-    const [submitted, setSubmitted] = useState(false);
-    const [events, setEvents] = useState([]);
-    const msg = useRef<Toast>(null);
-    const pedidoService = new PedidoService();
     const [modalLoad, setModalLoad] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const msg = useRef<Toast>(null);
+    const [events, setEvents] = useState([]);
+    const pedidoService = new PedidoService();
     const codigo = store.pedido.codigoRastreio;
     const [colorIcon1,setColor1]=useState('');
     const [colorIcon2,setColor2]=useState('');

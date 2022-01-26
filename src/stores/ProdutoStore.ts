@@ -22,6 +22,7 @@ class ProdutoStore {
     comprimento: 0,
     altura: 0,
     largura: 0,
+    status:'',
     imagens: new Array<FileImg>(),
     categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''}
   };
