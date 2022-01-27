@@ -119,3 +119,50 @@ export const Container  = styled.div`
 
 `;
 
+export const FormControl = styled.form`
+
+    label{
+        color: var(--primary);
+    }
+
+    .label-text{
+        color: var(--text-title);
+    }
+
+    .card{
+        background: var(--white);
+        border-radius: 0.24rem;
+        margin-top: 1.8rem;
+    }
+
+      /* CarouselDemo.css */
+      .product-item .product-item-content {
+        background: white;
+        border: 1px solid var(--surface-d);
+        border-radius: 3px;
+        margin: .3rem;
+        /* text-align: center; */
+        /* padding: 2rem 0; */
+    }
+    .product-item .product-image {
+        width: 100%;
+        height: 200px;
+        /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); */
+    }
+
+    .cursor-pointer{
+        cursor: pointer;
+    }
+
+
+    @media screen and (max-width: 40em) {
+    .text-title{
+        color: var(--text-title);
+    } 
+
+    }   
+
+  
+   
+`;
+

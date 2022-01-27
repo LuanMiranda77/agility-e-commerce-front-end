@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
 
-import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
 import { DialogProps } from '@material-ui/core/Dialog';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Divider } from 'primereact/divider';
 import { Timeline } from 'primereact/timeline';
 import { Toast } from 'primereact/toast';
 import icon from "../../assets/icon-voltar.png";
@@ -15,7 +13,7 @@ import { PedidoService } from '../../services/PedidoService/pedidoService';
 import { Utils } from "../../utils/utils";
 import { Carousel } from 'primereact/carousel';
 import markets from './markets.json'
-import { Container } from './styles';
+import { Container, FormControl } from './styles';
 import { observer } from 'mobx-react-lite';
 import MarketplaceStore from "../../stores/MarketplaceStore"
 import { HeaderAdmin } from '../../components/HeaderAdmin';
@@ -24,6 +22,12 @@ import { classNames } from 'primereact/utils'
 import { ButtonBase } from '../../components/ButtonBase';
 import { MarketplaceService } from '../../services/MarketplaceService/MarketplaceService';
 import { Tag } from 'primereact/tag';
+import { Detalhes } from './detalhes';
+import { Dialog, DialogContent, DialogTitle, Divider } from '@material-ui/core';
+import { InputBase } from '../../components/InputBase';
+import { InputNumber } from 'primereact/inputnumber';
+import { Dropdown } from 'primereact/dropdown';
+
 
 /**
 *@Author
@@ -32,6 +36,7 @@ import { Tag } from 'primereact/tag';
 
 const Marketplace: React.FC = () => {
   const store = useContext(MarketplaceStore);
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
   const [modalLoad, setModalLoad] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [maketId, setMarketId] = useState(0);
@@ -39,6 +44,14 @@ const Marketplace: React.FC = () => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [selectedProdutos, setSelectedprodutos] = useState<IProduto[]>([]);
   const marketplaceService = new MarketplaceService();
+  const [modalDialog, setModalDialog] = useState(false);
+  const [modalEdit, setModalEdit] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<any>(null);
+  const arrayStatus = [{ id: 1, name: 'Ativo', value: 'active' }, { id: 2, name: 'Encerrado', value: 'closed' }, { id: 3, name: 'Pausado', value: 'paused' }, { id: 4, name: 'Revisão', value: 'under_review' }]
+
+  const hideDialog = () => {
+    setModalDialog(false);
+  }
 
   // useEffect(() => {
   //   marketplaceService.findProdutosByMercadoLivre().then(data => {
@@ -113,11 +126,19 @@ const Marketplace: React.FC = () => {
     />
   }
 
-  const priceBodyTemplate = (rowData: IProduto) => {
-    return Utils.formatCurrency(rowData.precoAtacado);
+  const updateProduto = (prod: any) => {
+    setModalEdit(true);
+    store.load_prod(prod);
+    store.update();
+    // let op = arrayStatus.find(item => item.value === store.objUpdate.status);
+    // if(op != null){
+    //   setSelectedStatus(op.value);
+    // }
   }
 
-  const updateProduto = () => {
+  const detalhe = (prod: any) => {
+    setModalDialog(true);
+    store.load_prod(prod);
 
   }
 
@@ -126,7 +147,6 @@ const Marketplace: React.FC = () => {
     store.objUpdate.available_quantity = produto.quantidade;
     store.objUpdate.price = produto.precoVarejo;
     store.objUpdate.title = produto.titulo;
-    store.objUpdate.price = produto.precoVarejo;
     if (tipo === 1) {
       store.objUpdate.status = 'active';
     } else {
@@ -147,17 +167,39 @@ const Marketplace: React.FC = () => {
 
   }
 
+  const onSave = () => {
+    if( store.objUpdate.available_quantity===0 || store.objUpdate.price===0 || store.objUpdate.title === ''){
+      Utils.messagemShow(msg, 'error', '😱 Erro ao salvar', 'Campos em branco', 6000);
+      return false;
+    }else if (store.objUpdate.price < 0){
+      Utils.messagemShow(msg, 'error', '😱 Erro de campo quantidade', 'quantidade menor que 0', 6000);
+    }
+    setModalLoad(true);
+    marketplaceService.putProdutosByMercadoLivre(store.produto.id, store.objUpdate).then(data => {
+      store.produtos.map(item => {
+        if (item.id === data.id) {
+          item = data;
+        }
+      });
+      setModalLoad(false);
+      Utils.messagemShow(msg, 'success', 'Salvo', '😃 Anúncio alterado com sucesso', 5000);
+    }).catch(error => {
+      setModalLoad(false);
+      Utils.messagemShow(msg, 'error', '😱 Erro de carregamento', error.mensagemUsuario, 3000);
+    });
+  }
+
 
   const actionBodyTemplate = (rowData: IProduto) => {
     return (
       <div className="p-grid buttonAction">
-        <Button label="" icon="pi pi-pencil" className="p-button-rounded p-button-secondary p-mr-2 p-mb-2" tooltip="Editar anúncio" />
+        <Button label="" icon="pi pi-pencil" className="p-button-rounded p-button-secondary p-mr-2 p-mb-2" tooltip="Editar anúncio" onClick={() => updateProduto(rowData)} />
         {rowData.status === 'active' ?
           <Button label="" icon="pi pi-pause" className="p-button-rounded p-button-danger teste p-mr-2" tooltip="Pausar anúncio" onClick={() => updateStatus(rowData, 2)} />
           :
           <Button label="" icon="pi pi-play" className="p-button-rounded p-button-success teste p-mr-2" tooltip="Ativar anúncio" onClick={() => updateStatus(rowData, 1)} />
         }
-        <Button label="" icon="pi pi-chart-bar" className="p-button-rounded p-button-primary p-mr-2 p-mb-2" tooltip="Ver detalhes" />
+        <Button label="" icon="pi pi-chart-bar" className="p-button-rounded p-button-primary p-mr-2 p-mb-2" tooltip="Ver detalhes" onClick={() => detalhe(rowData)} />
       </div>
     );
   }
@@ -286,8 +328,8 @@ const Marketplace: React.FC = () => {
         : maketId === 0 ? '' :
           <div className='card p-p-2 card-aviso'>
             <div className='p-col-12 p-text-center' >
-              <div className='' style={{background: '#d3d3d3'}}>
-                <label htmlFor="" className='p-text-bold p-mb-3' style={{color: 'red'}}>Aviso</label>
+              <div className='' style={{ background: '#d3d3d3' }}>
+                <label htmlFor="" className='p-text-bold p-mb-3' style={{ color: 'red' }}>Aviso</label>
                 <h4>O Marketplace ainda não esta disponível nesta versão, esperamos liberar o mais breve possível.</h4>
               </div>
             </div>
@@ -296,9 +338,87 @@ const Marketplace: React.FC = () => {
           </div>
       }
     </div>
+    {/* =========================modal de edição====================== */}
+    <Dialog
+      className="p-col-12"
+      open={modalEdit}
+      onClose={() => setModalEdit(false)}
+      scroll={scroll}
+      aria-labelledby="scroll-dialog-title"
+      aria-describedby="scroll-dialog-description"
+      fullScreen
+      style={{ zIndex: 999 }}
+    >
+      <DialogTitle id="dialog-title" style={{ padding: '0px' }}>
+        <div className="p-grid  p-col-12">
+          <div className="p-col-5 p-lg-10 p-xl-10">
+            <div className="p-col-12">
+              <button type="button" onClick={() => setModalEdit(false)} className="p-grid "
+                style={{ background: 'white', border: '0' }}    >
+                <img src={icon} alt="img" />
+                <label htmlFor="" className="p-mt-2 p-text-bold" style={{ color: 'var(--text-title)', fontSize: '18px' }}>VOLTAR</label>
+              </button>
+            </div>
+          </div>
+          <div className="p-col-7 p-lg-2 p-xl-2">
+            <h5 className="p-text-bold p-text-uppercase p-mt-2 titulo-modal"
+              style={{ color: 'var(--secondary)' }}>
+              CÓDIGO: {store.produto.id}
+            </h5>
+          </div>
+        </div>
+      </DialogTitle>
+      <DialogContent dividers={scroll === 'paper'} style={{ background: 'var(--background)' }}>
+        <FormControl>
+          <div className="card p-p-2">
+            <h5 className='label-text p-ml-2'>Informações do anúncio</h5>
+            <div className='p-p-3 p-grid'>
+              <div className="p-col-12 p-lg-9 p-xl-9">
+                <InputBase type='text' label='titulo' placeholder='Digitar titulo do anúncio' value={store.objUpdate.title} onChange={(e) => { store.objUpdate.title = e.currentTarget.value }} />
+              </div>
+              <div className='p-field p-col-12 p-lg-2 p-xl-2 p-mt-1'>
+                <label htmlFor="" style={{ width: '100%' }}>Status</label>
+                <Dropdown className='test' value={store.objUpdate.status} options={arrayStatus} onChange={(e) => store.objUpdate.status = e.value} optionLabel="name" placeholder="Selecione o status" style={{ zIndex: '99' }} />
+              </div>
+            </div>
+            <div className="p-col-12  p-lg-3 p-xl-3">
+              <label htmlFor="pricovarejo" className='p-col-12' >Preço</label>
+              <InputNumber
+                id="pricevarejo"
+                value={store.objUpdate.price}
+                onValueChange={(e) => store.objUpdate.price = e.target.value}
+                mode="currency"
+                currency="BRL"
+                locale="pt-br"
+                className='p-col-12'
+              />
+            </div>
+            <div className='p-col-12 p-lg-3 p-xl-3 p-p-3'>
+              <InputBase type='number' label='Quantidade' placeholder='Digitar a quantidade do anúncio' value={store.objUpdate.available_quantity} onChange={(e) => { store.objUpdate.available_quantity = Number(e.currentTarget.value) }} />
+            </div>
+            {/* <div className='p-col-12'>
+              <h5 className='label-text'>Imagens do anúncio</h5>
+            </div>
+            <Divider />
+            <div className='p-col-12 p-lg-12 p-xl-12'>
+              <Carousel value={store.produto.imagens} numVisible={4} numScroll={4}
+                responsiveOptions={responsiveOptionsProduts}
+                className="custom-carousel p-mt-4"
+                circular
+                autoplayInterval={5000}
+                itemTemplate={productTemplate}
+              />
+            </div> */}
+          </div>
+        </FormControl>
+        <div className="p-text-right p-mt-3">
+          <ButtonBase icon='pi pi-check' label='Salvar' className="p-button-success p-pr-6 p-pl-6" onClick={onSave} />
+        </div>
+      </DialogContent>
+    </Dialog>
     <Toast ref={msg} />
     <ModalLoad visible={modalLoad} />
-
+    <Detalhes modalDialog={modalDialog} closeFuncion={hideDialog} store={store} />
   </Container>
   );
 }

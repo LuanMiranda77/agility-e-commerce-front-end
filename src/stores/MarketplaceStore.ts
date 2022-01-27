@@ -16,7 +16,7 @@ class MarketplaceStore{
   objUpdate = {
    //adicionar atributos aqui
    title: '',
-   price: '',
+   price: 0,
    status: '',
    available_quantity: 0,
   };
@@ -50,6 +50,19 @@ class MarketplaceStore{
   @action
   load(produtos: any[]): void {
     this.produtos = produtos;
+  }
+
+  @action
+  load_prod(produto: any) {
+    this.produto = {...produto};
+  }
+
+  @action
+  update() {
+    this.objUpdate.title= this.produto.titulo;
+    this.objUpdate.available_quantity = this.produto.quantidade;
+    this.objUpdate.price = this.produto.precoVarejo;
+    this.objUpdate.status = this.produto.status;
   }
 
 }
