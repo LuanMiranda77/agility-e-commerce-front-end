@@ -230,17 +230,20 @@ export function HeaderAdmin(props: any) {
       history.push(`/${page}`)
     } else if (page === 'cliente') {
       history.push(`/${page}`)
-    }else if (page === 'lojaconfig') {
+    } else if (page === 'lojaconfig') {
       history.push(`/${page}`)
-    }else if (page === 'livreconfig') {
+    } else if (page === 'livreconfig') {
       history.push(`/${page}`)
-    }else if (page === 'pagoconfig') {
+    } else if (page === 'pagoconfig') {
       history.push(`/${page}`)
-    }else if (page === 'loja') {
+    } else if (page === 'loja') {
       history.push(`/${page}`)
-    }else if (page === 'marketplace') {
+    } else if (page === 'marketplace') {
+      history.push(`/${page}`)
+    }else if (page === 'pedido-marketplace') {
       history.push(`/${page}`)
     }
+    
 
   };
 
@@ -275,23 +278,23 @@ export function HeaderAdmin(props: any) {
         <StyledTreeItem nodeId="2" labelText={!isCliente ? "MINHA LOJA" : "MINHA CONTA"} labelIcon={!isCliente ? Store : AccountBox}>
           <StyledTreeItem
             nodeId="3"
-            labelText={!isCliente ? "Informações da Loja": 'Informações da Pessoais'}
+            labelText={!isCliente ? "Informações da Loja" : 'Informações da Pessoais'}
             labelIcon={!isCliente ? Store : HowToReg}
             labelInfo=""
             color="#1a73e8"
             bgColor="#e8f0fe"
-            onClick={toggleDrawer(false, !isCliente ? 'loja':'cliente')}
+            onClick={toggleDrawer(false, !isCliente ? 'loja' : 'cliente')}
           />
           {!isCliente ? "" :
-          <StyledTreeItem
-            nodeId="5"
-            labelText="Endereço"
-            labelIcon={Public}
-            labelInfo=""
-            color="#a250f5"
-            bgColor="#f3e8fd"
-            onClick={toggleDrawer(false, 'endereco')}
-          />}
+            <StyledTreeItem
+              nodeId="5"
+              labelText="Endereço"
+              labelIcon={Public}
+              labelInfo=""
+              color="#a250f5"
+              bgColor="#f3e8fd"
+              onClick={toggleDrawer(false, 'endereco')}
+            />}
           <StyledTreeItem
             nodeId="4"
             labelText="Trocar senha"
@@ -305,29 +308,29 @@ export function HeaderAdmin(props: any) {
         </StyledTreeItem>
         <Divider />
         {!isCliente ?
-          (<StyledTreeItem nodeId="7" labelText="CÁTALAGO" labelIcon={MoveToInbox}>
+          (<StyledTreeItem nodeId="6" labelText="CÁTALAGO" labelIcon={MoveToInbox}>
             <StyledTreeItem
-              nodeId="8"
+              nodeId="61"
               labelText="Produto"
               labelIcon={ShoppingCart}
-              labelInfo="90"
+              // labelInfo="90"
               color="#1a73e8"
               bgColor="#e8f0fe"
               onClick={toggleDrawer(false, 'produto')}
             />
             <StyledTreeItem
-              nodeId="9"
+              nodeId="62"
               labelText="Categoria"
               labelIcon={FeaturedPlayList}
-              labelInfo="10"
+              // labelInfo="10"
               color="#e3742f"
               bgColor="#fcefe3"
               onClick={toggleDrawer(false, 'categoria')}
             />
             <StyledTreeItem
-              nodeId="9"
+              nodeId="63"
               labelText="Marketplaces"
-              labelIcon={Store}
+              labelIcon={Category}
               labelInfo=""
               color="#e3742f"
               bgColor="#fcefe3"
@@ -336,24 +339,47 @@ export function HeaderAdmin(props: any) {
           </StyledTreeItem>) :
           ''}
         <Divider />
-        <StyledTreeItem
-          nodeId="6"
-          labelText={!isCliente ? "PEDIDOS" : "COMPRAS"}
-          labelIcon={PostAddIcon}
-          labelInfo="733"
-          color="#3c8039"
-          bgColor="#e6f4ea"
-          onClick={toggleDrawer(false, 'pedido')}
-        />
-        <Divider />
         {!isCliente ?
+          <StyledTreeItem nodeId="12" labelText={"PEDIDOS"} labelIcon={PostAddIcon}>
+            <StyledTreeItem
+              nodeId="121"
+              labelText={"Pedidos Loja"}
+              labelIcon={PostAddIcon}
+              // labelInfo="733"
+              color="#3c8039"
+              bgColor="#e6f4ea"
+              onClick={toggleDrawer(false, 'pedido')}
+            />
+            <StyledTreeItem
+              nodeId="122"
+              labelText={"Pedidos Marketplace"}
+              labelIcon={Category}
+              // labelInfo="733"
+              color="#3c8039"
+              bgColor="#e6f4ea"
+              onClick={toggleDrawer(false, 'pedido-marketplace')}
+            />
+          </StyledTreeItem>
+          :
+          <StyledTreeItem
+            nodeId="123"
+            labelText={"COMPRAS"}
+            labelIcon={PostAddIcon}
+            labelInfo="733"
+            color="#3c8039"
+            bgColor="#e6f4ea"
+            onClick={toggleDrawer(false, 'pedido')}
+          />
+        }
+        <Divider />
+        {/* {!isCliente ?
           <StyledTreeItem nodeId="10" labelText="PROMOÇÕES" labelIcon={MonetizationOnIcon} />
           : ''}
-        <Divider />
+        <Divider /> */}
         {!isCliente ?
           <StyledTreeItem nodeId="10" labelText="CONFIGURAÇÃO" labelIcon={BrightnessHigh} >
             <StyledTreeItem
-              nodeId="3"
+              nodeId="101"
               labelText="Site da loja"
               labelIcon={Store}
               labelInfo=""
@@ -362,7 +388,7 @@ export function HeaderAdmin(props: any) {
               onClick={toggleDrawer(false, 'lojaconfig')}
             />
             <StyledTreeItem
-              nodeId="5"
+              nodeId="102"
               labelText="Mercado Livre"
               labelIcon={Category}
               labelInfo=""
@@ -371,7 +397,7 @@ export function HeaderAdmin(props: any) {
               onClick={toggleDrawer(false, 'livreconfig')}
             />
             <StyledTreeItem
-              nodeId="4"
+              nodeId="103"
               labelText="Mercado Pago"
               labelIcon={MonetizationOnIcon}
               labelInfo=""

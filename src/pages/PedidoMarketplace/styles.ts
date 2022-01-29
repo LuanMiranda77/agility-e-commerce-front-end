@@ -14,6 +14,7 @@ export const Container  = styled.div`
         border-radius: 0.25rem;
         margin: 1rem;
     }
+   
     .card-aviso{
         margin-left: 15rem;
         margin-right: 15rem;
@@ -30,8 +31,8 @@ export const Container  = styled.div`
         /* padding: 2rem 0; */
     }
     .product-item .product-image {
-        width: 100%;
-        height: 100px;
+        width: 50%;
+        height: 80px;
         /* box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); */
     }
 
@@ -129,10 +130,22 @@ export const FormControl = styled.form`
         color: var(--text-title);
     }
 
+    .center{
+        margin:0 auto;
+        justify-content: center;
+        padding: 0;
+    }
+
     .card{
         background: var(--white);
         border-radius: 0.24rem;
         margin-top: 1.8rem;
+    }
+
+    .card-pagamento{
+        background: #FFFACD;
+        border-radius: 0.25rem;
+        margin-top: 0.5rem;
     }
 
       /* CarouselDemo.css */
@@ -153,6 +166,56 @@ export const FormControl = styled.form`
     .cursor-pointer{
         cursor: pointer;
     }
+
+    /* css do cupom */
+    @color-gray: #BCBCBC;
+.text {
+	&-center { text-align: center; }
+}
+.ttu { text-transform: uppercase; }
+
+.printer-ticket {
+	display: table !important;
+	width: 100%;
+	max-width: 400px;
+	font-weight: light;
+	line-height: 1.3em;
+	@printer-padding-base: 10px;
+	&, & * { 
+		font-family: Tahoma, Geneva, sans-serif; 
+		font-size: 10px; 
+	}
+
+	th:nth-child(2),
+	td:nth-child(2) {
+		width: 50px;
+	}
+	
+	th:nth-child(3) ,
+	td:nth-child(3) { 
+		width: 90px; text-align: right; 
+	}
+	
+	th { 
+		font-weight: inherit;
+		padding:  0;
+		text-align: center;
+		border-bottom: 1px dashed ;
+	}
+	tbody {
+		tr:last-child td { padding-bottom: 0}
+	}
+	tfoot {
+		.sup td {
+			padding:  0;
+			border-top: 1px dashed ;
+		}
+		.sup.p--0 td { padding-bottom: 0.2rem; }
+	}
+	
+	.title { font-size: 1.5em; padding: 1.5 0; }
+	
+}
 
 
     @media screen and (max-width: 40em) {

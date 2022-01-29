@@ -37,8 +37,8 @@ export class MarketplaceService {
       const response = await integrador.get('/api/m_livre/categorias').then(response =>{
         return response.data.response;
       }).catch(error=>{
-        console.log(error);
-        return Promise.reject(error.response.data[0]);
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
       });
       return response;
     }
@@ -47,8 +47,8 @@ export class MarketplaceService {
       const response = await integrador.get(`/api/m_livre/categorias/${id}`).then(response =>{
         return response.data.response;
       }).catch(error=>{
-        console.log(error);
-        return Promise.reject(error.response.data[0]);
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
       });
       return response;
     }
@@ -57,8 +57,8 @@ export class MarketplaceService {
       const response = await integrador.get('/api/m_livre/items').then(response =>{
         return response.data.response;
       }).catch(error=>{
-        console.log(error);
-        return Promise.reject(error.response.data[0]);
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
       });
       return response;
     }
@@ -67,8 +67,28 @@ export class MarketplaceService {
       const response = await integrador.put('/api/m_livre/item/'+id, produto).then(response =>{
         return response.data.response;
       }).catch(error=>{
-        console.log(error);
-        return Promise.reject(error.response);
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
+      });
+      return response;
+    }
+
+    async findPedidos(id: string) {
+      const response = await integrador.get(`/api/m_livre/pedidos/${id}`).then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
+      });
+      return response;
+    }
+
+    async findPedidosByStatus(status: string) {
+      const response = await integrador.get(`/api/m_livre/pedidos/status/${status}`).then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
       });
       return response;
     }

@@ -22,14 +22,16 @@ export const DialogConfirme: React.FC<DialogConfirmeProps> = (props) => {
             aria-describedby="alert-dialog-slide-description"
            >
            <DialogContent style={{background: '#fffaf3bd', border: '5px solid #FFA726', borderRight: '0', borderTop: '0', borderBottom: '0'}}>
-                    <span className="p-grid">
+                    <div className="p-grid">
+                      <div className='p-col-1 p-mr-2'>
                       <span className="p-text-center p-pt-1">
                           <i className="pi pi-exclamation-triangle" style={{ fontSize: '3rem', color: 'var(--red)' }} />
                       </span>
-                      
-                      <DialogTitle id="alert-dialog-slide-title">{props.titulo}</DialogTitle>
-                      
-                    </span>
+                      </div>
+                      <div className='p-col-10'>
+                      <h3 id="alert-dialog-slide-title">{props.titulo}</h3>
+                      </div>
+                    </div>
                     <DialogContentText id="alert-dialog-slide-description">
                     <p className="p-text-center p-pt-2">{props.text}</p>
                     </DialogContentText>

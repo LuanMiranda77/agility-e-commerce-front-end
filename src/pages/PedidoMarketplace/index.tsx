@@ -12,7 +12,7 @@ import { ModalLoad } from '../../components/ModalLoad';
 import { PedidoService } from '../../services/PedidoService/pedidoService';
 import { Utils } from "../../utils/utils";
 import { Carousel } from 'primereact/carousel';
-import markets from './markets.json'
+import markets from '../Marketplace/markets.json'
 import { Container, FormControl } from './styles';
 import { observer } from 'mobx-react-lite';
 import MarketplaceStore from "../../stores/MarketplaceStore"
@@ -22,7 +22,6 @@ import { classNames } from 'primereact/utils'
 import { ButtonBase } from '../../components/ButtonBase';
 import { MarketplaceService } from '../../services/MarketplaceService/MarketplaceService';
 import { Tag } from 'primereact/tag';
-import { Detalhes } from './detalhes';
 import { Dialog, DialogContent, DialogTitle, Divider } from '@material-ui/core';
 import { InputBase } from '../../components/InputBase';
 import { InputNumber } from 'primereact/inputnumber';
@@ -30,15 +29,18 @@ import { Dropdown } from 'primereact/dropdown';
 import { AddToQueue } from '@material-ui/icons';
 import { DialogConfirme } from '../../components/DialogConfirme';
 import { InputSearch } from '../../components/InputSearch';
-
+import PedidoMarketplaceStore from "../../stores/PedidoMarketplaceStore"
+import { UtilsDate } from '../../utils/utilsDate';
+import { Detalhes } from './detalhes';
 
 /**
 *@Author
 *@Issue
 */
 
-const Marketplace: React.FC = () => {
-  const store = useContext(MarketplaceStore);
+const PedidoMarketplace: React.FC = () => {
+  const store = useContext(PedidoMarketplaceStore);
+
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
   const [modalLoad, setModalLoad] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -74,7 +76,7 @@ const Marketplace: React.FC = () => {
   const onFindBuscarProdutos = (id: number) => {
     setModalLoad(true);
     if (id === 1) {
-      marketplaceService.findProdutosByMercadoLivre().then(data => {
+      marketplaceService.findPedidos("1").then(data => {
         store.load(data);
         setModalLoad(false);
         setMarketId(id);
@@ -105,12 +107,12 @@ const Marketplace: React.FC = () => {
               className="product-image" />
           </div>
           {/* <div className='p-p-2'>
-            <h5 className="p-mb-1">{market.nome}</h5>
-            <label className='preco p-text-bold' htmlFor="preco">{Utils.formatCurrency(market.descricao)}</label>
-          </div>
-          <div className='p-p-2 p-text-right'>
-            <small className='p-ml-3'>266 vendidos</small>
-          </div> */}
+              <h5 className="p-mb-1">{market.nome}</h5>
+              <label className='preco p-text-bold' htmlFor="preco">{Utils.formatCurrency(market.descricao)}</label>
+            </div>
+            <div className='p-p-2 p-text-right'>
+              <small className='p-ml-3'>266 vendidos</small>
+            </div> */}
         </div>
       </div>
     );
@@ -145,24 +147,46 @@ const Marketplace: React.FC = () => {
     // }
   }
 
+  const filterPedidos = (status: string) =>{
+    setModalLoad(true);
+    if (status === "1" || status === "2" || status === "3") {
+      marketplaceService.findPedidos(status).then(data => {
+        store.load(data);
+        setModalLoad(false);
+      }).catch(error => {
+        setModalLoad(false);
+        Utils.messagemShow(msg, 'error', '😱 Erro de carregamento', error.mensagemUsuario, 3000);
+      });
+    }else{
+      marketplaceService.findPedidosByStatus(status).then(data => {
+        store.load(data);
+        setModalLoad(false);
+      }).catch(error => {
+        setModalLoad(false);
+        Utils.messagemShow(msg, 'error', '😱 Erro de carregamento', error.mensagemUsuario, 3000);
+      });
+    }
+  }
+
+
   const detalhe = (prod: any) => {
     setModalDialog(true);
     store.load_prod(prod);
 
   }
 
-  const updateStatus = (produto: any, tipo: number) => {
+  const updateStatus = (pedido: any, tipo: number) => {
     setModalLoad(true);
-    store.objUpdate.available_quantity = produto.quantidade;
-    store.objUpdate.price = produto.precoVarejo;
-    store.objUpdate.title = produto.titulo;
+    store.objUpdate.available_quantity = pedido.quantidade;
+    store.objUpdate.price = pedido.precoVarejo;
+    store.objUpdate.title = pedido.titulo;
     if (tipo === 1) {
       store.objUpdate.status = 'active';
     } else {
       store.objUpdate.status = 'paused';
     }
-    marketplaceService.putProdutosByMercadoLivre(produto.id, store.objUpdate).then(data => {
-      store.produtos.map(item => {
+    marketplaceService.putProdutosByMercadoLivre(pedido.id, store.objUpdate).then(data => {
+      store.pedidos.map(item => {
         if (item.id === data.id) {
           item.status = data.status;
         }
@@ -184,9 +208,9 @@ const Marketplace: React.FC = () => {
       Utils.messagemShow(msg, 'error', '😱 Erro de campo quantidade', 'quantidade menor que 0', 6000);
     }
     setModalLoad(true);
-    marketplaceService.putProdutosByMercadoLivre(store.produto.id, store.objUpdate).then(data => {
-      const index = store.findIndexById(store.produto.id);
-      store.produtos[index] = data;
+    marketplaceService.putProdutosByMercadoLivre(store.pedido.id, store.objUpdate).then(data => {
+      const index = store.findIndexById(store.pedido.id);
+      store.pedidos[index] = data;
       setModalLoad(false);
       setModalEdit(false);
       Utils.messagemShow(msg, 'success', 'Salvo', '😃 Anúncio alterado com sucesso', 5000);
@@ -199,27 +223,26 @@ const Marketplace: React.FC = () => {
 
   const actionBodyTemplate = (rowData: IProduto) => {
     return (
-      <div className="p-grid buttonAction">
-        {rowData.status !== 'closed' ? <Button label="" icon="pi pi-pencil" className="p-button-rounded p-button-secondary p-mr-2 p-mb-2" tooltip="Editar anúncio" onClick={() => updateProduto(rowData)} /> : ''}
-        {rowData.status !== 'closed' ? rowData.status === 'active' ?
-          <Button label="" icon="pi pi-pause" className="p-button-rounded p-button-danger teste p-mr-2" tooltip="Pausar anúncio" onClick={() => updateStatus(rowData, 2)} />
-          :
-          <Button label="" icon="pi pi-play" className="p-button-rounded p-button-success teste p-mr-2" tooltip="Ativar anúncio" onClick={() => updateStatus(rowData, 1)} />
-          :
-          ''
-        }
-        <Button label="" icon="pi pi-chart-bar" className="p-button-rounded p-button-primary p-mr-2 p-mb-2" tooltip="Ver detalhes" onClick={() => detalhe(rowData)} />
+      <div className="buttonAction">
+        <Button label="" icon="pi pi-chart-bar" className="p-button-primary p-mr-2 p-mb-2" tooltip="Ver detalhes" onClick={() => detalhe(rowData)} />
       </div>
     );
   }
 
   const header = (
     <div className="table-header p-grid">
-      <div className='p-col-12 p-lg-5  p-xl-2'>
-      <h5 className="p-m-0">Listagem dos anúcios</h5>
+      <div className='p-col-12 p-lg-1  p-xl-1'>
+        <h5 className="p-m-0">Listagem dos pedidos</h5>
       </div>
-      <div className="p-col-12 p-lg-6 p-ml-2 pesquisar">
+      <div className="p-col-12 p-lg-6 p-xl-6  pesquisar">
         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
+      </div>
+      <div className="p-col-12 p-lg-5 p-xl-5 p-text-right">
+        <Button className='p-mt-1 p-mr-3 p-shadow-3' label='' icon='pi pi-amazon' style={{ height: '38px' }} tooltip="Todos" tooltipOptions={{ position: 'top' }}  onClick={() => filterPedidos("1")}/>
+        <Button className='p-mt-1 p-mr-3 p-shadow-3 p-button-warning' label='' icon='pi pi-exclamation-circle' style={{ height: '38px' }} tooltip="Pedidos pendentes" tooltipOptions={{ position: 'top' }} onClick={() => filterPedidos("2")} />
+        <Button className='p-mt-1 p-mr-3 p-shadow-3 p-button-secondary' label='' icon='pi pi-cloud-download' style={{ height: '38px' }} tooltip="Pedidos recentes" tooltipOptions={{ position: 'top' }} onClick={() => filterPedidos("3")}/>
+        <Button className='p-mt-1 p-mr-3 p-shadow-3 p-button-danger' label='' icon='pi pi-ban' style={{ height: '38px' }} tooltip="Pedidos cancelados" tooltipOptions={{ position: 'top' }} onClick={() => filterPedidos("cancelled")}/>
+        <Button className='p-mt-1 p-button-success' label='' icon='pi pi-check-circle' style={{ height: '38px' }} tooltip="Pedidos concluidos" tooltipOptions={{ position: 'top' }} onClick={() => filterPedidos("delivered")}/>
       </div>
     </div>
   );
@@ -227,7 +250,7 @@ const Marketplace: React.FC = () => {
   const bodyTemplateColumnA = (rowData: any) => {
     return (
       <div>
-        <span className="p-column-title">Cod.Barras:</span>
+        <span className="p-column-title">ID:</span>
         {rowData.id}
       </div>
     );
@@ -235,16 +258,16 @@ const Marketplace: React.FC = () => {
   const bodyTemplateColumnB = (rowData: any) => {
     return (
       <div>
-        <span className="p-column-title">Titulo:</span>
-        {rowData.titulo}
+        <span className="p-column-title">Cliente:</span>
+        {rowData.buyer.nickname}
       </div>
     );
   }
   const bodyTemplateColumnC = (rowData: any) => {
-    const p = Utils.formatCurrency(rowData.precoVarejo);;
+    const p = Utils.formatCurrency(rowData.total_amount);;
     return (
       <div>
-        <span className="p-column-title">Preço:</span>
+        <span className="p-column-title">Valor:</span>
         <span>{p}</span>
       </div>
     );
@@ -264,9 +287,9 @@ const Marketplace: React.FC = () => {
       color = "primary";
       status = "REVISÃO";
     }
-    if (status === 'closed') {
-      color = "warning";
-      status = "ENCERRADO";
+    if (status === 'cancelled') {
+      color = "danger";
+      status = "CANCELADO";
     }
 
     return (
@@ -277,24 +300,19 @@ const Marketplace: React.FC = () => {
     );
   }
   const bodyTemplateColumnE = (rowData: any) => {
-    const stockClassName = classNames({
-      'outofstock': rowData.quantidade === 0,
-      'lowstock': rowData.quantidade > 0 && rowData.quantidade < 10,
-      'instock': rowData.quantidade > 5
-    });
     return (
-      <div className={stockClassName}>
-        <span className="p-column-title">Estoque:</span>
-        {rowData.quantidade}
+      <div>
+        <span className="p-column-title">Data venda:</span>
+        {UtilsDate.formatByDDMMYYYY(rowData.date_created)}
       </div>
     );
   }
 
   const bodyTemplateColumnF = (rowData: any) => {
     return (
-      <div >
-        <span className="p-column-title">Vendas:</span>
-        {rowData.qtn_vendida}
+      <div>
+        <span className="p-column-title">Data final:</span>
+        {UtilsDate.formatByDDMMYYYY(rowData.expiration_date)}
       </div>
     );
   }
@@ -329,30 +347,30 @@ const Marketplace: React.FC = () => {
       />
     </div>
     <div className='p-col-12'>
-    <Divider/>
+      <Divider />
       {maketId === 1 ?
         <div className="card p-p-2">
           <div className="datatable-crud-demo datatable-responsive-demo">
             <div className="table">
               <DataTable
-                value={store.produtos} selection={selectedProdutos}
+                value={store.pedidos} selection={selectedProdutos}
                 onSelectionChange={(e) => setSelectedprodutos(e.value)}
                 dataKey="id" paginator rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} produtos"
+                currentPageReportTemplate="Mostrando  {first} - {last} total de {totalRecords} pedidos"
                 globalFilter={globalFilter}
                 header={header}
                 scrollable
                 scrollHeight={te}
                 className="p-datatable-responsive-demo"
               >
-                <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-                <Column header="" body={imageBodyTemplate} headerStyle={{ width: '10%' }}></Column>
-                {/* <Column field="codigoBarras" header="Codigo" body={bodyTemplateColumnA} headerStyle={{ width: '12%' }} sortable></Column> */}
-                <Column field="titulo" header="Titulo" body={bodyTemplateColumnB} headerStyle={{ width: '25%' }} sortable></Column>
-                <Column field="precoVarejo" header="Preço" body={bodyTemplateColumnC} sortable></Column>
-                <Column field="quantidade" header="Estoque" body={bodyTemplateColumnE} sortable></Column>
-                <Column field="qtn_vendida" header="Vendidas" body={bodyTemplateColumnF} sortable></Column>
+                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                {/* <Column header="" body={imageBodyTemplate} headerStyle={{ width: '10%' }}></Column> */}
+                <Column field="id" header="Código" body={bodyTemplateColumnA} headerStyle={{ width: '12%' }} sortable></Column>
+                <Column field="buyer.nickname" header="Cliente" body={bodyTemplateColumnB} headerStyle={{ width: '30%' }} sortable></Column>
+                <Column field="total_amount" header="Valor" body={bodyTemplateColumnC} sortable></Column>
+                <Column field="date_created" header="Dt. Venda" body={bodyTemplateColumnE} sortable></Column>
+                <Column field="expiration_date" header="Dt. Final" body={bodyTemplateColumnF} sortable></Column>
                 <Column field="status" header="Status" body={bodyTemplateColumnD} sortable></Column>
                 <Column body={actionBodyTemplate}></Column>
               </DataTable>
@@ -399,7 +417,7 @@ const Marketplace: React.FC = () => {
           <div className="p-col-7 p-lg-2 p-xl-2">
             <h5 className="p-text-bold p-text-uppercase p-mt-2 titulo-modal"
               style={{ color: 'var(--secondary)' }}>
-              CÓDIGO: {store.produto.id}
+              CÓDIGO: {store.pedido}
             </h5>
           </div>
         </div>
@@ -433,18 +451,18 @@ const Marketplace: React.FC = () => {
               <InputBase type='number' label='Quantidade' placeholder='Digitar a quantidade do anúncio' value={store.objUpdate.available_quantity} onChange={(e) => { store.objUpdate.available_quantity = Number(e.currentTarget.value) }} />
             </div>
             {/* <div className='p-col-12'>
-              <h5 className='label-text'>Imagens do anúncio</h5>
-            </div>
-            <Divider />
-            <div className='p-col-12 p-lg-12 p-xl-12'>
-              <Carousel value={store.produto.imagens} numVisible={4} numScroll={4}
-                responsiveOptions={responsiveOptionsProduts}
-                className="custom-carousel p-mt-4"
-                circular
-                autoplayInterval={5000}
-                itemTemplate={productTemplate}
-              />
-            </div> */}
+                <h5 className='label-text'>Imagens do anúncio</h5>
+              </div>
+              <Divider />
+              <div className='p-col-12 p-lg-12 p-xl-12'>
+                <Carousel value={store.pedido.imagens} numVisible={4} numScroll={4}
+                  responsiveOptions={responsiveOptionsProduts}
+                  className="custom-carousel p-mt-4"
+                  circular
+                  autoplayInterval={5000}
+                  itemTemplate={productTemplate}
+                />
+              </div> */}
           </div>
         </FormControl>
         <div className="p-text-right p-mt-3">
@@ -458,7 +476,7 @@ const Marketplace: React.FC = () => {
     </Dialog>
     <Toast ref={msg} />
     <ModalLoad visible={modalLoad} />
-    <Detalhes modalDialog={modalDialog} closeFuncion={hideDialog} store={store} />
+    <Detalhes modalDialog={modalDialog} closeFuncion={hideDialog} store={store.pedido} />
     <DialogConfirme
       show={deleteProdutoDialog}
       text={"Anúncio: " + store.objUpdate.title}
@@ -468,4 +486,4 @@ const Marketplace: React.FC = () => {
   </Container>
   );
 }
-export default observer(Marketplace);
+export default observer(PedidoMarketplace);

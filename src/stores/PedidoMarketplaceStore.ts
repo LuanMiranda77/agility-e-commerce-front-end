@@ -1,9 +1,8 @@
-import { IProduto } from './../domain/types/IProduto';
 import { action, computed, makeObservable, observable } from "mobx";
 import {createContext}from "react";
-import { FileImg } from '../domain/types/FileImg';
+import { FileImg } from "../domain/types/FileImg";
 
-class MarketplaceStore{
+class PedidoMarketplaceStore{
   
 
 
@@ -35,41 +34,40 @@ class MarketplaceStore{
   };
 
   @observable
-  produtos: Array<any>;
+  pedidos: Array<any>;
 
   @observable
-  produto: any;
+  pedido: any;
   
 
   constructor(){
-    this.produtos = new Array<any>();
-    this.produto = this.objNew;
+    this.pedidos = new Array<any>();
     makeObservable(this);
   }
 
   @action
-  load(produtos: any[]): void {
-    this.produtos = produtos;
+  load(pedidos: any[]): void {
+    this.pedidos = pedidos;
   }
 
   @action
-  load_prod(produto: any) {
-    this.produto = {...produto};
+  load_prod(pedido: any) {
+    this.pedido = {...pedido};
   }
 
   @action
   update() {
-    this.objUpdate.title= this.produto.titulo;
-    this.objUpdate.available_quantity = this.produto.quantidade;
-    this.objUpdate.price = this.produto.precoVarejo;
-    this.objUpdate.status = this.produto.status;
+    this.objUpdate.title= this.pedido.titulo;
+    this.objUpdate.available_quantity = this.pedido.quantidade;
+    this.objUpdate.price = this.pedido.precoVarejo;
+    this.objUpdate.status = this.pedido.status;
   }
 
   @action
   findIndexById = (id: number) => {
     let index = -1;
-    for (let i = 0; i < this.produtos.length; i++) {
-      if (this.produtos[i].id === id) {
+    for (let i = 0; i < this.pedidos.length; i++) {
+      if (this.pedidos[i].id === id) {
         index = i;
         break;
       }
@@ -78,4 +76,4 @@ class MarketplaceStore{
   }
 
 }
-export default createContext(new MarketplaceStore());
+export default createContext(new PedidoMarketplaceStore());
