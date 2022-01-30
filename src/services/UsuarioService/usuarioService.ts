@@ -37,6 +37,16 @@ export class UsuarioService {
         });;
       return response;
     }
+
+    async updateStatus(id: number, status: string) {
+      const response = api.put(this.url+`/status/${id}/${status}`).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;;
+    }
     
   
 }

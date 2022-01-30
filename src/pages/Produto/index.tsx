@@ -36,6 +36,7 @@ import iconLivre from '../../assets/icon-livre.jpg'
 import { Dropdown } from 'primereact/dropdown'
 import { ModalLoad } from '../../components/ModalLoad'
 import { ModalMarketplace } from "./modalMarketplace"
+import { useHistory } from 'react-router-dom';
 
 
 
@@ -60,6 +61,8 @@ const Produto: React.FC = () => {
     const hideDialogMarket = () => {
         setModalDialog(false);
     }
+
+    const history = useHistory();
 
     useEffect(() => {
         produtoService.getProdutos().then(data => {
@@ -368,7 +371,7 @@ const Produto: React.FC = () => {
 
                 <div className="p-grid p-p-2">
                     <div className="p-col-12 p-md-6 p-lg-5 p-ml-3 p-mr-5" >
-                        <ButtonBase label="Markeplace anúncios" icon="pi pi-cog" className="p-button-warning" onClick={() => setModalDialog(true)} />
+                        <ButtonBase label="Markeplace anúncios" icon="pi pi-cog" className="p-button-warning" onClick={() => history.push("/marketplace")} />
                     </div>
                     <div className="p-p-2 p-col-12 p-sm-5 p-md-6 p-lg-6 p-ml-2 pesquisar">
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />

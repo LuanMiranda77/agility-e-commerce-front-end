@@ -59,7 +59,6 @@ class CategoriaStore {
   update = (categoria: ICategoria) => {
     // console.log(categoria);
     this.categoria = { ...categoria };
-    console.log(this.categoria);
   }
 
   @action

@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 //nossos imports
+import ListaCliente from './pages/ListaCliente';
 import PedidoMarketplace from './pages/PedidoMarketplace';
 import Marketplace from './pages/Marketplace';
 import Loja from './pages/Loja';
@@ -35,6 +36,7 @@ const Routes: React.FC = () => {
           <Route path="/home" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/usuario" component={Usuario} />
+          <PrivateRoute path="/lista-cliente" component={ListaCliente} />
           <PrivateRoute path="/pedido-marketplace" component={PedidoMarketplace} />
           <PrivateRoute path="/loja" component={Loja} />
           <PrivateRoute path="/pagoconfig" component={PagoConfig} />

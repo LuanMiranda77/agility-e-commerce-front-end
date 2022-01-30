@@ -24,6 +24,9 @@ class UsuarioStore {
   cliente: ICliente;
 
   @observable
+  clientes: Array<ICliente>;
+
+  @observable
   usuario: IUser;
 
 
@@ -52,11 +55,18 @@ class UsuarioStore {
       dataNascimento: new Date(),
       sexo: 'M',
     }
+
+    this.clientes = new Array<ICliente>();
   }
 
   @action
   public load(cliente: ICliente){
     this.cliente = {...cliente};
+  }
+
+  @action
+  public loadClientes(clientes: Array<ICliente>){
+    this.clientes = clientes.slice();
   }
 
   @action

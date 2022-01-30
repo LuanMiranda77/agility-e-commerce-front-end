@@ -33,6 +33,28 @@ export class ClienteService {
         });
       return response;
     }
+    //modelo de request get
+    async getClientes(){
+      const response = await api.get(this.url).then( resp =>{
+            return resp.data;
+        })
+        .catch(error => {
+            console.log(error.response.data);
+            return Promise.reject(error.response.data[0]);
+        });
+      return response;
+    }
+
+    async updateTipo(id: number, tipo: string) {
+      const response = api.put(this.url+`/tipo/${id}/${tipo}`).then(response =>{
+        return response.data;
+      }).catch(error=>{
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+      });
+      return response;;
+    }
+
     
   
 }

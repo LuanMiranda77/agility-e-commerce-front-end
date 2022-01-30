@@ -240,10 +240,12 @@ export function HeaderAdmin(props: any) {
       history.push(`/${page}`)
     } else if (page === 'marketplace') {
       history.push(`/${page}`)
-    }else if (page === 'pedido-marketplace') {
+    } else if (page === 'pedido-marketplace') {
+      history.push(`/${page}`)
+    }else if (page === 'lista-cliente') {
       history.push(`/${page}`)
     }
-    
+
 
   };
 
@@ -306,6 +308,20 @@ export function HeaderAdmin(props: any) {
           />
 
         </StyledTreeItem>
+        {!isCliente ?
+          <>
+            <Divider />
+            <StyledTreeItem
+              nodeId="3"
+              labelText={'CLIENTES'}
+              labelIcon={HowToReg}
+              labelInfo=""
+              color="#1a73e8"
+              bgColor="#e8f0fe"
+              onClick={toggleDrawer(false, 'lista-cliente')}
+            />
+          </>
+          : ''}
         <Divider />
         {!isCliente ?
           (<StyledTreeItem nodeId="6" labelText="CÁTALAGO" labelIcon={MoveToInbox}>
