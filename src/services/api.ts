@@ -3,16 +3,16 @@ import { getToken } from "./auth";
 
 
 const api = axios.create({
-    baseURL: "http://localhost:8080/",
+    baseURL: "https://agility-ecommerce-api.herokuapp.com/",
  
 });
 
 const integrador = axios.create({
-    baseURL: "http://localhost:5000/",
+    baseURL: "https://agility-ecommerce-api.herokuapp.com/",
     headers: {
       Authorization:'Client-ID 51ea2b9cfb2560e',
       Accept: "application/json",
-      'Access-Control-Allow-Origin': 'http://localhost:3000/',
+      'Access-Control-Allow-Origin': 'https://agility-ecommerce-api.herokuapp.com/',
     }
   });
 
