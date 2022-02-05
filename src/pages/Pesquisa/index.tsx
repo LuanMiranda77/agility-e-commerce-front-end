@@ -96,11 +96,11 @@ const Pesquisa: React.FC = (props: any) => {
             {/* <div className="product-description">{data.description}</div> */}
             <Rating value={product.estrelas} readOnly cancel={false}></Rating>
             <i className="pi pi-tag product-category-icon"></i>
-            <span className="product-category">{product.categorias[0].nome}</span>
+            <span className="product-category">{product.categoria.nome}</span>
           </div>
           <div className="product-list-action">
             <span className="product-price">{Utils.formatCurrency(product.precoVarejo)}</span>
-            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>
+            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)}></ButtonBase>
             {/* <span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
           </div>
         </div>
@@ -119,7 +119,7 @@ const Pesquisa: React.FC = (props: any) => {
           <div className="product-grid-item-top">
             <div>
               <i className="pi pi-tag product-category-icon"></i>
-              <span className="product-category">{product.categorias[0].nome}</span>
+              <span className="product-category">{product.categoria.nome}</span>
             </div>
             <div className="frete-gratis">
               <span className={`product-badge status-success`}>{'Frete Grátis'}</span>
@@ -136,7 +136,7 @@ const Pesquisa: React.FC = (props: any) => {
             <small>{'266 vendidos'}</small>
             {product.quantidade === 0 ?
               <div className="text-esgotado p-text-bold p-p-2"><label htmlFor="">ESGOTADO</label></div>
-              : <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>}
+              : <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)}></ButtonBase>}
           </div>
         </div>
       </div>
@@ -172,6 +172,21 @@ const Pesquisa: React.FC = (props: any) => {
   const onEventDetalhesProduto = (idProduto: number) => {
     console.log(history.replace('/'));
     history.push(`detalheproduto/${idProduto}`);
+}
+
+const setDadosLocalStorage = (carrinho: any) => {
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+}
+
+const getDadosLocalStorage = () => {
+  return JSON.parse(localStorage.getItem("carrinho") || "[]");
+}
+
+const addCarrinho = (produto: IProduto) => {
+    let array = getDadosLocalStorage();
+    array.push(produto);
+    setDadosLocalStorage(array);
+    window.location.reload();
 }
 
 

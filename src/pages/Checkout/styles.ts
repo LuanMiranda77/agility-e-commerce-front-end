@@ -35,7 +35,7 @@ export const Container = styled.div`
         padding: 0;
     }
     .img-cartao{
-        width: 40%;
+        width: 30%;
     }
 
     .resumo-ped{

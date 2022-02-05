@@ -11,6 +11,7 @@ export const Container = styled.div`
   height:35px;
   border-radius: 3px;
   transition: 0.2s;
+  /* box-shadow: 2px 2px 8px black; */
   &:hover {
       filter: brightness(0.6);
   }

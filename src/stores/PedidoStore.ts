@@ -1,11 +1,16 @@
+import { IProduto } from './../domain/types/IProduto';
+import { statusPedido } from './../pages/Pedido/enumStatus';
 import { action, computed, makeObservable, observable } from "mobx";
+
 import { IPedido } from "../domain/types/IPedido";
 import {createContext}from "react";
+import { IEnderecoEntrega } from "../domain/types/IEnderecoEntrega";
 import { IEndereco } from "../domain/types/IEndereco";
 import {ICliente} from "../domain/types/ICliente";
 import { IPagamento } from "../domain/types/IPagamento";
 import { IUser } from "../domain/types/IUser";
 import { UtilsDate } from "../utils/utilsDate";
+import { Utils } from "../utils/utils";
 
 class PedidoStore{
 
@@ -13,7 +18,7 @@ class PedidoStore{
   
   byId = observable.map();
 
-  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: '', password: '', role: 'MASTER'};
+  usuario: IUser = {id: 0, nome:'', login:'', email:'', dataCriacao: null, dataAtualizacao: null, status: 'ATIVO', password: '', role: 'CLIENTE'};
 
   cliente: ICliente = { id: 0,
               usuario: this.usuario,
@@ -21,21 +26,23 @@ class PedidoStore{
               tipo: 'VAREJO',
               enderecos: new Array<IEndereco>(),
               telefone: '',
-              celular: ''
+              celular: '',
+              dataNascimento: new Date(),
+              sexo:'M',
   };
 
   pagamento: IPagamento = {
-    id: 0,
+    id: null,
     numeroDeParcelas: 0,
     // dataEmissao: new Date,
-    dataVencimento: UtilsDate.formatByYYYYMMDD(new Date),
-    dataPagamento: UtilsDate.formatByYYYYMMDD(new Date) ,
+    dataVencimento: UtilsDate.formatByYYYYMMDD(new Date(UtilsDate.adicionarDiasByData(2))),
+    dataPagamento: null,
     tipo: 'BOLETO',
-    estatus: 'APROVADO',
+    estatus: 'PENDENTE',
   };
 
-  endereco: IEndereco = {
-    id: 0,
+  endereco: IEnderecoEntrega = {
+    id: null,
     logradouro: '',
     numero: '',
     complemento: '',
@@ -43,21 +50,22 @@ class PedidoStore{
     cidade: '',
     cep: '',
     uf : 'PB',
-
   };
 
   objNew = {
    //adicionar atributos aqui
-   id: 0,
-   dataDeCriacao: new Date(),
-   dataFechamento: new Date(),
+   id: null,
+   dataDeCriacao: UtilsDate.formatByYYYYMMDD(new Date()),
+   dataFechamento: null,
    pagamento: this.pagamento,
    cliente: this.cliente,
-   enderecoDeEntrega: this.endereco,
+   enderecoEntrega: this.endereco,
    valorTotal: 0,
    valorFrete: 0,
    valorDesconto: 0,
-   estatus: '',
+   estatus: statusPedido.PENDENTE,
+   codigoRastreio:'',
+   produtos: new Array<any>(),
   };
 
   @observable
@@ -96,6 +104,12 @@ class PedidoStore{
   @action
   load(pedidos: IPedido[]): void {
     console.log(pedidos) 
+    // this.pedidos = pedidos;
+  }
+
+  @action
+  loadEndereEntrega(endereco: IEndereco | IEnderecoEntrega): void {
+    this.pedido.enderecoEntrega = {...endereco};
     // this.pedidos = pedidos;
   }
   

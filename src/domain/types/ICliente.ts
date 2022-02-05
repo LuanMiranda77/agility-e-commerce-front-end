@@ -4,9 +4,11 @@ import { IUser } from "./IUser";
 export interface ICliente{
     id: number;
     usuario: IUser;
-    cpfCnpj: String;
-    tipo: String;
+    cpfCnpj: string;
+    tipo: string;
     enderecos: Array<IEndereco>;
-    telefone: String;
-    celular: String;
+    telefone: string;
+    celular: string;
+    dataNascimento: Date;
+    sexo: string;
 }

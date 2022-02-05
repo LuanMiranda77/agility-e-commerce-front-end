@@ -1,10 +1,11 @@
 export interface IEndereco{
-    id: Number;
-    logradouro: String;
-    numero: String;
-    complemento: String;
-    bairro: String;
-    cidade: String;
-    cep: String;
-    uf : String;
+    id: number | null;
+    logradouro: string;
+    numero: string;
+    complemento: string;
+    bairro: string;
+    cidade: string;
+    cep: string;
+    uf : string;
+    padrao?: string | null;
 }

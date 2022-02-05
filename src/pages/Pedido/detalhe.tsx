@@ -1,23 +1,19 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogContent, DialogTitle } from '@material-ui/core';
 import { DialogProps } from '@material-ui/core/Dialog';
-import { InputText } from 'primereact/inputtext';
-import { Toast } from 'primereact/toast';
-import { classNames } from 'primereact/utils';
-import React, { useRef, useState, useEffect } from 'react';
-import icon from "../../assets/icon-voltar.png";
-import { ButtonBase } from '../../components/ButtonBase';
-import { CategoriaService } from "../../services/CategoriaService/categoriaService";
-import { Utils } from "../../utils/utils";
-import { Container, FormControl } from "./styles";
-import { IPedido } from "../../domain/types/IPedido"
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InsertEmoticon, TripOriginRounded } from '@material-ui/icons';
+import { Card } from 'primereact/card';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
 import { Divider } from 'primereact/divider';
 import { Timeline } from 'primereact/timeline';
-import { Card } from 'primereact/card';
+import { Toast } from 'primereact/toast';
+import React, { useEffect, useRef, useState } from 'react';
+import icon from "../../assets/icon-voltar.png";
+import { ModalLoad } from '../../components/ModalLoad';
 import { PedidoService } from '../../services/PedidoService/pedidoService';
+import { Utils } from "../../utils/utils";
+import { Container, FormControl } from "./styles";
+import {statusPedido} from './enumStatus';
 
 interface DetalhesProps {
     store: any;
@@ -26,52 +22,99 @@ interface DetalhesProps {
 }
 
 export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
+
     const store = props.store;
-    store.pedido.produtos = [{ objectURL: 'https://25753.cdn.simplo7.net/static/25753/sku/relogios-digitais-relogio-digital-de-led-1617029341220.png', titulo: 'Relógio Digital De Luxo Com Tela De Toque De Silicone Com Pulseira De Silicone', quantidadeVendida: 15, valor: 500 },
-    { objectURL: 'https://images-americanas.b2w.io/produtos/1336330097/imagens/relogio-digital-led-luxo-touch-screen-silicone-strap-relogio-de-pulso-azul-escuro/1336330097_1_large.jpg', titulo: 'Relógio Digital De Luxo Com Tela De Toque De Silicone Com Pulseira De Silicone', quantidadeVendida: 15, valor: 500 }];
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+    const [modalLoad, setModalLoad] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const [events, setEvents] = useState([]);
     const msg = useRef<Toast>(null);
+    const [events, setEvents] = useState([]);
     const pedidoService = new PedidoService();
-    
-    const codigo = 'LB230826957HK';
-    
-    const iconInicio = 'pi pi-check', iconProgresso = 'pi pi-shopping-cart';
+    const codigo = store.pedido.codigoRastreio;
+    const [colorIcon1,setColor1]=useState('');
+    const [colorIcon2,setColor2]=useState('');
+    const [colorIcon3,setColor3]=useState('');
+    const [colorIcon4,setColor4]=useState('');
+    const [colorIcon5,setColor5]=useState('');
+   
+
+    const iconInicio = 'pi pi-inbox', iconProgresso = 'pi pi-send', iconFim='pi pi-user', iconSaio='pi pi-sign-out';
     const corInicio = '#607D8B', corProgresso = '#FF9800';
-
-
     
     useEffect(() => {
-        console.log("up")
-        pedidoService.getRastreio(codigo).then(data =>{
-            let cont = 0;
-            data.forEach(function(item: { icon: string; color: string; }) {
-                
-                if( cont === 0 ){
-                    item.icon = iconInicio;
-                    item.color = corInicio;  
-                    
-                }
-                else if( data.length === cont+1 ){
-                    item.icon = iconInicio;
-                    item.color = '#008000'; 
-                }else{
-                item.icon = iconProgresso;
-                item.color = corProgresso; 
-                }
-                cont++;
-            })
-            setEvents(data);
- 
-            
-            
-          }
-          ).catch(error => {
-            Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
-          });
+        
+        if (props.modalDialog && props.store.pedido.estatus !== 'CANCELADO' && props.store.pedido.estatus !== 'NAO_ENVIADO' && props.store.pedido.estatus !== 'PENDENTE') {
+           setModalLoad(true);
+           testeStatusPedido();
+            pedidoService.getRastreio(codigo).then(data => {
+                console.log(data);
+                let cont = 0;
+                data.forEach(function (item: { icon: string; color: string; }) {
 
-    }, []);
+                    if (cont === 0) {
+                        item.icon = iconInicio;
+                        item.color = corInicio;
+                    }
+                    else if (data.length === cont + 1) {
+                        item.icon = iconFim;
+                        item.color = '#008000';
+                    }  else if (data.length-1 === cont+1) {
+                        item.icon = iconSaio;
+                        item.color = '#008000';
+                    }
+                    else {
+                        item.icon = iconProgresso;
+                        item.color = corProgresso;
+                    }
+                    cont++;
+                })
+                setEvents(data.reverse());
+                setModalLoad(false);
+            }
+            ).catch(error => {
+                setModalLoad(false);
+                Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+            });
+
+            // pedidoService.getPedidosById(store.pedido.id).then(data => {
+            //     store.pedido.produtos = data;
+            // }).catch(error => {
+            //     Utils.messagemShow(msg, 'error', 'Erro de carregamento', error.mensagemUsuario, 5000);
+            // });
+        }else{
+            setEvents([]); 
+            setColor1('');
+            setColor2('');
+            setColor3('');
+            setColor4('');
+            setColor5('');
+        }
+
+    }, [props]);
+
+    const testeStatusPedido = () =>{
+        if(store.pedido.estatus === statusPedido.PENDENTE){
+            setColor1('var(--primary)');
+        }else if(store.pedido.estatus === statusPedido.FINALIZADO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+        }else if(store.pedido.estatus === statusPedido.ENVIADO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+            setColor3('var(--primary)');
+        }else if(store.pedido.estatus === statusPedido.RECEBIDO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+            setColor3('var(--primary)');
+            setColor4('var(--secondary)');
+        }else if(store.pedido.estatus === statusPedido.RECEBIDO){
+            setColor1('var(--primary)');
+            setColor2('var(--primary)');
+            setColor3('var(--primary)');
+            setColor4('var(--secondary)');
+            setColor5('#ffff00');
+        }
+    }
 
 
     const hideDialog = () => {
@@ -80,8 +123,8 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
 
     const bodyTemplateColumnA = (rowData: any) => {
         let imgURL = ''
-        if (rowData.objectURL) {
-            imgURL = rowData.objectURL;
+        if (rowData.produto.imagens[0].objectURL) {
+            imgURL = rowData.produto.imagens[0].objectURL;
         }
         // eslint-disable-next-line jsx-a11y/alt-text
         return <img
@@ -95,7 +138,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
         return (
             <div>
                 <span className="p-column-title">Titulo:</span>
-                <h5>{rowData.titulo}</h5>
+                <h5>{rowData.produto.titulo}</h5>
             </div>
         );
     }
@@ -111,7 +154,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
         return (
             <div>
                 <span className="p-column-title">Valor:</span>
-                <h3 style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>{Utils.formatCurrency(rowData.valor)}</h3>
+                <h3 style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>{Utils.formatCurrency(rowData.quantidadeVendida * rowData.produto.precoVarejo)}</h3>
             </div>
         );
     }
@@ -132,10 +175,27 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
 
     const customizedContent = (item: any) => {
         return (
-            <Card title={item.status} subTitle={item.data+' '+ item.hora}>
-                <p>{item.local}</p>
-                {/* <Button label="Read more" className="p-button-text"></Button> */}
-            </Card>
+            <div className='card p-shadow-2 p-p-3' style={{marginTop:'-1rem', marginBottom: '1.5rem', width:'100%'}}>
+                <h4 className='p-mb-1'>{item.status}</h4>
+                <h5 className='p-mb-2'>{item.data + ' ' + item.hora}</h5>
+                {item.origem ?
+                    <>
+                        <p className='p-mr-1 p-mb-2'><span className='p-text-bold'>Saida:</span> {item.origem}</p>
+                        <p className='p-mr-1'><span className='p-text-bold p-mr-1'>Para:</span>{item.destino}</p>
+                    </> :
+                    <p>{item.local}</p>
+                }
+            </div>
+            // <Card title={item.status} subTitle={item.data + ' ' + item.hora}>
+            //     {item.origem ?
+            //         <>
+            //             <p><span className='p-text-bold p-mr-1'>Saida:</span> {item.origem}</p>
+            //             <p><span className='p-text-bold p-mr-1'>Para:</span>{item.destino}</p>
+            //         </> :
+            //         <p>{item.local}</p>
+            //     }
+            //     {/* <Button label="Read more" className="p-button-text"></Button> */}
+            // </Card>
         );
     };
 
@@ -185,35 +245,35 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                             <div className="p-grid p-col-12 p-text-center">
                                 <div className="p-col-12 p-lg-2 p-xl-2 p-ml-1">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-file p-pb-3'></i>
+                                        <i style={{color: colorIcon1}} className='pi pi-file p-pb-3'></i>
                                         <br />
                                         <h4>Pedidos Realizados</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-3">
-                                    <div className='p-field  p-p-2 button-status'>
-                                        <i className='pi pi-money-bill p-pb-3'></i>
+                                    <div className='p-field  p-p-2 button-status' >
+                                        <i style={{color: colorIcon2}} className='pi pi-money-bill p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Pago</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-2 p-mr-3">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-send p-pb-3'></i>
+                                        <i style={{color: colorIcon3}} className='pi pi-send p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Enviado</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-2 p-mr-3">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-map-marker p-pb-3'></i>
+                                        <i style={{color: colorIcon4}} className='pi pi-map-marker p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Recebido</h4>
                                     </div>
                                 </div>
                                 <div className="p-col-12 p-lg-2 p-xl-2">
                                     <div className='p-field p-p-2 button-status'>
-                                        <i className='pi pi-star-o p-pb-3'></i>
+                                        <i style={{color: colorIcon5}} className='pi pi-star-o p-pb-3'></i>
                                         <br />
                                         <h4>Pedido Avaliado</h4>
                                     </div>
@@ -243,20 +303,29 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                                 </div>
                                 <div className='p-col-12 p-lg-2 p-xl-2 p-text-right'>
                                     <h4 style={{ color: 'var(--text-title)' }}>Código dos correios</h4>
-                                    <h5>ds54sd5s899sd</h5>
+                                    <h5>{codigo}</h5>
                                 </div>
 
                             </div>
                             <div className="p-grid p-col-12">
-                                <div className='p-col-12 p-lg-4 p-xl-4'>
-                                    <label htmlFor="">{store.pedido.cliente.nome}</label>
-                                    <label htmlFor="">{store.pedido.cliente.telefone}</label>
-                                    <label htmlFor="">{store.pedido.cliente.endereço}</label>
-                                    <Divider className="divider" layout="vertical" />
+                                <div className='p-col-12 p-lg-3 p-xl-3'>
+                                    <div className='label-text p-text-bold p-mb-2'>
+                                        <label htmlFor="">{store.pedido.cliente.usuario.nome}</label>
+                                    </div>
+                                    <div className='label-text p-mb-2 p-text-bold'>
+                                        <label className='label-text p-mb-2' htmlFor="">{store.pedido.cliente.celular}</label>
+                                    </div>
+                                    <div className='label-text p-mb-2'>
+                                        <label className='label-text' htmlFor="">{store.pedido.enderecoEntrega.logradouro+", "+store.pedido.enderecoEntrega.numero+" - "+store.pedido.enderecoEntrega.bairro}</label>
+                                    </div>
+                                    <div className='label-text p-mb-2'>
+                                        <label className='label-text' htmlFor="">{store.pedido.enderecoEntrega.complemento +"   "+ store.pedido.enderecoEntrega.cidade +" - "+ store.pedido.enderecoEntrega.uf +", "+ store.pedido.enderecoEntrega.cep }</label>
+                                    </div>
                                 </div>
+                                <Divider className="divider" layout="vertical" />
                                 <div className='timeline-demo p-col-12 p-lg-8 p-xl-8'>
                                     <div className="card">
-                                        <Timeline value={events} align="alternate" className="customized-timeline" marker={customizedMarker} content={customizedContent} />
+                                        <Timeline value={events} className="timeline-demo" marker={customizedMarker} content={customizedContent} />
                                     </div>
 
                                 </div>
@@ -287,7 +356,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
                             <Divider />
                             <div className="p-col-12 p-text-right">
                                 <h2 style={{ color: 'var(--text-title)' }}>
-                                    Método de pagamento <span style={{ color: 'var(--primary)' }}>{' Boleto avista x 1 '+Utils.formatCurrency(store.pedido.valorTotal + store.pedido.valorFrete - store.pedido.valorDesconto)}</span>
+                                    Método de pagamento <span style={{ color: 'var(--primary)' }}>{store.pedido.pagamento.tipo+' - '+store.pedido.pagamento.numeroDeParcelas+"x de "+ Utils.formatCurrency((store.pedido.valorTotal + store.pedido.valorFrete - store.pedido.valorDesconto)/store.pedido.pagamento.numeroDeParcelas)}</span>
                                 </h2>
                             </div>
                         </div>
@@ -299,6 +368,7 @@ export const DetalhePedido: React.FC<DetalhesProps> = (props) => {
             </div>
         </DialogActions> */}
                 <Toast ref={msg} />
+                <ModalLoad visible={modalLoad} />
             </Dialog>
         </Container>
     );

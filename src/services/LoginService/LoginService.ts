@@ -11,19 +11,22 @@ export class LoginService {
 
     public async login(pEntity : IUser) {
         
-        api.post(this.auth, {email:'admin',password:'Ads%$#@!Ads'}).then(response =>{
+        const token = await api.post(this.auth, {email:'admin',password:'Ads%$#@!Ads'}).then(response =>{
             login(response.data);
+            return response.data;
 
         });
-        const response = await api.post(this.url+'/login', pEntity)
-        .then( resp =>{
-            return resp.data;
-        })
-        .catch(error => {
-            console.log(error.response.data[0]);
-            return Promise.reject(error.response.data[0]);
-        });
-        return response;
+        if(token){
+            const response = await api.post(this.url+'/login', pEntity)
+            .then( resp =>{
+                return resp.data;
+            })
+            .catch(error => {
+                console.log(error.response.data[0]);
+                return Promise.reject(error.response.data[0]);
+            });
+            return response;
+        }
     }
 
     public async recuperarSenha(user: IUser){
@@ -32,6 +35,18 @@ export class LoginService {
             return resp.data;
         })
         .catch(error => {
+            return Promise.reject(error.response.data[0]);
+        });
+        return response;
+    }
+
+    public async trocarSenha(user: IUser){
+        const response = await api.put(this.url+`/${user.id}`, user)
+        .then( resp =>{
+            return resp.data;
+        })
+        .catch(error => {
+            console.log(error);
             return Promise.reject(error.response.data[0]);
         });
         return response;

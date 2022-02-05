@@ -22,8 +22,9 @@ class ProdutoStore {
     comprimento: 0,
     altura: 0,
     largura: 0,
+    status:'',
     imagens: new Array<FileImg>(),
-    categorias: new Array<ICategoria>()
+    categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''}
   };
 
   @observable
@@ -66,9 +67,9 @@ class ProdutoStore {
   }
 
   @action
-  setCategorias(categorias: ICategoria[]): void{
-    console.log(categorias);
-    this.produto.categorias = categorias;
+  setCategorias(categoria: ICategoria): void{
+    console.log(categoria);
+    this.produto.categoria = categoria;
   }
 
   @action

@@ -123,18 +123,19 @@ const Home: React.FC = () => {
     }
     return (
       <div className="p-col-12">
-        <div id='produto-2' className="cursor-pointer product-list-item" onClick={() =>onEventDetalhesProduto(product.id)}>
-          <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="product-image" />
+        <div id='produto-2' className="product-list-item" >
+          <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} 
+               alt={product.titulo} className="cursor-pointer product-image" onClick={() =>onEventDetalhesProduto(product.id)}/>
           <div className="product-list-detail">
             <div className="product-name">{product.titulo}</div>
             {/* <div className="product-description">{data.description}</div> */}
             <Rating value={product.estrelas} readOnly cancel={false}></Rating>
             <i className="pi pi-tag product-category-icon"></i>
-            <span className="product-category">{product.categorias[0].nome}</span>
+            <span className="product-category">{product.categoria.nome}</span>
           </div>
           <div className="product-list-action">
             <span className="product-price">{Utils.formatCurrency(product.precoVarejo)}</span>
-            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>
+            <ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)} ></ButtonBase>
             {/* <span className={`product-badge status-${data.inventoryStatus.toLowerCase()}`}>{data.inventoryStatus}</span> */}
           </div>
         </div>
@@ -149,18 +150,18 @@ const Home: React.FC = () => {
     }
     return (
       <div className="p-col-12 p-md-3">
-        <div id='produto-1' className="cursor-pointer product-grid-item p-shadow-2" onClick={() =>onEventDetalhesProduto(product.id)}>
+        <div id='produto-1' className="product-grid-item p-shadow-2" >
           <div className="product-grid-item-top">
             <div>
               <i className="pi pi-tag product-category-icon"></i>
-              <span className="product-category">{product.categorias[0].nome}</span>
+              <span className="product-category">{product.categoria.nome}</span>
             </div>
             <div className="frete-gratis">
               <span className={`product-badge status-success`}>{'Frete Grátis'}</span>
             </div>
           </div>
           <div className="product-grid-item-content">
-            <img src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="product-image" />
+            <img onClick={() =>onEventDetalhesProduto(product.id)} src={img} onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'} alt={product.titulo} className="cursor-pointer product-image" />
             <div className="product-name">{product.titulo}</div>
             {/* <div className="product-description">{data.description}</div> */}
             <Rating value={product.estrelas} readOnly cancel={false}></Rating>
@@ -170,7 +171,7 @@ const Home: React.FC = () => {
             <small>{'266 vendidos'}</small>
             {product.quantidade === 0 ? 
             <div className="text-esgotado p-text-bold p-p-2"><label htmlFor="">ESGOTADO</label></div>
-            :<ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0}></ButtonBase>}
+            :<ButtonBase className='p-button-success' icon="pi pi-shopping-cart" label="Carrinho" disabled={product.quantidade === 0} onClick={() => addCarrinho(product)}></ButtonBase>}
           </div>
         </div>
       </div>
@@ -205,6 +206,33 @@ const Home: React.FC = () => {
 
   const onEventDetalhesProduto = (idProduto: number) => {
         history.push(`detalheproduto/${idProduto}`)
+  }
+
+  const setDadosLocalStorage = (carrinho: any) => {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  }
+
+  const getDadosLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("carrinho") || "[]");
+  }
+
+  const addCarrinho = (produto: IProduto) => {
+      let array = getDadosLocalStorage();
+      let band = 0;
+     array.forEach((item: IProduto) => {
+        if(item.id === produto.id){
+          produto.quantidade+=1;
+        }
+      });
+      
+      if(band === 1){
+        setDadosLocalStorage(array);
+      }else{
+        produto.quantidade = 1;
+        array.push(produto);
+        setDadosLocalStorage(array);
+      }
+      window.location.reload();
   }
 
   return <Container>

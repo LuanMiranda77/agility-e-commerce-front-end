@@ -1,0 +1,12 @@
+{
+    "dados":[
+        {"id": 1, "logo": "https://s2.glbimg.com/Bu6upvmSg6SRv0za635uXphThKo=/620x430/e.glbimg.com/og/ed/f/original/2020/03/28/mercado-livre.jpg", "nome":"Mercado Livre", "descricao": "Ative na sua loja Online em poucos passos, sem necessidade de conhecimento técnico."},
+        {"id": 2, "logo": "https://img.ibxk.com.br/2020/02/10/10173806533062.jpg", "nome":"Shopee", "descricao": "Venda produtos online a partir de Loja Logo com segurança e garantia do Shopee."},
+        {"id": 3, "logo": "https://images.contentful.com/alneenqid6w5/3hRQ23BqGdnYGkQtzOtsRF/abbcb463e142e13825d97358da9af010/amazon_logo.png", "nome":"Amazom", "descricao": "Exiba seus produtos aos milhões de clientes que compram na Amazon todos os dias."},
+        {"id": 4, "logo": "https://mir-s3-cdn-cf.behance.net/projects/404/544472123566509.Y3JvcCw5MDAsNzAzLDAsOTg.jpg", "nome":"Magalu Marketplace", "descricao": "O Magalu Marketplace é um shopping virtual onde você pode aumentar as suas vendas."},
+        {"id": 5, "logo": "https://blog.americanasmarketplace.com.br/wp-content/uploads/2021/09/logo-americanas-vermelho.png", "nome":"Americanas Marketplace", "descricao": "A plataforma que possibilita que lojistas de todos os tamanhos e segmentos venda mais."},
+        {"id": 6, "logo": "https://www.designculture.com.br/wp-content/uploads/2014/02/netshoes-logo-novo-0.jpg", "nome":"Netshoes", "descricao": "Você pode vender seus produtos no maior e-commerce de lifestyle esportivo da América Latina."},
+        {"id": 5, "logo": "https://varejo.espm.br/wp-content/uploads/2020/07/casas_bahia_new.png", "nome":"Casas Bahia Marketplace", "descricao": "Aqui você conta com a tradição e confiabilidade da nossa marca para aumentar suas vendas."}
+        
+    ]
+}

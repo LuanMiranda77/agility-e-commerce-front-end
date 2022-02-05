@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Container } from './styles'
 import { Divider } from 'primereact/divider';
 import { useHistory } from 'react-router-dom';
@@ -7,8 +7,8 @@ import { ButtonBase } from '../../components/ButtonBase';
 import { ButtonRedeSociais } from '../../components/ButtonRedeSociais';
 import { InputGroup } from '../../components/InputGroup';
 import { LoginService } from '../../services/LoginService/LoginService';
-import { observer} from 'mobx-react-lite';
-import {useContext, useRef} from 'react';
+import { observer } from 'mobx-react-lite';
+import { useContext, useRef } from 'react';
 import UserStore from "../../stores/userStore";
 import { Toast } from 'primereact/toast';
 import { Utils } from '../../utils/utils';
@@ -27,25 +27,30 @@ function Login() {
     const loginService = new LoginService();
 
     const logar = () => {
-        
+
         loginService.login(store.user).then(response => {
-                if(response.role === 'MASTER'){
-                    history.push("/dashboard");
-                }else if(response.role === 'ADMIN'){
-                    history.push("/dashboard");
-                }else if(response.role === 'SEPARADOR'){
-                    history.push("/dashboard");
-                }else{
-                    history.push("/home");
-                }
-        }).catch(err =>{
-              Utils.messagemShow(msg,'info', `AVISO`, err.mensagemUsuario, 3000);
+            if (response.role === 'MASTER') {
+                Utils.geraTokenLogin(response);
+                history.push("/dashboard");
+            } else if (response.role === 'ADMIN') {
+                Utils.geraTokenLogin(response);
+                history.push("/dashboard");
+            } else if (response.role === 'SEPARADOR') {
+                Utils.geraTokenLogin(response);
+                history.push("/dashboard");
+            } else {
+                Utils.geraTokenLogin(response);
+                history.push("/home");
+                console.log(Utils.getTokenLogin());
+            }
+        }).catch(err => {
+            Utils.messagemShow(msg, 'info', `AVISO`, err.mensagemUsuario, 3000);
         });
     }
 
     const [modalSenha, setModalSenha] = useState(false);
 
-    const closeModalSenha = () =>{
+    const closeModalSenha = () => {
         setModalSenha(false);
     }
 
@@ -69,11 +74,15 @@ function Login() {
                                 <InputGroup label="Senha" placeholder="Digite a senha" icon="pi pi-key" type="password" onChange={(e) => store.user.password = e.target.value} required autoFocus></InputGroup>
                             </div>
                             <ButtonBase icon="" label="ENTER" className="p-button-success p-button-raised p-button-rounded" onClick={logar} />
-                            <div className="div-link">
-                                <a href="/user" ><span className="cadastro">Cadastre-se</span></a>
-                                <a onClick={()=> setModalSenha(true)} style={{cursor:'pointer'}} >
-                                    <span className="esquece">Esquece a senha</span>
-                                </a>
+                            <div className="div-link p-grid">
+                                <div className='p-col-12 p-lg-6 p-xl-6'>
+                                    <a href="/usuario" ><span className="cadastro">Cadastre-se</span></a>
+                                </div>
+                                <div className='p-col-12 p-lg-6 p-xl-6 p-text-right' >
+                                    <a onClick={() => setModalSenha(true)} style={{ cursor: 'pointer' }} >
+                                        <span className="esquece">Esquece a senha</span>
+                                    </a>
+                                </div>
                             </div>
 
                         </div>
@@ -89,10 +98,10 @@ function Login() {
                         <ButtonRedeSociais icon="pi pi-facebook" sizeIcon="3" size="6" label="Facebook" className="facebook p-button-raised p-button-rounded" />
                     </div>
                 </div>
-              
+
             </div>
-            <Toast ref={msg}/>
-            <ModalRecuperaSenha store={store} modalDialog={modalSenha} closeFuncion={closeModalSenha}/>
+            <Toast ref={msg} />
+            <ModalRecuperaSenha store={store} modalDialog={modalSenha} closeFuncion={closeModalSenha} />
         </Container>
 
     )

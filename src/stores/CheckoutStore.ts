@@ -34,6 +34,33 @@ class CheckoutStore{
   };
 
   @observable
+  frete= {
+    sCepOrigem: '58500000',
+    sCepDestino: "",
+    nVlPeso: '',
+    nCdFormato: '1',
+    nVlComprimento: '',
+    nVlAltura: '',
+    nVlLargura: '',
+    nCdServico: ["04014", "04510"],
+    nVlDiametro: "0",
+  }
+
+  @observable
+  resultFrete = {
+    Codigo: "",
+    Valor: "",
+    PrazoEntrega: "",
+    ValorSemAdicionais: "",
+    ValorMaoPropria: "",
+    ValorAvisoRecebimento: "",
+    ValorValorDeclarado: "",
+    EntregaDomiciliar: "",
+    EntregaSabado: "",
+    Erro: ""
+  }
+
+  @observable
   checkouts: Array<ICheckout>;
 
   @observable

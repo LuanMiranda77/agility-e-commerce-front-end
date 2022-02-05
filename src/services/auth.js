@@ -1,5 +1,5 @@
 
-export const TOKEN_KEY = "@demo-Token";
+export let TOKEN_KEY = null;
 
 
 export const isAuthenticated = () => localStorage.getItem(TOKEN_KEY) !== null;
@@ -14,5 +14,7 @@ export const login = token => {
 
 
 export const logout = () => {
+  TOKEN_KEY = null;
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem("p-text-left");
 };

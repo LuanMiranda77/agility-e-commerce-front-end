@@ -7,7 +7,7 @@ export const Container  = styled.div`
     top:0;
     position:fixed;
     width:100%;
-    z-index: 99999;
+    z-index: 15;
     
     .text-top{
         color: var(--text-title);
@@ -23,8 +23,8 @@ export const Container  = styled.div`
     }
     .quant-sacola{
         color: var(--white);
-        padding-top: 2.3rem;
-        margin-left: -2.4rem;
+        margin-left: -1.9rem;
+        background: var(--secondary);
     }
     .label-div-enter{
         display: block;
@@ -50,6 +50,10 @@ export const Container  = styled.div`
         margin:0 auto;
         justify-content: center;
         padding: 0;
+    }
+
+    .cursor-pointer{
+        cursor: pointer;
     }
 
 @media screen and (max-width: 40em) {

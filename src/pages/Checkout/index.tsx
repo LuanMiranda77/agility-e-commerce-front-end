@@ -14,8 +14,9 @@ import { ListItem } from '../../components/ListItem';
 import { Toast } from 'primereact/toast';
 import { CheckoutService } from '../../services/CheckoutService/checkoutService';
 import config from '../../config/index.json'
-import { Route, useHistory } from 'react-router-dom';
 import PagePix from './pagepix';
+import { IProduto } from '../../domain/types/IProduto';
+import { useHistory } from 'react-router-dom';
 
 const Checkout: React.FC = () => {
   const store = useContext(CheckoutStore);
@@ -24,34 +25,54 @@ const Checkout: React.FC = () => {
   const [qr_code_base64, setQRCode64] = useState('');
   const [qr_code, setQRCode] = useState('');
   const [dt_expired, setDataExpiried] = useState('');
+  const [diaVal, setDiaVal] = useState('');
+  const [anoVal, setAnoVal] = useState('');
 
 
   const msg = useRef<Toast>(null);
   const [tipoFrete, setTipoFrete] = useState('PAC');
   const [tipoPagamento, setTipoPagamento] = useState('credit_card');
   const [valorFrete, setValorFrete] = useState(frentePAc);
-  const [valorCompra, setValorCompra] = useState(100);
+  const [valorCompra, setValorCompra] = useState(0);
   const [totalCompra, setTotalCompra] = useState(valorCompra);
   const PUBLIC_KEY = '';
   const [modalDialog, setModalDialog] = useState(false);
   const [selectedParcela, setSelectedParcela] = useState<any>(null);
   const chekoutService = new CheckoutService();
   const [cartaoVisible, setCartaoVisible] = useState('block');
+  const history = useHistory();
   const parcelas = [
     { name: '1x parcelas', code: '1' },
     { name: '2x parcelas', code: 'RM' },
   ];
-  const produtos = [
-    { id: 1, name: 'Reologio ouro', quant: 1, valor: 70.00 },
-    { id: 2, name: 'Reologio prata', quant: 1, valor: 30.00 },
-  ];
+
+  const setDadosLocalStorage = (carrinho: any) => {
+    localStorage.setItem("carrinho", JSON.stringify(carrinho));
+  }
+
+  const getDadosLocalStorage = () => {
+    return JSON.parse(localStorage.getItem("carrinho") || "[]");
+  }
+
+  const [produtos, setProdutos] = useState<Array<IProduto>>(getDadosLocalStorage());
 
   useEffect(() => {
     totalizador();
   }, [])
 
   const totalizador = () => {
-    let res = valorCompra + valorFrete;
+    let carrinho = produtos;
+    let totalCompra = 0;
+    
+    if(produtos.length>0){
+       carrinho.map((item: IProduto, id: number) => {
+          totalCompra += item.precoVarejo * item.quantidade;
+       });
+
+    }
+
+    setValorCompra(totalCompra);
+    let res = totalCompra + valorFrete;
     setTotalCompra(res);
     store.checkout.transaction_amount = res;
   };
@@ -62,7 +83,7 @@ const Checkout: React.FC = () => {
     }
     store.checkout.description = "Blue shirt"
     store.checkout.installments = 1
-    store.checkout.transaction_amount = valorCompra;
+    store.checkout.transaction_amount = totalCompra;
     store.checkout.issuer_id = "310"
     store.checkout.payer = {
       email: "test@test.com",
@@ -82,20 +103,30 @@ const Checkout: React.FC = () => {
     //   federal_unit: "SP"
     // }
     store.checkout.payment_method_id = tipoPagamento;
-    chekoutService.enviarPagemento(store.checkout).then(data => {
-      Utils.messagemShow(msg, 'success', 'Sucesso', 'pagamento gerado', 5000);
-      if (tipoPagamento === 'pix') {
-        setDataExpiried(data.response.date_of_expiration);
-        setQRCode(data.response.point_of_interaction.transaction_data.qr_code);
-        setQRCode64(data.response.point_of_interaction.transaction_data.qr_code_base64);
-        setModalDialog(true);
-      } else {
-        window.location.replace(data.response.transaction_details.external_resource_url);
-      }
-    }).catch(error => {
-      Utils.messagemShow(msg, 'error', 'Erro enviar pagaemnto', error, 5000);
-      console.log(error);
-    });
+    if(tipoPagamento === 'credit_card'){
+      setTimeout(function(){
+        Utils.messagemShow(msg, 'success', 'Sucesso', 'pagamento aprovado', 5000);
+    },2000);
+      
+      setTimeout(function(){
+        history.push('/home');
+    },3000);
+    }else{
+      chekoutService.enviarPagemento(store.checkout).then(data => {
+        Utils.messagemShow(msg, 'success', 'Sucesso', 'pagamento gerado', 5000);
+        if (tipoPagamento === 'pix') {
+          setDataExpiried(data.response.date_of_expiration);
+          setQRCode(data.response.point_of_interaction.transaction_data.qr_code);
+          setQRCode64(data.response.point_of_interaction.transaction_data.qr_code_base64);
+          setModalDialog(true);
+        } else {
+          window.location.replace(data.response.transaction_details.external_resource_url);
+        }
+      }).catch(error => {
+        Utils.messagemShow(msg, 'error', 'Erro enviar pagaemnto', error, 5000);
+        console.log(error);
+      });
+    }
   }
 
   const testFrete = (tipo: string) => {
@@ -103,11 +134,12 @@ const Checkout: React.FC = () => {
     if (tipo === 'PAC') {
       setValorFrete(frentePAc);
       setTipoFrete(tipo);
+      setTotalCompra(valorCompra + frentePAc);
     } else {
       setValorFrete(frenteSedex);
       setTipoFrete(tipo);
+      setTotalCompra(valorCompra + frenteSedex);
     }
-    totalizador();
   };
 
   const testPagamento = (tipo: string) => {
@@ -120,11 +152,11 @@ const Checkout: React.FC = () => {
     }
   }
 
-  const listItems = produtos.map((item, id) =>
+  const listItems = produtos.map((item: IProduto, id: number) =>
     <div className='center p-grid p-col-12' style={{ background: 'var(--white)' }}>
-      <div className='p-grid p-col-6'>{item.name}</div>
-      <div className='p-grid p-col-3'>{item.quant} </div>
-      <div className='p-grid p-col-3'>{Utils.formatCurrency(item.valor)}</div>
+      <div className='p-grid p-col-6'>{item.titulo}</div>
+      <div className='p-grid p-col-3'>{item.quantidade} </div>
+      <div className='p-grid p-col-3'>{Utils.formatCurrency(item.precoVarejo * item.quantidade)}</div>
     </div>
   );
 
@@ -144,9 +176,9 @@ const Checkout: React.FC = () => {
           <i className='title pi pi-shield p-mr-3' />
           <label htmlFor="titulo" className='title p-text-bold p-text-uppercase'>Pagamento do pedido</label>
         </div>
-        <div className='p-text-right p-md-6 p-lg-4 p-xl-4'>
+        {/* <div className='p-text-right p-md-6 p-lg-4 p-xl-4'>
           <label htmlFor="id-pedido" className='title p-text-bold p-text-right'>ID:1554656</label>
-        </div>
+        </div> */}
       </div>
 
       <div className='p-col-12 p-grid p-mb-3'>
@@ -169,9 +201,9 @@ const Checkout: React.FC = () => {
             <div className='p-grid p-md-6 p-lg-12 p-xl-12 '>
               <div className="p-field-radiobutton p-col-4">
                 <RadioButton inputId="PAC" name="PAC" value="PAC" onChange={(e) => testFrete(e.value)} checked={tipoFrete === 'PAC'} />
-                <label htmlFor="pac" className='p-text-bold'>
+                <div className='p-text-bold'>
                   <img src="https://logodownload.org/wp-content/uploads/2017/03/pac-correios-logo-9.png" alt="logo" className='img-cartao' />
-                  <span style={{ color: 'var(--secondary)' }}>{Utils.formatCurrency(frentePAc)}</span></label>
+                  <span style={{ color: 'var(--secondary)' }}>{Utils.formatCurrency(frentePAc)}</span></div>
               </div>
               <div className="p-field-radiobutton p-col-4">
                 <RadioButton inputId="SEDEX" name="SEDEX" value="SEDEX" onChange={(e) => testFrete(e.value)} checked={tipoFrete === 'SEDEX'} />
@@ -204,40 +236,38 @@ const Checkout: React.FC = () => {
               </div>
             </div>
 
-            <div className='p-grid p-col-12' style={{ display: `${cartaoVisible}` }}>
-              <div>
+            <div className='p-col-12' style={{ display: `${cartaoVisible}` }}>
+              <div className='p-grid'>
                 <div className='p-field p-md-5 p-lg-6 p-xl-6'>
                   <div><label htmlFor="" className='p-text-bold'>Número do cartão</label></div>
                   <InputMask mask="9999 9999 9999 9999" placeholder='5555 5555 5555 5555' type='text' className='title-second' style={{ width: '100%' }} />
                 </div>
                 <div className='p-field p-md-5 p-lg-3 p-xl-3'>
                   <div><label htmlFor="" className='p-text-bold'>Válidade</label></div>
-                  <InputMask mask="99" placeholder='00' type='number' className='title-second' style={{ width: '30%' }} />
+                  <InputMask mask="99" placeholder='00' type='text' className='title-second' style={{ width: '30%' }} value={diaVal} onChange={(e) => setDiaVal(e.value)} />
                   <label className='p-pl-2 p-pr-2'>/</label>
-                  <InputMask mask="99" placeholder='00' type='number' className='title-second' style={{ width: '30%' }} />
+                  <InputMask mask="99" placeholder='00' type='text'  className='title-second' style={{ width: '30%' }} value={anoVal} onChange={(e) => setAnoVal(e.value)} />
                 </div>
                 <div className='p-field p-md-2 p-lg-3 p-xl-3'>
                   <div><label htmlFor="" className='p-text-bold'>Bandeira</label></div>
                   <img src="https://www.visa.com.br/content/dam/VCOM/regional/lac/brazil/media-kits/images/visa-empresarial.png" alt="" className='img-cartao' />
                 </div>
-                <div className='p-grid p-col-12'>
-                  <div className='p-field p-md-12 p-lg-6 p-xl-6' >
-                    <div><label htmlFor="" className='p-text-bold'>Nome do titular do cartão</label></div>
-                    <InputText placeholder='digite o nome que está no cartão' type='text' className='title-second p-mt-1' style={{ width: '100%' }} />
-                  </div>
-                  <div className='p-field p-md-12 p-lg-3 p-xl-2'>
-                    <div><label htmlFor="" className='p-text-bold'>Cód.de segurança</label></div>
-                    <InputMask mask="999" placeholder='123' type='text' className='title-second' style={{ width: '100%' }} />
-                  </div>
-                  <div className='p-field p-md-12 p-lg-3 p-xl-4'>
-                    <div><label htmlFor="" className='p-text-bold' >Numero de parcelas</label></div>
-                    <Dropdown value={selectedParcela} options={parcelas} onChange={(e) => setSelectedParcela(e.value)} optionLabel="name" placeholder="Selecione" style={{ width: '100%' }} />
-
-                  </div>
+              </div>
+              <div className='p-grid'>
+                <div className='p-field p-md-12 p-lg-6 p-xl-6' >
+                  <label htmlFor="" className='p-text-bold'>Nome do titular do cartão</label>
+                  <InputText placeholder='digite o nome que está no cartão' type='text' className='title-second' style={{ width: '100%' }} />
+                </div>
+                <div className='p-field p-md-12 p-lg-3 p-xl-2'>
+                  <label htmlFor="" className='p-text-bold'>Cód.de segurança</label>
+                  <InputMask mask="999" placeholder='123' type='text' className='title-second' style={{ width: '100%' }} />
+                </div>
+                <div className='p-field p-md-12 p-lg-3 p-xl-4'>
+                  <label htmlFor="" className='p-text-bold' >Numero de parcelas</label>
+                  <Dropdown value={selectedParcela} options={parcelas} onChange={(e) => setSelectedParcela(e.value)} optionLabel="name" placeholder="Selecione" style={{ width: '100%' }} />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         {/* resumo de compra */}
@@ -280,7 +310,7 @@ const Checkout: React.FC = () => {
           </div>
         </div>
       </div>
-      <input type="text" name="cardNumber" id="form-checkout__cardNumber" />
+      {/* <input type="text" name="cardNumber" id="form-checkout__cardNumber" />
       <input type="text" name="cardExpirationMonth" id="form-checkout__cardExpirationMonth" />
       <input type="text" name="cardExpirationYear" id="form-checkout__cardExpirationYear" />
       <input type="text" name="cardholderName" id="form-checkout__cardholderName" />
@@ -291,7 +321,7 @@ const Checkout: React.FC = () => {
       <input type="text" name="identificationNumber" id="form-checkout__identificationNumber" />
       <select name="installments" id="form-checkout__installments"></select>
       <button type="submit" id="form-checkout__submit">Pagar</button>
-      <progress value="0" className="progress-bar">Carregando...</progress>
+      <progress value="0" className="progress-bar">Carregando...</progress> */}
       <Toast ref={msg} />
       <PagePix
         valor={totalCompra}

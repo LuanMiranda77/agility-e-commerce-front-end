@@ -8,6 +8,14 @@ export class UtilsDate{
         return data;
     } 
 
+    public static formatByYYYYMMDDSemHora = (data: any) =>{
+        const moment = require('moment');
+  
+        data = moment(data).format('YYYY-MM-DD');
+         
+        return data;
+    } 
+
     public static formatByDDMMYYYY = (data: Date) =>{
         const moment = require('moment');
   
@@ -34,6 +42,11 @@ export class UtilsDate{
         return horas.reverse();
         
     }
+
+    public static adicionarDiasByData(dias: number){
+        const moment = require('moment');
+        return moment().add(dias, 'days');
+     }
 
     public static subtrairDiasByData(dias: number){
         const moment = require('moment');

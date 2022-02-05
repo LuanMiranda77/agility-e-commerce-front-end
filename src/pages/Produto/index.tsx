@@ -33,12 +33,18 @@ import { Utils } from "../../utils/utils"
 import { Container, FormControl } from "./styles"
 import { Checkbox } from 'primereact/checkbox';
 import iconLivre from '../../assets/icon-livre.jpg'
+import { Dropdown } from 'primereact/dropdown'
+import { ModalLoad } from '../../components/ModalLoad'
+import { ModalMarketplace } from "./modalMarketplace"
+import { useHistory } from 'react-router-dom';
 
 
 
 const Produto: React.FC = () => {
 
     const store = useContext(ProdutoStore);
+    const [modalDialog, setModalDialog] = useState(false);
+    const [modalLoad, setModalLoad] = useState(false);
     const [produtoDialog, setProdutoDialog] = useState(false);
     const [deleteProdutoDialog, setDeleteprodutoDialog] = useState(false);
     const [deleteProdutosDialog, setDeleteprodutosDialog] = useState(false);
@@ -51,6 +57,12 @@ const Produto: React.FC = () => {
     const produtoService = new ProdutoService();
     const categoriaService = new CategoriaService();
     const [checked, setChecked] = useState<boolean>(false);
+
+    const hideDialogMarket = () => {
+        setModalDialog(false);
+    }
+
+    const history = useHistory();
 
     useEffect(() => {
         produtoService.getProdutos().then(data => {
@@ -165,8 +177,8 @@ const Produto: React.FC = () => {
         setDeleteprodutosDialog(true);
     }
 
-    const setCategoria = (categoria: ICategoria[]) => {
-        store.produto.categorias = categoria;
+    const setCategoria = (categoria: { value: any }) => {
+        store.produto.categoria = categoria.value;
     }
 
     const deleteSelectedAll = () => {
@@ -344,7 +356,7 @@ const Produto: React.FC = () => {
                     <div className="p-grid  p-sm-6 p-md-6 p-lg-5 p-mb-2" >
                         {/* <ButtonBase label="Enviar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={enviarProdutosMercadoLivre} /> */}
                         <div className='p-col-4'>
-                            <ButtonBase label="Enviar Livre" icon="pi pi-send" className="p-button-success" onClick={enviarProdutosMercadoLivre} style={{background:'#EFDD3E'}}/>
+                            <ButtonBase label="Enviar Livre" icon="pi pi-send" className="p-button-success" onClick={enviarProdutosMercadoLivre} style={{ background: '#EFDD3E' }} />
                         </div >
                         <div className='p-col-4'>
                             <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-button-success" onClick={openDialog} />
@@ -359,7 +371,7 @@ const Produto: React.FC = () => {
 
                 <div className="p-grid p-p-2">
                     <div className="p-col-12 p-md-6 p-lg-5 p-ml-3 p-mr-5" >
-                        <ButtonBase label="Estoque mínimo" icon="" className="p-button-warning" />
+                        <ButtonBase label="Markeplace anúncios" icon="pi pi-cog" className="p-button-warning" onClick={() => history.push("/marketplace")} />
                     </div>
                     <div className="p-p-2 p-col-12 p-sm-5 p-md-6 p-lg-6 p-ml-2 pesquisar">
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
@@ -483,7 +495,13 @@ const Produto: React.FC = () => {
                                     </div>
 
                                     <div className="p-col-12 p-felx p-ms-12 p-md-6 p-lg-3 p-field">
-                                        <ComboMultSelect options={categorias} label='Categoria' selectOptions={store.produto.categorias} setFunction={setCategoria} />
+                                        <label htmlFor="peso" className="p-col-12" >Categoria</label>
+                                        <Dropdown value={store.produto.categoria} options={categorias} onChange={setCategoria}
+                                            optionLabel="nome"
+                                            placeholder="Selecione categoria"
+                                            style={{ width: '100%' }}
+                                        />
+                                        {/* filter showClear filterBy="nome"  */}
                                     </div>
                                 </div>
                                 <div className="p-formgrid p-grid">
@@ -603,8 +621,11 @@ const Produto: React.FC = () => {
                 setFunctionButtonSim={deleteSelectedAll}
                 setFunctionButtonNao={hideDialogConfirme} />
 
+            <ModalMarketplace modalDialog={modalDialog} closeFuncion={hideDialogMarket} store={store} />
+            <ModalLoad visible={modalLoad} />
             <Toast ref={toast} />
             {/* <FooterAdmin /> */}
+
         </Container>
     )
 }
