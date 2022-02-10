@@ -23,7 +23,8 @@ export class LoginService {
             })
             .catch(error => {
                 console.log(error.response.data[0]);
-                return Promise.reject(error.response.data[0]);
+                
+                return error.response.data[0] !== undefined ? Promise.reject(error.response.data[0]) : Promise.reject({mensagemUsuario:'Verifique o JWT'});
             });
             return response;
         }

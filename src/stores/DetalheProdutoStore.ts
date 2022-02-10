@@ -1,8 +1,6 @@
-import { IFrete } from './../domain/types/IFrente';
 import { makeObservable, observable } from "mobx";
 import { createContext } from "react";
 import { FileImg } from "../domain/types/FileImg";
-import { ICategoria } from "../domain/types/ICategoria";
 import { IProduto } from './../domain/types/IProduto';
 
 class DetalheProdutoStore {
@@ -47,7 +45,8 @@ class DetalheProdutoStore {
     largura: 0,
     status:'',
     imagens: new Array<FileImg>(),
-    categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''}
+    categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''},
+    idMarketplace: ''
   };
 
   @observable

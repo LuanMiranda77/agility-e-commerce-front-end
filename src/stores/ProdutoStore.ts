@@ -24,7 +24,8 @@ class ProdutoStore {
     largura: 0,
     status:'',
     imagens: new Array<FileImg>(),
-    categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''}
+    categoria: { id:0, nome:'', idCategoriaPai:'',idCategoriaFilha: ''},
+    idMarketplace:''
   };
 
   @observable

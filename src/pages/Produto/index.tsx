@@ -140,10 +140,12 @@ const Produto: React.FC = () => {
             } else {
                 produtoService.save(store.produto, checked).then(res => {
                     store.add(res);
-                    Utils.messagemShow(toast, 'success', 'Cadastro com sucesso!', `Item: ${store.produto.titulo}`, 3000);
+                    setChecked(false);
                     hideDialog();
+                    Utils.messagemShow(toast, 'success', 'Cadastro com sucesso!', `Item: ${store.produto.titulo}`, 3000);
 
                 }).catch(error => {
+                    setChecked(false);
                     Utils.messagemShow(toast, 'error', 'Error no cadastro', error.mensagemUsuario, 3000);
                     return false;
                 });
@@ -223,9 +225,10 @@ const Produto: React.FC = () => {
 
     const actionBodyTemplate = (rowData: IProduto) => {
         return (
-            <div className="buttonAction">
+            <div className="buttonAction p-grid">
                 <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() => editar(rowData)} />
-                <ButtonBase label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste" onClick={() => openConfirmeDeleteDialog(rowData)} />
+                <Button label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste p-mr-2 p-mb-2" onClick={() => openConfirmeDeleteDialog(rowData)} />
+                <Button label="" icon="pi pi-chart-bar" className="p-button-rounded teste" onClick={() => openConfirmeDeleteDialog(rowData)} tooltip="Marketplaces" tooltipOptions={{ position: 'top' }} />
             </div>
         );
     }

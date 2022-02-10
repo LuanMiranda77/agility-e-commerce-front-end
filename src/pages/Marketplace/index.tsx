@@ -187,6 +187,7 @@ const Marketplace: React.FC = () => {
     marketplaceService.putProdutosByMercadoLivre(store.produto.id, store.objUpdate).then(data => {
       const index = store.findIndexById(store.produto.id);
       store.produtos[index] = data;
+      setDeleteprodutoDialog(false)
       setModalLoad(false);
       setModalEdit(false);
       Utils.messagemShow(msg, 'success', 'Salvo', '😃 Anúncio alterado com sucesso', 5000);
@@ -410,7 +411,7 @@ const Marketplace: React.FC = () => {
             <h5 className='label-text p-ml-2'>Informações do anúncio</h5>
             <div className='p-p-3 p-grid'>
               <div className="p-col-12 p-lg-9 p-xl-9">
-                <InputBase type='text' label='titulo' placeholder='Digitar titulo do anúncio' value={store.objUpdate.title} onChange={(e) => { store.objUpdate.title = e.currentTarget.value }} />
+                <InputBase disabled={true} type='text' label='titulo' placeholder='Digitar titulo do anúncio' value={store.objUpdate.title} onChange={(e) => { store.objUpdate.title = e.currentTarget.value }} />
               </div>
               <div className='p-field p-col-12 p-lg-2 p-xl-2 p-mt-1'>
                 <label htmlFor="" style={{ width: '100%' }}>Status</label>

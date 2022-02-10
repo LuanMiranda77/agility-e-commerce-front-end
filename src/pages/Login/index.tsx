@@ -29,7 +29,10 @@ function Login() {
     const logar = () => {
 
         loginService.login(store.user).then(response => {
-            if (response.role === 'MASTER') {
+            if(response.status !== "ATIVO"){
+                Utils.messagemShow(msg, 'error', `AVISO`, "Seu usuario foi desativado faça um novo cadastro ou entre em contato", 6000);
+            }
+            else if (response.role === 'MASTER') {
                 Utils.geraTokenLogin(response);
                 history.push("/dashboard");
             } else if (response.role === 'ADMIN') {

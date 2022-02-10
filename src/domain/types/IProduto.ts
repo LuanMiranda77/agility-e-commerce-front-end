@@ -17,4 +17,5 @@ export interface IProduto{
   imagens: Array<any>;
   categoria: ICategoria;
   status: string;
+  idMarketplace: string;
 }
