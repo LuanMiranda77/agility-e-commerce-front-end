@@ -53,6 +53,17 @@ export class MarketplaceService {
       return response;
     }
 
+    async findProdutoByIdMercadoLivre(ids: Array<string>) {
+      const response = await integrador.post(`/api/m_livre/items/ids`, ids).then(response =>{
+        console.log(response.data[0].body);
+        return response.data[0].body;
+      }).catch(error=>{
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
+      });
+      return response;
+    }
+
     async findProdutosByMercadoLivre() {
       const response = await integrador.get('/api/m_livre/items').then(response =>{
         return response.data.response;
@@ -92,6 +103,18 @@ export class MarketplaceService {
       });
       return response;
     }
+
+    async deleteImage(hash: string) {
+      const response = await integrador.delete(`/api/m_livre/item/image/${hash}`).then(response =>{
+        return response.data.response;
+      }).catch(error=>{
+        console.log(error.response.data);
+        return Promise.reject(error.response.data);
+      });
+      return response;
+    }
+
+
     
   
 }

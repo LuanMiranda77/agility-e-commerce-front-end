@@ -156,6 +156,9 @@ export const Detalhes: React.FC<DetalhesProps> = (props) => {
                     </div>
                 </FormControl>
             </DialogContent>
+
+            {/* ======================modal de marketplace======================= */}
+            
             <Toast ref={msg} />
             <ModalLoad visible={modalLoad} />
         </Dialog>

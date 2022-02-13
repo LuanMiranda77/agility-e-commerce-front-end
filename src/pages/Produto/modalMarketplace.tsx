@@ -98,7 +98,7 @@ export const ModalMarketplace: React.FC<DetalhesProps> = (props) => {
                         <div className="p-col-7 p-lg-6 p-xl-6 p-text-right">
                             <h5 className="p-text-bold p-text-uppercase p-mt-2 titulo-modal"
                                 style={{ color: 'var(--secondary)' }}>
-                                Gerencimaneto de anúncios
+                                Gerenciamento de anúncios
                             </h5>
                         </div>
                     </div>

@@ -13,40 +13,54 @@ export class ProdutoService {
     for (let f of pEntity.imagens) {
       if (f && f.size < 5e6) {
         const formData = new FormData();
-        // formData.append('image', f);
         formData.append('file', f);
-        // const res = await imgur.post(`https://api.imgur.com/3/image`, formData);
         const res = await integrador.post(`api/m_livre/item/upload`, formData);
-        pEntity.imagens[cont].objectURL = res.data.objectURL;
-        pEntity.imagens[cont].hash = res.data.hash;
-        pEntity.imagens[cont].nome = "|" + res.data.nome;
-        pEntity.imagens[cont].tam = "|" + res.data.size;
+        pEntity.imagens[cont] = {...res.data.response}
+        pEntity.imagens[cont].tam = res.data.response.size;
       }
       cont++;
     }
-
+    
     const response = await api.post(this.url, pEntity).then(response => {
         if (check === true) {
           this.enviarProdutoMercLivre(pEntity).then(data => {
-            let obj = {id: null, produto: response, idMarkeplace: data.id, tipo:1}
+            let obj = {id: null, produto: response.data, idMarkeplace: data.id, tipo:1}
             api.post(this.url+"/item-market", obj);
           }).catch(error => {
-            return Promise.reject(error.response.data[0]);
-          });;
+            console.log(error);
+            return Promise.reject(error.data.response);
+          });
         }
         return response.data;
       }).catch(error => {
+        console.log(error);
         return Promise.reject(error.response.data[0]);
       });
     return response;
   }
 
-  public async update(pEntity: IProduto): Promise<IProduto> {
+  public async update(pEntity: IProduto) {
+    
+    let cont = 0;
+    for (let f of pEntity.imagens) {
+      console.log(f);
+      if (f && f.size < 5e6) {
+        if(!f.id){
+          const formData = new FormData();
+          formData.append('file', f);
+          const res = await integrador.post(`api/m_livre/item/upload`, formData);
+          pEntity.imagens[cont] = {...res.data.response}
+          pEntity.imagens[cont].tam = res.data.response.size;
+        }
+      }
+      cont++;
+    }
+
     const response = await api.put(this.url + `/${pEntity.id}`, pEntity)
       .then(response => {
         if(pEntity.idMarketplace !== null || pEntity.idMarketplace !== ''){
            const marketService = new MarketplaceService();
-           let objUpdate = {title: pEntity.titulo, descricao: pEntity.descricao}
+           let objUpdate = {title: pEntity.titulo, descricao: pEntity.descricao, imagens: pEntity.imagens}
            marketService.putProdutosByMercadoLivre(pEntity.idMarketplace, objUpdate);
         }
         return response.data;

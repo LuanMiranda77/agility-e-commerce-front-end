@@ -17,7 +17,9 @@ import { Tag } from 'primereact/tag'
 import { Toast } from "primereact/toast"
 import { classNames } from 'primereact/utils'
 import React, { useContext, useEffect, useRef, useState } from "react"
+import icon from "../../assets/icon-voltar.png";
 import produtoIcone from "../../assets/produtoIcone.svg"
+import iconLivre from "../../assets/icon-livre.svg"
 import { ButtonBase } from "../../components/ButtonBase"
 import { ComboMultSelect } from "../../components/ComboMultSelect"
 import { DialogConfirme } from '../../components/DialogConfirme'
@@ -32,11 +34,13 @@ import ProdutoStore from "../../stores/ProdutoStore"
 import { Utils } from "../../utils/utils"
 import { Container, FormControl } from "./styles"
 import { Checkbox } from 'primereact/checkbox';
-import iconLivre from '../../assets/icon-livre.jpg'
+// import iconLivre from '../../assets/icon-livre.jpg'
 import { Dropdown } from 'primereact/dropdown'
 import { ModalLoad } from '../../components/ModalLoad'
 import { ModalMarketplace } from "./modalMarketplace"
 import { useHistory } from 'react-router-dom';
+import { MarketplaceService } from '../../services/MarketplaceService/MarketplaceService'
+import { spawn } from 'child_process'
 
 
 
@@ -57,6 +61,7 @@ const Produto: React.FC = () => {
     const produtoService = new ProdutoService();
     const categoriaService = new CategoriaService();
     const [checked, setChecked] = useState<boolean>(false);
+    const [produtosMK, setProdutosMK] = useState<any>([]);
 
     const hideDialogMarket = () => {
         setModalDialog(false);
@@ -103,16 +108,35 @@ const Produto: React.FC = () => {
 
     }
 
-    const enviarProdutosMercadoLivre = () => {
-        let produto = store.produtos.filter(valor => selectedProdutos.includes(valor));
-        produtoService.enviarProdutoMercLivre(produto[0])
-            .then(result => {
-                Utils.messagemShow(toast, 'success', 'Produto enviado com sucesso', `Item: ${result.titulo}`, 5000);
-            })
-            .catch(error => {
-                Utils.messagemShow(toast, 'error', 'Error na validação do produto', error, 5000);
+    const enviarProdutosMercadoLivre = (market: any) => {
+        // let produto = store.produtos.filter(valor => selectedProdutos.includes(valor));
+        setSelectMarket(market);
+        console.log(market);
+        if (market.id === 1) {
+            return false;
+        }
+
+        else if (selectedProdutos.length === 0) {
+            Utils.messagemShow(toast, 'info', 'Produtos marketplace', 'Você não selecionou os produtos para ser enviados!', 5000);
+            return false;
+        }
+
+        setModalLoad(true);
+        selectedProdutos.forEach((prod: IProduto) => {
+            if (prod.idMarketplace === '' ||  prod.idMarketplace === null) {
+                produtoService.enviarProdutoMercLivre(prod)
+                    .then(result => {
+                        Utils.messagemShow(toast, 'success', 'Produto enviado com sucesso', `Item: ${result.titulo}`, 3000);
+                    })
+                    .catch(error => {
+                        Utils.messagemShow(toast, 'error', 'Error na validação do produto', error, 5000);
+                    }
+                    );
+            }else{
+                Utils.messagemShow(toast, 'error', 'Produto já enviado anteriormente', `Item: ${prod.titulo}`, 5000);
             }
-            );
+        });
+        setModalLoad(false);
 
     }
 
@@ -145,7 +169,7 @@ const Produto: React.FC = () => {
                     Utils.messagemShow(toast, 'success', 'Cadastro com sucesso!', `Item: ${store.produto.titulo}`, 3000);
 
                 }).catch(error => {
-                    setChecked(false);
+                    console.log(error);
                     Utils.messagemShow(toast, 'error', 'Error no cadastro', error.mensagemUsuario, 3000);
                     return false;
                 });
@@ -156,6 +180,11 @@ const Produto: React.FC = () => {
         }
     }
     const editar = (produto: IProduto) => {
+        if (produto.idMarketplace !== '' && produto.idMarketplace !== null) {
+            setChecked(true);
+        } else {
+            setChecked(false);
+        }
         store.update(produto);
         let soma = 0;
         store.produto.imagens.forEach(e => {
@@ -224,13 +253,47 @@ const Produto: React.FC = () => {
 
 
     const actionBodyTemplate = (rowData: IProduto) => {
+        let mkteste=false;
+        if(rowData.idMarketplace !== '' && rowData.idMarketplace !== null ){
+            mkteste=true;
+        }
+
         return (
             <div className="buttonAction p-grid">
                 <ButtonBase label="" icon="pi pi-pencil" className="p-button-rounded p-button-success p-mr-2 p-mb-2" onClick={() => editar(rowData)} />
                 <Button label="" icon="pi pi-trash" className="p-button-rounded p-button-danger teste p-mr-2 p-mb-2" onClick={() => openConfirmeDeleteDialog(rowData)} />
-                <Button label="" icon="pi pi-chart-bar" className="p-button-rounded teste" onClick={() => openConfirmeDeleteDialog(rowData)} tooltip="Marketplaces" tooltipOptions={{ position: 'top' }} />
+                {  mkteste ?
+                <Button label="" icon="pi pi-chart-bar" className="p-button-rounded teste" onClick={() => findProdutoByIdsMK(rowData)} tooltip="Marketplaces" tooltipOptions={{ position: 'top' }} />
+                :''} 
             </div>
         );
+    }
+
+    const findProdutoByIdsMK = (prod: any) =>{
+        setModalLoad(true);
+        store.update(prod);
+        const mkService = new MarketplaceService();
+        let array = [];
+        setProdutosMK([]);
+        array.push(prod.idMarketplace);
+        mkService.findProdutoByIdMercadoLivre(array).then(data =>{
+            setModalMarketVisible(true);
+            let  mk = {key:1,  logo: '', nome:''};
+            mk = {...data};
+            mk.logo = iconLivre;
+            mk.nome = 'Mercado livre';
+            array = []
+            array.push(mk);
+            setProdutosMK(array);
+            // produtosMK.push(mk);
+            setModalLoad(false);
+        })
+        .catch(error => {
+            setModalLoad(false);
+            Utils.messagemShow(toast, 'error', 'Error no carregamento', error.mensagemUsuario, 3000);
+            return false;
+        });
+        
     }
 
     const header = (
@@ -320,6 +383,13 @@ const Produto: React.FC = () => {
     }
 
     const onTemplateRemove = (file: any) => {
+        if (file.id) {
+            const marketService = new MarketplaceService();
+            marketService.deleteImage(file.hash).then()
+                .catch(error => {
+                    Utils.messagemShow(toast, 'error', 'Error no cadastro', error.mensagemUsuario, 5000);
+                });
+        }
         let _array = store.produto.imagens.filter(f => f.objectURL !== file.objectURL);
         store.produto.imagens = _array;
         setTotalSize(totalSize - file.size);
@@ -347,24 +417,41 @@ const Produto: React.FC = () => {
         te = "40rem";
     }
 
+    const arrayMarket = [{ id: 1, name: '' }, { id: 2, name: 'Mercado Livre' }]
+    const [selectMarket, setSelectMarket] = useState('');
+    const [modalMarketVisible, setModalMarketVisible] = useState(false);
+
+    const logoTemplate = (rowData: any) => {
+        let imgURL = ''
+        if (rowData.imagens[0]) {
+            imgURL = rowData.imagens[0].objectURL;
+        }
+        // eslint-disable-next-line jsx-a11y/alt-text
+        return <img
+            id='link'
+            src={imgURL}
+            onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
+            className="product-image"
+        />
+    }
+
     return (
         <Container>
             <HeaderAdmin />
             <div className="card">
                 <div className="p-grid p-mt-3" >
-                    <div className="p-grid  p-col-12 p-md-6 p-lg-7 p-ml-2">
+                    <div className="p-grid p-col-12 p-md-6 p-lg-9 p-ml-2">
                         <img src={produtoIcone} alt="img" className="p-ml-2 p-mb-2" />
-                        <label className="p-ml-2 p-mt-2">Cadastro de Produto</label>
+                        <label className="p-ml-2 p-mt-3">Cadastro de Produto</label>
                     </div>
-                    <div className="p-grid  p-sm-6 p-md-6 p-lg-5 p-mb-2" >
-                        {/* <ButtonBase label="Enviar" icon="pi pi-plus" className="p-mr-5 p-button-success" onClick={enviarProdutosMercadoLivre} /> */}
-                        <div className='p-col-4'>
+                    <div className="p-grid  p-col-12 p-lg-3 p-mb-2 p-text-right" >
+                        {/* <div className='p-col-4'>
                             <ButtonBase label="Enviar Livre" icon="pi pi-send" className="p-button-success" onClick={enviarProdutosMercadoLivre} style={{ background: '#EFDD3E' }} />
-                        </div >
-                        <div className='p-col-4'>
+                        </div > */}
+                        <div className='p-col-6 p-lg-6 p-xl-6 p-text-right'>
                             <ButtonBase label="Adicionar" icon="pi pi-plus" className="p-button-success" onClick={openDialog} />
                         </div>
-                        <div className='p-col-4'>
+                        <div className='p-col-6 p-lg-6 p-xl-6  p-text-center'>
                             <ButtonBase label="Remover" icon="pi pi-times" className=" p-button-danger" onClick={confirmDeleteSelected} />
                         </div>
                     </div>
@@ -373,11 +460,15 @@ const Produto: React.FC = () => {
                 <Divider className="diveder" />
 
                 <div className="p-grid p-p-2">
-                    <div className="p-col-12 p-md-6 p-lg-5 p-ml-3 p-mr-5" >
+                    <div className="p-col-12 p-lg-3 p-xl-3 p-ml-2" >
                         <ButtonBase label="Markeplace anúncios" icon="pi pi-cog" className="p-button-warning" onClick={() => history.push("/marketplace")} />
                     </div>
-                    <div className="p-p-2 p-col-12 p-sm-5 p-md-6 p-lg-6 p-ml-2 pesquisar">
+                    <div className="p-col-12 p-lg-5 p-xl-5 p-text-center pesquisar">
                         <InputSearch placeholder="Pesquise..." type="search" onInput={(e) => setGlobalFilter(e.currentTarget.value)} />
+                    </div>
+                    <div className='p-col-12 p-lg-3 p-xl-3 p-mt-1 p-text-right'>
+                        {/* <label htmlFor="" style={{ width: '100%' }}>Status</label> */}
+                        <Dropdown className='test' value={selectMarket} options={arrayMarket} onChange={(e) => enviarProdutosMercadoLivre(e.value)} optionLabel="name" placeholder="Envio em massa" style={{ zIndex: '99' }} />
                     </div>
                 </div>
             </div>
@@ -615,6 +706,64 @@ const Produto: React.FC = () => {
                 </Dialog>
 
             </div>
+            {/* =========================modal marketplace==================================== */}
+
+            <Dialog
+                className="teste"
+                open={modalMarketVisible}
+                onClose={() => setModalMarketVisible(false)}
+                scroll={scroll}
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                maxWidth="lg"
+                style={{ zIndex: 999 }}
+            >
+                <DialogTitle id="dialog-title">
+                    <div className="p-grid  p-col-12">
+                        <div className="p-col-5 p-lg-6 p-xl-6">
+                            <div className="p-col-12">
+                                <button type="button" onClick={() => setModalMarketVisible(false)} className="p-grid "
+                                    style={{ background: 'white', border: '0' }}    >
+                                    <img src={icon} alt="img" />
+                                    <label htmlFor="" className="p-mt-2 p-text-bold" style={{ color: 'var(--text-title)', fontSize: '18px' }}>VOLTAR</label>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="p-col-7 p-lg-6 p-xl-6 p-text-right">
+                            <h5 className="p-text-bold p-text-uppercase p-mt-2 titulo-modal"
+                                style={{ color: 'var(--secondary)' }}>
+                                Gerenciamento de anúncios
+                            </h5>
+                        </div>
+                    </div>
+                </DialogTitle>
+                <DialogContent dividers={scroll === 'paper'} style={{ background: 'var(--background)' }}>
+                    <div className='p-col-12'>
+                        <h3>Listagem dos Marketplaces</h3>
+                        <div className='p-mt-3'>
+                            <h2>Produto: {store.produto.titulo}</h2>
+                        </div>
+                        <div className='p-col-12'>
+                            <DataTable value={produtosMK} scrollable scrollHeight="300px">
+                                <Column field="logo" header="Logo" body={(e)=>{
+                                    // eslint-disable-next-line jsx-a11y/alt-text
+                                    return <img id='mk1'
+                                    src={e.logo}
+                                    onError={(e) => e.currentTarget.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png'}
+                                    className="product-image-mk"
+                                    style={{width: '100%', height: '50px'}}
+                                />
+                                }}></Column>
+                                <Column field="nome" header="Marketplace"></Column>
+                                <Column field="available_quantity" header="Estoque"></Column>
+                                <Column field="sold_quantity" header="Vendidos"></Column>
+                                <Column field="price" header="Pr. Unit"  body={(e) => { return <h3>{Utils.formatCurrency(e.price)}</h3>}}></Column>
+                                <Column header="Total Vendido" body={(e) => { return <h3>{Utils.formatCurrency(e.sold_quantity * e.price)}</h3>}}></Column>
+                            </DataTable>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
 
             <DialogConfirme show={deleteProdutoDialog} text={"item: " + store.produto.titulo} titulo='Realmente deseja deletar o item?'
                 setFunctionButtonSim={hideDeleteProdutoDialog}
