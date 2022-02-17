@@ -45,7 +45,15 @@ const Pesquisa: React.FC = (props: any) => {
     if (props.match.params.filter.substr(1, 1) === '!') {
       let categ = props.match.params.filter.split('!');
       filterProdutos('CATEGORIA',categ[1]);
-    } else {
+    }
+    else if(props.match.params.filter.substr(0, 6) === '*categ'){
+      produtoService.findProdutoByCategoria(props.match.params.filter.substr(6, 7)).then(data => {
+        setProduto(data);
+      }).catch(error => {
+        Utils.messagemShow(toast, 'info', `AVISO`, error.mensagemUsuario, 3000);
+      });
+    } 
+    else {
       produtoService.pesquisaProdutosByTitle(props.match.params.filter).then(data => {
         setProduto(data);
       }).catch(error => {

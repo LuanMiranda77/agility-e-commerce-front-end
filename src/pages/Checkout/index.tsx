@@ -164,6 +164,17 @@ const Checkout: React.FC = () => {
     setModalDialog(false);
   }
 
+  let cliente = Utils.getClienteLocal();
+  let endereco = cliente.enderecos?.find((e) => e.padrao === 'S');
+
+  const carregarEnderecoEntrega = <div className='p-col-12'>
+                                    <span className='p-text-bold'>Recebedor: <label htmlFor="">{cliente.usuario.nome}</label></span>
+                                    <h5 className='p-text-bold p-mt-2'>Rua: <label htmlFor="">{endereco?.logradouro + ', '+endereco?.numero}</label></h5>
+                                    <h5 className='p-text-bold '>Bairro: <label htmlFor="">{endereco?.bairro + ', '+endereco?.cidade+'-'+endereco?.uf+' | CEP: '+endereco?.cep}</label></h5>
+                                  </div>
+
+  
+
   return (
     <Container id='form-checkout'>
       <script src="https://sdk.mercadopago.com/js/v2"></script>
@@ -190,7 +201,8 @@ const Checkout: React.FC = () => {
             </label>
             <Divider />
             <br />
-            <InputBase label='CEP' placeholder='00000-000' type='text' className='title-second p-mt-1' />
+            {/* <InputBase label='CEP' placeholder='00000-000' type='text' className='title-second p-mt-1' /> */}
+            {carregarEnderecoEntrega}
           </div>
           <div className='card p-md-6 p-lg-12 p-xl-12 p-mb-2 p-p-3'>
             <label htmlFor="endereco" className='label-title p-text-bold'>

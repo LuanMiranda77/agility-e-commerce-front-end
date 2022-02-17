@@ -29,7 +29,7 @@ import { PedidoService } from "../../services/PedidoService/pedidoService";
 const Carrinho: React.FC = () => {
   const store = useContext(CarrinhoStore);
   const storePedido = useContext(PedidoStore);
-  let itemPedido = {  pedido: {}, produto: {}, quantidadeVendida: 0, dataVenda: new Date()};
+  let itemPedido = {  pedido: {}, produto: {}, quantidadeVendida: 0};
   const msg = useRef<Toast>(null);
   const [produtos, setProduto] = useState<IProduto[]>([]);
   const produtoService = new ProdutoService();
@@ -165,16 +165,19 @@ const Carrinho: React.FC = () => {
     storePedido.pedido.valorFrete = store.objPage.valorFrete;
     storePedido.pedido.valorDesconto = store.objPage.valorDesconto;
     storePedido.pedido.valorTotal = (total + store.objPage.valorFrete) - store.objPage.valorDesconto;
-    // storePedido.pedido.produtos = getDadosLocalStorage().map((e: any) => {
-    //   itemPedido.produto=e;
-    //   itemPedido.pedido=storePedido.pedido;
-    //   itemPedido.quantidadeVendida = e.quantidade;
-    //   return itemPedido; 
-    // });
+    storePedido.pedido.produtos = getDadosLocalStorage().map((e: any) => {
+      let pedCopy = {...storePedido.pedido}
+      itemPedido.produto=e;
+      pedCopy.produtos=[];
+      itemPedido.pedido=pedCopy;
+      itemPedido.quantidadeVendida = e.quantidade;
+      return itemPedido; 
+    });
     console.log(storePedido.pedido);
     // return false;
     pedidoService.save(storePedido.pedido).then(data =>{
       setModalLoad(false);
+      setDadosLocalStorage([]);
       storePedido.pedido = data;
       history.push('/checkout');
     }

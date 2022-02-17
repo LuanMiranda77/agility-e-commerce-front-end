@@ -36,6 +36,12 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
 
   const onCategChange = (e: { value: any }) => {
     setSelectedCateg(e.value);
+    console.log(e.value.code);
+    history.push(`/pesquisa/*categ${e.value.code}`);
+  }
+
+  const onFindProduto = (params: string) => {
+    history.push(`/pesquisa/${params}`);
   }
 
   const pesquisaProduto = (event: any, params: string) => {
@@ -173,12 +179,12 @@ export const HeaderCliente: React.FC<HeaderClienteProps> = () => {
         placeholder="Todas as categorias"
         style={{ color: 'white' }}
       />
-      <button className='button-categ p-mr-4 p-mt-1' onClick={(e) => pesquisaProduto(null, 'categoria-test0')}>Ofertas do dia</button>
-      <button className='button-categ p-mr-4 p-mt-1'>Novidades</button>
-      <button className='button-categ p-mr-4 p-mt-1'>Relógios</button>
-      <button className='button-categ p-mr-4 p-mt-1'>Brincos</button>
-      <button className='button-categ p-mr-4 p-mt-1'>Pulseiras</button>
-      <button className='button-categ p-mt-1'>Gargantilhas</button>
+      {/* <button className='button-categ p-mr-4 p-mt-1' onClick={(e) => pesquisaProduto(null, 'categoria-test0')}>Ofertas do dia</button>
+      <button className='button-categ p-mr-4 p-mt-1'>Novidades</button> */}
+      <button className='button-categ p-mr-4 p-mt-1' onClick={() => onFindProduto('relógios')}>Relógios</button>
+      <button className='button-categ p-mr-4 p-mt-1'onClick={() => onFindProduto('brincos')}>Brincos</button>
+      <button className='button-categ p-mr-4 p-mt-1' onClick={() => onFindProduto('pulseiras')}>Pulseiras</button>
+      <button className='button-categ p-mt-1' onClick={() => onFindProduto('gargantilha')}>Gargantilhas</button>
     </div>
     <Toast ref={msg} />
   </Container>;

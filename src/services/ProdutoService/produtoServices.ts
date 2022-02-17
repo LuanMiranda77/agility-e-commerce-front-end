@@ -134,6 +134,8 @@ export class ProdutoService {
     return response;
   }
 
+  
+
   public async findProduto(id: number) {
     const response = await api.get(this.url + `/${id}`).then(response => {
       return response.data;
@@ -143,6 +145,17 @@ export class ProdutoService {
     });
     return response;
   }
+
+  public async findProdutoByCategoria(id: number) {
+    const response = await api.get(this.url+`/categoria/${id}`).then(response => {
+      return response.data;
+    }).catch(error => {
+      console.log(error.response);
+      return Promise.reject(error.response.data[0]);
+    });
+    return response;
+  }
+
 
 
 
